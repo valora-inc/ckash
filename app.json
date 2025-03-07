@@ -25,7 +25,7 @@
   "android": {
     "adaptiveIcon": {
       "foregroundImage": "./assets/adaptive-icon.png",
-      "backgroundColor": "#ff5050"
+      "backgroundColor": "#000d5a"
     },
     "package": "xyz.divvi.ckash",
     "permissions": [
@@ -40,9 +40,9 @@
       "expo-splash-screen",
       {
         "image": "./assets/splash-icon.png",
-        "imageWidth": 200,
+        "imageWidth": 150,
         "resizeMode": "contain",
-        "backgroundColor": "#ff5050"
+        "backgroundColor": "#000d5a"
       }
     ],
     [
