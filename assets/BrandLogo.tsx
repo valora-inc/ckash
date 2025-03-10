@@ -1,31 +1,34 @@
-import * as React from "react";
-import Svg, { ClipPath, Defs, G, Path } from "react-native-svg";
+import * as React from 'react'
+import { StyleSheet, View, ViewStyle } from 'react-native'
+import Svg, { Path } from 'react-native-svg'
 
 interface Props {
-  size?: number;
-  color?: string;
+  size?: number
+  style?: ViewStyle
 }
 
-export default function Logo({ size = 32, color = "#ffffff" }: Props) {
+export default function Logo({ style, size = 24 }: Props) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 180 180" fill="none">
-      <G clipPath="url(#a)">
-        <G mask="url(#b)">
-          <Path
-            fill={color}
-            d="M135.357 0H44.643C19.987 0 0 19.987 0 44.643v90.714C0 160.013 19.987 180 44.643 180h90.714C160.013 180 180 160.013 180 135.357V44.643C180 19.987 160.013 0 135.357 0Z"
-          />
-          <Path
-            fill="#FFFFFF"
-            d="M66.339 38.568 38.575 66.332a6.055 6.055 0 0 0 0 8.564l66.565 66.564a6.054 6.054 0 0 0 8.563 0l27.764-27.764a6.054 6.054 0 0 0 0-8.563L74.902 38.568a6.055 6.055 0 0 0-8.563 0ZM134.041 78.34V47.916a1.926 1.926 0 0 0-1.918-1.918h-30.426c-1.73 0-2.596 2.068-1.354 3.31l30.426 30.425c1.204 1.204 3.31.339 3.31-1.353l-.038-.038ZM45.959 101.697v30.426c0 1.053.865 1.918 1.918 1.918h30.426c1.73 0 2.595-2.068 1.354-3.31l-30.426-30.426c-1.203-1.203-3.31-.338-3.31 1.354l.038.038Z"
-          />
-        </G>
-      </G>
-      <Defs>
-        <ClipPath id="a">
-          <Path fill="#FFFFFF" d="M0 0h180v180H0z" />
-        </ClipPath>
-      </Defs>
-    </Svg>
-  );
+    <View style={[styles.container, style]}>
+      <Svg width={size} height={size} viewBox="0 0 24 24">
+        <Path
+          fill="#477BFF"
+          d="m24 11.984-7.534 4.333-5.821-3.14c.127-.371.206-.758.206-1.177 0-.418-.079-.837-.222-1.224l5.393-3.093L24 11.984Z"
+        />
+        <Path
+          fill="#003CD6"
+          d="M11.912 24c-3.458 0-6.244-1.13-8.52-3.455C1.11 18.225 0 15.432 0 11.999c0-3.432 1.109-6.241 3.39-8.557C5.67 1.125 8.456 0 11.911 0c2.241 0 4.218.52 6.042 1.589 1.324.781 2.41 1.74 3.289 2.906l-4.52 2.643-.047-.05c-1.219-1.305-2.837-1.967-4.812-1.967-1.845 0-3.42.66-4.684 1.963-1.246 1.267-1.882 2.923-1.882 4.915 0 1.993.633 3.625 1.882 4.915 1.253 1.292 2.828 1.948 4.684 1.948 1.503 0 2.795-.374 3.84-1.11a5.09 5.09 0 0 0 1.06-.931l4.493 2.638c-.88 1.193-1.972 2.167-3.307 2.954C16.11 23.479 14.13 24 11.912 24Z"
+        />
+      </Svg>
+    </View>
+  )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 2,
+    shadowOpacity: 1,
+    shadowColor: 'rgba(46, 51, 56, 0.15)',
+  },
+})
