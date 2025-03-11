@@ -39,12 +39,12 @@ jobs:
           path: ${{ env.ANDROID_HOME}}
       - uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: "temurin"
+          java-version: "17"
       - uses: actions/setup-node@v4
         id: setup-node
         with:
-          node-version-file: 'package.json'
+          node-version-file: "package.json"
           check-latest: true
       - name: Setup runner
         run: |
@@ -85,7 +85,7 @@ jobs:
       - uses: actions/setup-node@v4
         id: setup-node
         with:
-          node-version-file: 'package.json'
+          node-version-file: "package.json"
           check-latest: true
       - uses: expo/expo-github-action@v8
         with:
