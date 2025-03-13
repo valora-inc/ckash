@@ -2,7 +2,6 @@ import { createApp } from "@divvi/mobile";
 import { registerRootComponent } from "expo";
 import Constants from "expo-constants";
 import React from "react";
-import CustomScreen from "./screens/CustomScreen";
 import BrandLogo from "./assets/BrandLogo";
 import WelcomeLogo from "./assets/WelcomeLogo";
 import HomeScreen from "./screens/HomeScreen";
@@ -116,26 +115,10 @@ const App = createApp({
             label: (t) => t("activity"),
             icon: ActivityIcon,
           },
-          // {
-          //   name: 'Playground',
-          //   component: PlaygroundScreen,
-          //   icon: PlaygroundTabIcon,
-          //   label: (t) => t('playground'),
-          // },
         ],
         initialScreen: "Home",
       };
     },
-    custom: (Screen) => (
-      <>
-        <Screen
-          name="CustomScreen"
-          component={CustomScreen}
-          // TODO: make custom screens use our custom back button
-          options={{ headerBackVisible: true, headerShown: true }}
-        />
-      </>
-    ),
   },
   locales: {
     "en-US": require("./locales/en-US.json"),
