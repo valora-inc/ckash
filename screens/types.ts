@@ -5,6 +5,7 @@ type RootStackParamList = StackParamList & {
   CustomScreen: {
     someParam: string;
   };
+  Home: undefined;
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =

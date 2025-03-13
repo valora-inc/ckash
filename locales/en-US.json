@@ -1,3 +1,17 @@
 {
-  "playground": "Playground"
+  "playground": "Playground",
+  "home": {
+    "addCKES": "Add cKES",
+    "sendMoney": "Send Money",
+    "receiveMoney": "Receive Money",
+    "holdUSD": "Hold US Dollars",
+    "swapToUSD": "Swap your cKES for cUSD",
+    "withdraw": "Withdraw From Your Wallet",
+    "addCKESBottomSheet": {
+      "addCKESFromCUSD": "From My cUSD Balance",
+      "bySwapping": "Add cKES by swapping from your cUSD",
+      "purchase": "Purchase cKES",
+      "purchaseDescription": "Add cKES by purchasing through one of our trusted providers"
+    }
+  }
 }

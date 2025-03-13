@@ -3,10 +3,10 @@ import { registerRootComponent } from "expo";
 import Constants from "expo-constants";
 import React from "react";
 import CustomScreen from "./screens/CustomScreen";
-import PlaygroundScreen from "./screens/PlaygroundScreen";
 import BrandLogo from "./assets/BrandLogo";
 import WelcomeLogo from "./assets/WelcomeLogo";
-import PlaygroundTabIcon from "./assets/PlaygroundTabIcon";
+import HomeScreen from "./screens/HomeScreen";
+import ActivityIcon from "./assets/ActivityTabIcon";
 
 const expoConfig = Constants.expoConfig;
 if (!expoConfig) {
@@ -105,15 +105,25 @@ const App = createApp({
       return {
         screens: [
           defaultTabs.wallet,
-          defaultTabs.activity,
           {
-            name: "Playground",
-            component: PlaygroundScreen,
-            icon: PlaygroundTabIcon,
-            label: (t) => t("playground"),
+            name: "Home",
+            component: HomeScreen,
+            icon: defaultTabs.activity.icon,
+            label: defaultTabs.activity.label,
           },
+          {
+            ...defaultTabs.activity,
+            label: (t) => t("activity"),
+            icon: ActivityIcon,
+          },
+          // {
+          //   name: 'Playground',
+          //   component: PlaygroundScreen,
+          //   icon: PlaygroundTabIcon,
+          //   label: (t) => t('playground'),
+          // },
         ],
-        initialScreen: "activity",
+        initialScreen: "Home",
       };
     },
     custom: (Screen) => (
@@ -141,6 +151,25 @@ const App = createApp({
     "tr-TR": require("./locales/tr-TR.json"),
     "vi-VN": require("./locales/vi-VN.json"),
     "zh-CN": require("./locales/zh-CN.json"),
+  },
+  networks: {
+    enabledNetworkIds: ["celo-mainnet"],
+  },
+  experimental: {
+    activity: {
+      hideActionsCarousel: true,
+    },
+    tokens: {
+      enabledTokenIds: [
+        "celo-mainnet:0x765de816845861e75a25fca122bb6898b8b1282a", // cUSD
+        "celo-mainnet:0x456a3d042c0dbd3db53d5489e98dfb038553b0d0", // cKES
+      ],
+      overrides: {
+        "celo-mainnet:0x456a3d042c0dbd3db53d5489e98dfb038553b0d0": {
+          showZeroBalance: true,
+        },
+      },
+    },
   },
 });
 
