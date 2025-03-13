@@ -1,12 +1,10 @@
 import { createApp } from "@divvi/mobile";
 import { registerRootComponent } from "expo";
 import Constants from "expo-constants";
-import React from "react";
-import CustomScreen from "./screens/CustomScreen";
-import PlaygroundScreen from "./screens/PlaygroundScreen";
 import BrandLogo from "./assets/BrandLogo";
 import WelcomeLogo from "./assets/WelcomeLogo";
-import PlaygroundTabIcon from "./assets/PlaygroundTabIcon";
+import HomeScreen from "./screens/HomeScreen";
+import ActivityIcon from "./assets/ActivityTabIcon";
 
 const expoConfig = Constants.expoConfig;
 if (!expoConfig) {
@@ -105,42 +103,43 @@ const App = createApp({
       return {
         screens: [
           defaultTabs.wallet,
-          defaultTabs.activity,
           {
-            name: "Playground",
-            component: PlaygroundScreen,
-            icon: PlaygroundTabIcon,
-            label: (t) => t("playground"),
+            name: "Home",
+            component: HomeScreen,
+            icon: defaultTabs.activity.icon,
+            label: defaultTabs.activity.label,
+          },
+          {
+            ...defaultTabs.activity,
+            label: (t) => t("activity"),
+            icon: ActivityIcon,
           },
         ],
-        initialScreen: "activity",
+        initialScreen: "Home",
       };
     },
-    custom: (Screen) => (
-      <>
-        <Screen
-          name="CustomScreen"
-          component={CustomScreen}
-          // TODO: make custom screens use our custom back button
-          options={{ headerBackVisible: true, headerShown: true }}
-        />
-      </>
-    ),
   },
   locales: {
     "en-US": require("./locales/en-US.json"),
-    "es-419": require("./locales/es-419.json"),
-    "pt-BR": require("./locales/pt-BR.json"),
-    de: require("./locales/de.json"),
-    "ru-RU": require("./locales/ru-RU.json"),
-    "fr-FR": require("./locales/fr-FR.json"),
-    "it-IT": require("./locales/it-IT.json"),
-    "uk-UA": require("./locales/uk-UA.json"),
-    "pl-PL": require("./locales/pl-PL.json"),
-    "th-TH": require("./locales/th-TH.json"),
-    "tr-TR": require("./locales/tr-TR.json"),
-    "vi-VN": require("./locales/vi-VN.json"),
-    "zh-CN": require("./locales/zh-CN.json"),
+  },
+  networks: {
+    enabledNetworkIds: ["celo-mainnet"],
+  },
+  experimental: {
+    activity: {
+      hideActionsCarousel: true,
+    },
+    tokens: {
+      enabledTokenIds: [
+        "celo-mainnet:0x765de816845861e75a25fca122bb6898b8b1282a", // cUSD
+        "celo-mainnet:0x456a3d042c0dbd3db53d5489e98dfb038553b0d0", // cKES
+      ],
+      overrides: {
+        "celo-mainnet:0x456a3d042c0dbd3db53d5489e98dfb038553b0d0": {
+          showZeroBalance: true,
+        },
+      },
+    },
   },
 });
 
