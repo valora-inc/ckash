@@ -12,5 +12,9 @@
       "purchase": "Purchase cKES",
       "purchaseDescription": "Add cKES by purchasing through one of our trusted providers"
     }
+  },
+  "getStartedActivity": {
+    "title": "Get started by adding {{tokenSymbol}} to your wallet",
+    "cta": "Purchase {{tokenSymbol}}"
   }
 }
