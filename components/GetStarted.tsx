@@ -12,7 +12,11 @@ export default function GetStarted() {
   const { t } = useTranslation();
   const { cKESToken } = useTokens();
 
-  const { default: Button, BtnSizes, BtnTypes } = require("@divvi/mobile/src/components/Button");
+  const {
+    default: Button,
+    BtnSizes,
+    BtnTypes,
+  } = require("@divvi/mobile/src/components/Button");
 
   const goToAddFunds = () => {
     cKESToken &&
