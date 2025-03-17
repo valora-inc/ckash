@@ -10,6 +10,7 @@ import Receive from "../assets/home/Receive";
 import Swap from "../assets/home/Swap";
 import Withdraw from "../assets/home/Withdraw";
 import Send from "../assets/home/Send";
+import { TokenBalance } from "src/tokens/slice";
 import { useTokens } from "../utils";
 
 function FlatCard({
@@ -64,9 +65,25 @@ export default function HomeScreen(_props: RootStackScreenProps<"Home">) {
   }
 
   function onPressWithdraw() {
-    // TODO(sravi): figure out how to copy behavior from existing app (no spend
-    // option)
-    navigate("Withdraw");
+    const cashOutTokens = [cKESToken, cUSDToken].filter(
+      (token): token is TokenBalance => !!token && !!token.isCashOutEligible,
+    );
+    const availableCashOutTokens = cashOutTokens.filter(
+      (token) => !token.balance.isZero(),
+    );
+    const numAvailableCashOutTokens = availableCashOutTokens.length;
+    if (
+      numAvailableCashOutTokens === 1 ||
+      (numAvailableCashOutTokens === 0 && cashOutTokens.length === 1)
+    ) {
+      const { tokenId } =
+        numAvailableCashOutTokens === 1
+          ? availableCashOutTokens[0]
+          : cashOutTokens[0];
+      navigate("Withdraw", { tokenId });
+    } else {
+      navigate("Withdraw");
+    }
   }
 
   return (
