@@ -1,5 +1,5 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { navigate, useWallet } from "@divvi/mobile";
+import { navigate } from "@divvi/mobile";
 import Touchable from "@divvi/mobile/src/components/Touchable";
 import React, { useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -10,9 +10,7 @@ import Receive from "../assets/home/Receive";
 import Swap from "../assets/home/Swap";
 import Withdraw from "../assets/home/Withdraw";
 import Send from "../assets/home/Send";
-
-const cUsdTokenId = "celo-mainnet:0x765de816845861e75a25fca122bb6898b8b1282a";
-const cKesTokenId = "celo-mainnet:0x456a3d042c0dbd3db53d5489e98dfb038553b0d0";
+import { useTokens } from "../utils";
 
 function FlatCard({
   onPress,
@@ -32,13 +30,6 @@ function FlatCard({
       {...props}
     />
   );
-}
-
-function useTokens() {
-  const { tokens } = useWallet();
-  const cKESToken = tokens.find((token) => token.tokenId === cKesTokenId);
-  const cUSDToken = tokens.find((token) => token.tokenId === cUsdTokenId);
-  return { cKESToken, cUSDToken };
 }
 
 export default function HomeScreen(_props: RootStackScreenProps<"Home">) {

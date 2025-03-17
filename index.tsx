@@ -5,6 +5,9 @@ import BrandLogo from "./assets/BrandLogo";
 import WelcomeLogo from "./assets/WelcomeLogo";
 import HomeScreen from "./screens/HomeScreen";
 import ActivityIcon from "./assets/ActivityTabIcon";
+import { CKES_TOKEN_ID, CUSD_TOKEN_ID } from "./utils";
+import GetStarted from "./components/GetStarted";
+import React from "react";
 
 const expoConfig = Constants.expoConfig;
 if (!expoConfig) {
@@ -130,15 +133,15 @@ const App = createApp({
       hideActionsCarousel: true,
     },
     tokens: {
-      enabledTokenIds: [
-        "celo-mainnet:0x765de816845861e75a25fca122bb6898b8b1282a", // cUSD
-        "celo-mainnet:0x456a3d042c0dbd3db53d5489e98dfb038553b0d0", // cKES
-      ],
+      enabledTokenIds: [CUSD_TOKEN_ID, CKES_TOKEN_ID],
       overrides: {
-        "celo-mainnet:0x456a3d042c0dbd3db53d5489e98dfb038553b0d0": {
+        [CKES_TOKEN_ID]: {
           showZeroBalance: true,
         },
       },
+    },
+    transactions: {
+      emptyState: <GetStarted />,
     },
   },
 });
