@@ -1,5 +1,5 @@
-import * as React from "react";
-import Svg, { Defs, LinearGradient, Path, Stop } from "react-native-svg";
+import * as React from 'react'
+import Svg, { Defs, LinearGradient, Path, Stop } from 'react-native-svg'
 const Withdraw = () => (
   <Svg width={48} height={48} fill="none">
     <Path
@@ -45,5 +45,5 @@ const Withdraw = () => (
       </LinearGradient>
     </Defs>
   </Svg>
-);
-export default Withdraw;
+)
+export default Withdraw

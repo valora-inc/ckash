@@ -1,25 +1,25 @@
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { navigate } from "@divvi/mobile";
-import Touchable from "@divvi/mobile/src/components/Touchable";
-import React, { useRef } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { useTranslation } from "react-i18next";
-import { RootStackScreenProps } from "./types";
-import Add from "../assets/home/Add";
-import Receive from "../assets/home/Receive";
-import Swap from "../assets/home/Swap";
-import Withdraw from "../assets/home/Withdraw";
-import Send from "../assets/home/Send";
-import { useTokens } from "../utils";
+import { BottomSheetModal } from '@gorhom/bottom-sheet'
+import { navigate } from '@divvi/mobile'
+import Touchable from '@divvi/mobile/src/components/Touchable'
+import React, { useRef } from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import { useTranslation } from 'react-i18next'
+import { RootStackScreenProps } from './types'
+import Add from '../assets/home/Add'
+import Receive from '../assets/home/Receive'
+import Swap from '../assets/home/Swap'
+import Withdraw from '../assets/home/Withdraw'
+import Send from '../assets/home/Send'
+import { useTokens } from '../utils'
 
 function FlatCard({
   onPress,
   testID,
   ...props
 }: {
-  children: React.ReactNode;
-  onPress: () => void;
-  testID: string;
+  children: React.ReactNode
+  onPress: () => void
+  testID: string
 }) {
   return (
     <Touchable
@@ -29,44 +29,44 @@ function FlatCard({
       onPress={onPress}
       {...props}
     />
-  );
+  )
 }
 
-export default function HomeScreen(_props: RootStackScreenProps<"Home">) {
-  const { t } = useTranslation();
-  const addCKESBottomSheetRef = useRef<BottomSheetModal>(null);
+export default function HomeScreen(_props: RootStackScreenProps<'Home'>) {
+  const { t } = useTranslation()
+  const addCKESBottomSheetRef = useRef<BottomSheetModal>(null)
 
-  const { cKESToken, cUSDToken } = useTokens();
+  const { cKESToken, cUSDToken } = useTokens()
 
   function onPressAddCKES() {
     if (cUSDToken?.balance.isZero()) {
-      !!cKESToken && navigate("Add", { tokenId: cKESToken.tokenId });
+      !!cKESToken && navigate('Add', { tokenId: cKESToken.tokenId })
     } else {
-      addCKESBottomSheetRef.current?.snapToIndex(0);
+      addCKESBottomSheetRef.current?.snapToIndex(0)
     }
   }
 
   function onPressSendMoney() {
-    !!cKESToken && navigate("Send");
+    !!cKESToken && navigate('Send')
   }
 
   function onPressRecieveMoney() {
-    navigate("Receive");
+    navigate('Receive')
   }
 
   function onPressHoldUSD() {
     !!cKESToken &&
       !!cUSDToken &&
-      navigate("Swap", {
+      navigate('Swap', {
         fromTokenId: cKESToken.tokenId,
         toTokenId: cUSDToken.tokenId,
-      });
+      })
   }
 
   function onPressWithdraw() {
     // TODO(sravi): figure out how to copy behavior from existing app (no spend
     // option)
-    navigate("Withdraw");
+    navigate('Withdraw')
   }
 
   return (
@@ -74,7 +74,7 @@ export default function HomeScreen(_props: RootStackScreenProps<"Home">) {
       <FlatCard testID="FlatCard/AddCKES" onPress={onPressAddCKES}>
         <View style={styles.column}>
           <Add />
-          <Text style={styles.ctaText}>{t("home.addCKES")}</Text>
+          <Text style={styles.ctaText}>{t('home.addCKES')}</Text>
         </View>
       </FlatCard>
       <View style={styles.row}>
@@ -82,7 +82,7 @@ export default function HomeScreen(_props: RootStackScreenProps<"Home">) {
           <FlatCard testID="FlatCard/SendMoney" onPress={onPressSendMoney}>
             <View style={styles.column}>
               <Send />
-              <Text style={styles.ctaText}>{t("home.sendMoney")}</Text>
+              <Text style={styles.ctaText}>{t('home.sendMoney')}</Text>
             </View>
           </FlatCard>
         </View>
@@ -93,7 +93,7 @@ export default function HomeScreen(_props: RootStackScreenProps<"Home">) {
           >
             <View style={styles.column}>
               <Receive />
-              <Text style={styles.ctaText}>{t("home.receiveMoney")}</Text>
+              <Text style={styles.ctaText}>{t('home.receiveMoney')}</Text>
             </View>
           </FlatCard>
         </View>
@@ -102,53 +102,53 @@ export default function HomeScreen(_props: RootStackScreenProps<"Home">) {
         <View style={styles.row}>
           <Swap />
           <View style={styles.flex}>
-            <Text style={styles.ctaText}>{t("home.holdUSD")}</Text>
-            <Text style={styles.ctaSubText}>{t("home.swapToUSD")}</Text>
+            <Text style={styles.ctaText}>{t('home.holdUSD')}</Text>
+            <Text style={styles.ctaSubText}>{t('home.swapToUSD')}</Text>
           </View>
         </View>
       </FlatCard>
       <FlatCard testID="FlatCard/Withdraw" onPress={onPressWithdraw}>
         <View style={styles.row}>
           <Withdraw />
-          <Text style={styles.ctaText}>{t("home.withdraw")}</Text>
+          <Text style={styles.ctaText}>{t('home.withdraw')}</Text>
         </View>
       </FlatCard>
       <AddCKESBottomSheet forwardedRef={addCKESBottomSheetRef} />
     </View>
-  );
+  )
 }
 
 function AddCKESBottomSheet({
   forwardedRef,
 }: {
-  forwardedRef: React.RefObject<BottomSheetModal>;
+  forwardedRef: React.RefObject<BottomSheetModal>
 }) {
   // Import here to avoid race condition with appConfig. importing this at the
   // top level would mean appConfig is read before it is set by createApp
   // causing a crash
   const BottomSheet =
-    require("@divvi/mobile/src/components/BottomSheet").default;
-  const { t } = useTranslation();
-  const { cKESToken, cUSDToken } = useTokens();
+    require('@divvi/mobile/src/components/BottomSheet').default
+  const { t } = useTranslation()
+  const { cKESToken, cUSDToken } = useTokens()
 
   function onPressSwapFromCusd() {
     !!cUSDToken &&
       !!cKESToken &&
-      navigate("Swap", {
+      navigate('Swap', {
         fromTokenId: cUSDToken.tokenId,
         toTokenId: cKESToken.tokenId,
-      });
-    forwardedRef.current?.dismiss();
+      })
+    forwardedRef.current?.dismiss()
   }
 
   function onPressPurchaseCkes() {
-    !!cKESToken && navigate("Add", { tokenId: cKESToken.tokenId });
-    forwardedRef.current?.dismiss();
+    !!cKESToken && navigate('Add', { tokenId: cKESToken.tokenId })
+    forwardedRef.current?.dismiss()
   }
 
   return (
     <BottomSheet
-      title={t("home.addCKES")}
+      title={t('home.addCKES')}
       forwardedRef={forwardedRef}
       testId="AddCKESBottomSheet"
     >
@@ -158,10 +158,10 @@ function AddCKESBottomSheet({
             <Swap />
             <View style={styles.flex}>
               <Text style={styles.bottomSheetCtaText}>
-                {t("home.addCKESBottomSheet.addCKESFromCUSD")}
+                {t('home.addCKESBottomSheet.addCKESFromCUSD')}
               </Text>
               <Text style={styles.bottomSheetCtaSubText}>
-                {t("home.addCKESBottomSheet.bySwapping")}
+                {t('home.addCKESBottomSheet.bySwapping')}
               </Text>
             </View>
           </View>
@@ -171,17 +171,17 @@ function AddCKESBottomSheet({
             <Add />
             <View style={styles.flex}>
               <Text style={styles.bottomSheetCtaText}>
-                {t("home.addCKESBottomSheet.purchase")}
+                {t('home.addCKESBottomSheet.purchase')}
               </Text>
               <Text style={styles.bottomSheetCtaSubText}>
-                {t("home.addCKESBottomSheet.purchaseDescription")}
+                {t('home.addCKESBottomSheet.purchaseDescription')}
               </Text>
             </View>
           </View>
         </FlatCard>
       </View>
     </BottomSheet>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -191,33 +191,33 @@ const styles = StyleSheet.create({
     // No padding applied to the bottom by default incase of a scrollable screen
     paddingHorizontal: 16,
     paddingTop: 16,
-    position: "relative",
+    position: 'relative',
     gap: 16,
   },
   flatCard: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     padding: 16,
     borderRadius: 12,
-    borderColor: "#002586",
+    borderColor: '#002586',
     borderWidth: 1,
   },
   column: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
     gap: 8,
   },
   ctaText: {
     // ...typeScale.labelSemiBoldMedium,
-    color: "#002586",
+    color: '#002586',
   },
   ctaSubText: {
     // ...typeScale.bodySmall,
-    color: "#595F6F",
+    color: '#595F6F',
   },
   row: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 16,
   },
   flex: {
@@ -229,10 +229,10 @@ const styles = StyleSheet.create({
   },
   bottomSheetCtaText: {
     // ...typeScale.labelMedium,
-    color: "#002586",
+    color: '#002586',
   },
   bottomSheetCtaSubText: {
     // ...typeScale.bodySmall,
-    color: "#002586",
+    color: '#002586',
   },
-});
+})

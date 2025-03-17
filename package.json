@@ -88,8 +88,10 @@
     "@babel/core": "^7.25.2",
     "@expo/config-plugins": "~9.0.12",
     "@types/react": "~18.3.12",
+    "@valora/prettier-config": "^0.0.1",
     "prettier": "^3.5.3",
     "typescript": "^5.8.2"
   },
-  "private": true
+  "private": true,
+  "prettier": "@valora/prettier-config"
 }
