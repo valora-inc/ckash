@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react'
 import Svg, {
   ClipPath,
   Defs,
@@ -7,7 +7,7 @@ import Svg, {
   Mask,
   Path,
   Stop,
-} from "react-native-svg";
+} from 'react-native-svg'
 const SvgComponent = (props: any) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
@@ -25,7 +25,7 @@ const SvgComponent = (props: any) => (
         y={0}
         maskUnits="userSpaceOnUse"
         style={{
-          maskType: "luminance",
+          maskType: 'luminance',
         }}
       >
         <Path fill="#fff" d="M204 0H0v184h204V0Z" />
@@ -422,5 +422,5 @@ const SvgComponent = (props: any) => (
       </ClipPath>
     </Defs>
   </Svg>
-);
-export default SvgComponent;
+)
+export default SvgComponent

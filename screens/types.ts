@@ -1,11 +1,11 @@
-import { NativeStackScreenProps, StackParamList } from "@divvi/mobile";
+import { NativeStackScreenProps, StackParamList } from '@divvi/mobile'
 
 type RootStackParamList = StackParamList & {
-  Home: undefined;
-};
+  Home: undefined
+}
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =
-  NativeStackScreenProps<RootStackParamList, T>;
+  NativeStackScreenProps<RootStackParamList, T>
 
 // This allows type-safe navigation to known and custom screens using the `navigate` function from `@divvi/mobile`
 declare global {

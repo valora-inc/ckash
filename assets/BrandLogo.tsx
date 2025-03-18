@@ -1,10 +1,10 @@
-import * as React from "react";
-import { StyleSheet, View, ViewStyle } from "react-native";
-import Svg, { Path } from "react-native-svg";
+import * as React from 'react'
+import { StyleSheet, View, ViewStyle } from 'react-native'
+import Svg, { Path } from 'react-native-svg'
 
 interface Props {
-  size?: number;
-  style?: ViewStyle;
+  size?: number
+  style?: ViewStyle
 }
 
 export default function Logo({ style, size = 24 }: Props) {
@@ -21,7 +21,7 @@ export default function Logo({ style, size = 24 }: Props) {
         />
       </Svg>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -29,6 +29,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowRadius: 2,
     shadowOpacity: 1,
-    shadowColor: "rgba(46, 51, 56, 0.15)",
+    shadowColor: 'rgba(46, 51, 56, 0.15)',
   },
-});
+})

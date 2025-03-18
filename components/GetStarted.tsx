@@ -1,35 +1,35 @@
-import { navigate } from "@divvi/mobile";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { StyleSheet, Text, View } from "react-native";
-import Add from "../assets/home/Add";
-import { colors, typeScale, useTokens } from "../utils";
+import { navigate } from '@divvi/mobile'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import { StyleSheet, Text, View } from 'react-native'
+import Add from '../assets/home/Add'
+import { colors, typeScale, useTokens } from '../utils'
 
 // hardcoding a fallback token symbol in case the token info is not loaded
-const DEFAULT_TOKEN_SYMBOL = "cKES";
+const DEFAULT_TOKEN_SYMBOL = 'cKES'
 
 export default function GetStarted() {
-  const { t } = useTranslation();
-  const { cKESToken } = useTokens();
+  const { t } = useTranslation()
+  const { cKESToken } = useTokens()
 
   const {
     default: Button,
     BtnSizes,
     BtnTypes,
-  } = require("@divvi/mobile/src/components/Button");
+  } = require('@divvi/mobile/src/components/Button')
 
   const goToAddFunds = () => {
     cKESToken &&
-      navigate("Add", {
+      navigate('Add', {
         tokenId: cKESToken.tokenId,
-      });
-  };
+      })
+  }
 
   return (
     <View testID="GetStarted" style={styles.container}>
       <Add />
       <Text style={styles.title}>
-        {t("getStartedActivity.title", {
+        {t('getStartedActivity.title', {
           tokenSymbol: cKESToken?.symbol ?? DEFAULT_TOKEN_SYMBOL,
         })}
       </Text>
@@ -37,7 +37,7 @@ export default function GetStarted() {
         <Button
           testID="GetStarted/cta"
           onPress={goToAddFunds}
-          text={t("getStartedActivity.cta", {
+          text={t('getStartedActivity.cta', {
             tokenSymbol: cKESToken?.symbol ?? DEFAULT_TOKEN_SYMBOL,
           })}
           type={BtnTypes.PRIMARY}
@@ -46,7 +46,7 @@ export default function GetStarted() {
         />
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -57,18 +57,18 @@ const styles = StyleSheet.create({
     margin: 16,
     padding: 16,
     gap: 16,
-    alignItems: "center",
+    alignItems: 'center',
   },
   title: {
     ...typeScale.labelSemiBoldMedium,
     color: colors.borderPrimary,
-    textAlign: "center",
+    textAlign: 'center',
     marginHorizontal: 32,
   },
   ctaContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   cta: {
     flexGrow: 1,
   },
-});
+})
