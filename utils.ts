@@ -41,9 +41,9 @@ export const colors = {
   navigationBottomPrimary: '#1B5BFF', // color for text and icons on bottom navigation
   navigationBottomSecondary: '#595F6F', // secondary color for text and icons on bottom navigation
   bottomSheetHandle: '#D8D8D8', // color for bottom sheet handle
-  buttonPrimaryBackground: '#1B5BFF', // Background color for primary buttons (high-priority actions).
+  buttonPrimaryBackground: ['#002070', '#1B5BFF'], // Background color for primary buttons (high-priority actions).
   buttonPrimaryContent: '#FFFFFF', // Text and icon color for primary buttons.
-  buttonPrimaryBorder: '#1B5BFF', // Border color for primary buttons.
+  buttonPrimaryBorder: undefined, // Border color for primary buttons.
   buttonSecondaryBackground: '#FFFFFF', // Background color for secondary buttons (less emphasized actions).
   buttonSecondaryContent: '#002586', // Text and icon color for secondary buttons.
   buttonSecondaryBorder: '#002586', // Border color for secondary buttons.

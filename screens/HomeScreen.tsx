@@ -1,5 +1,6 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { navigate } from '@divvi/mobile'
+import { TokenBalance } from '@divvi/mobile/src/tokens/slice'
 import Touchable from '@divvi/mobile/src/components/Touchable'
 import React, { useRef } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
@@ -64,9 +65,25 @@ export default function HomeScreen(_props: RootStackScreenProps<'Home'>) {
   }
 
   function onPressWithdraw() {
-    // TODO(sravi): figure out how to copy behavior from existing app (no spend
-    // option)
-    navigate('Withdraw')
+    const cashOutTokens = [cKESToken, cUSDToken].filter(
+      (token): token is TokenBalance => !!token && !!token.isCashOutEligible,
+    )
+    const availableCashOutTokens = cashOutTokens.filter(
+      (token) => !token.balance.isZero(),
+    )
+    const numAvailableCashOutTokens = availableCashOutTokens.length
+    if (
+      numAvailableCashOutTokens === 1 ||
+      (numAvailableCashOutTokens === 0 && cashOutTokens.length === 1)
+    ) {
+      const { tokenId } =
+        numAvailableCashOutTokens === 1
+          ? availableCashOutTokens[0]
+          : cashOutTokens[0]
+      navigate('Withdraw', { tokenId })
+    } else {
+      navigate('Withdraw')
+    }
   }
 
   return (

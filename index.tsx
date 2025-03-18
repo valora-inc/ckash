@@ -42,6 +42,14 @@ const App = createApp({
           touchId: require('./assets/biometry/touch-id.png'),
           iris: require('./assets/biometry/iris.png'),
         },
+        backupAndRecoveryImages: {
+          walletSafe: require('./assets/backup-and-recovery/wallet-safe.png'),
+          cloudBackupEmail: require('./assets/backup-and-recovery/email.png'),
+          recoveryPhraseEducation1: require('./assets/backup-and-recovery/recover-phrase.png'),
+          recoveryPhraseEducation2: require('./assets/backup-and-recovery/dont-lose.png'),
+          recoveryPhraseEducation3: require('./assets/backup-and-recovery/write-down.png'),
+          recoveryPhraseEducation4: require('./assets/backup-and-recovery/private-phrase.png'),
+        },
       },
       colors,
     },
@@ -88,6 +96,8 @@ const App = createApp({
     transactions: {
       emptyState: <GetStarted />,
     },
+    hideCashInTokenFilters: true,
+    disableNfts: true,
   },
 })
 
