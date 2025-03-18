@@ -10,7 +10,7 @@ import Receive from "../assets/home/Receive";
 import Swap from "../assets/home/Swap";
 import Withdraw from "../assets/home/Withdraw";
 import Send from "../assets/home/Send";
-import { useTokens } from "../utils";
+import { colors, typeScale, useTokens } from "../utils";
 
 function FlatCard({
   onPress,
@@ -208,12 +208,11 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   ctaText: {
-    // ...typeScale.labelSemiBoldMedium,
-    color: "#002586",
+    ...typeScale.labelSemiBoldMedium,
   },
   ctaSubText: {
-    // ...typeScale.bodySmall,
-    color: "#595F6F",
+    ...typeScale.bodySmall,
+    color: colors.contentSecondary,
   },
   row: {
     flexDirection: "row",
@@ -228,11 +227,9 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
   },
   bottomSheetCtaText: {
-    // ...typeScale.labelMedium,
-    color: "#002586",
+    ...typeScale.labelMedium,
   },
   bottomSheetCtaSubText: {
-    // ...typeScale.bodySmall,
-    color: "#002586",
+    ...typeScale.bodySmall,
   },
 });

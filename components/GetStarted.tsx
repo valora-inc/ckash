@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, Text, View } from "react-native";
 import Add from "../assets/home/Add";
-import { useTokens } from "../utils";
+import { colors, typeScale, useTokens } from "../utils";
 
 // hardcoding a fallback token symbol in case the token info is not loaded
 const DEFAULT_TOKEN_SYMBOL = "cKES";
@@ -51,7 +51,7 @@ export default function GetStarted() {
 
 const styles = StyleSheet.create({
   container: {
-    borderColor: "#002586",
+    borderColor: colors.borderPrimary,
     borderWidth: 1,
     borderRadius: 12,
     margin: 16,
@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    // ...typeScale.labelSemiBoldMedium,
-    color: "#002586",
+    ...typeScale.labelSemiBoldMedium,
+    color: colors.borderPrimary,
     textAlign: "center",
     marginHorizontal: 32,
   },
