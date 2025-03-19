@@ -21,11 +21,10 @@ const App = createApp({
       ? expoConfig.scheme[0]
       : expoConfig.scheme
     : 'example',
-  // Uncomment this to enable the Divvi protocol and set your referrer ID and protocol IDs
-  // divviProtocol: {
-  //   protocolIds: ["somm"],
-  //   referrerId: "some-referrer-id",
-  // },
+  divviProtocol: {
+    protocolIds: ['celo'],
+    referrerId: 'ckash',
+  },
   features: {
     cloudBackup: true,
   },
