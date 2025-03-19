@@ -1,4 +1,4 @@
-import { navigate } from '@divvi/mobile'
+import { navigate, Button } from '@divvi/mobile'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
@@ -11,12 +11,6 @@ const DEFAULT_TOKEN_SYMBOL = 'cKES'
 export default function GetStarted() {
   const { t } = useTranslation()
   const { cKESToken } = useTokens()
-
-  const {
-    default: Button,
-    BtnSizes,
-    BtnTypes,
-  } = require('@divvi/mobile/src/components/Button')
 
   const goToAddFunds = () => {
     cKESToken &&
@@ -40,8 +34,8 @@ export default function GetStarted() {
           text={t('getStartedActivity.cta', {
             tokenSymbol: cKESToken?.symbol ?? DEFAULT_TOKEN_SYMBOL,
           })}
-          type={BtnTypes.PRIMARY}
-          size={BtnSizes.FULL}
+          type="primary"
+          size="full"
           style={styles.cta}
         />
       </View>

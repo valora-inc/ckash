@@ -98,6 +98,9 @@ const App = createApp({
     },
     hideCashInTokenFilters: true,
     disableNfts: true,
+    showPositions: false,
+    showImportTokensFlow: false,
+    showSwapTokenFilters: false,
   },
 })
 
