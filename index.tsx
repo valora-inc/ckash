@@ -23,7 +23,7 @@ const App = createApp({
     : 'example',
   divviProtocol: {
     protocolIds: ['celo'],
-    referrerId: 'ckash',
+    referrerId: 'cKash',
   },
   features: {
     cloudBackup: true,
