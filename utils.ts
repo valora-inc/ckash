@@ -18,6 +18,7 @@ export const colors = {
   backgroundSecondary: '#FFFFFF', // Subtle contrast background for secondary surfaces like cards, panels, or inputs.
   backgroundTertiary: '#DFE8FF', // Low-emphasis background for subtle supporting areas, typically used when both primary and secondary backgrounds are present, and an additional layer of distinction is needed.
   backgroundScrim: '#000000', // Semi-transparent underlay behind bottom sheets, modals, dialogs, and other temporary surfaces to dim the background.
+  backgroundSplash: '#000D5A', // Background color for splash screen (e.g., when requesting biometrics on app launch)
 
   // text, icons, and other content
   contentPrimary: '#002586', // main content on primary background
@@ -67,6 +68,7 @@ export const colors = {
   brandGradientLeft: '#002586', // Starting color for the brand gradient, used in backgrounds or borders to reinforce brand identity.
   brandGradientRight: '#002586', // Ending color for the brand gradient, used in backgrounds or borders to reinforce brand identity.
   contentOnboardingComplete: '#FFFFFF', // Text and image color for onboarding completion screen
+  backgroundOnboardingComplete: '#000D5A', // Background color for onboarding completion screen
 }
 
 // Import from @divvi-mobile once exposed
