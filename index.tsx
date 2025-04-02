@@ -100,6 +100,7 @@ const App = createApp({
     showPositions: false,
     showImportTokensFlow: false,
     showSwapTokenFilters: false,
+    enableSwapAppFee: false,
   },
 })
 
