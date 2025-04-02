@@ -9,7 +9,7 @@
   "newArchEnabled": false,
   "ios": {
     "supportsTablet": false,
-    "bundleIdentifier": "xyz.divvi.ckash",
+    "bundleIdentifier": "xyz.mobilestack.mento",
     "infoPlist": {
       "NSCameraUsageDescription": "Connecting your camera allows you to scan QR codes for transactions.",
       "NSUserTrackingUsageDescription": "We use the advertising identifier to accurately attribute app installs from ad campaigns.",
@@ -27,7 +27,7 @@
       "foregroundImage": "./assets/adaptive-icon.png",
       "backgroundColor": "#000d5a"
     },
-    "package": "xyz.divvi.ckash",
+    "package": "xyz.mobilestack.mento",
     "permissions": [
       "android.permission.CAMERA",
       "android.permission.ACCESS_NETWORK_STATE",
@@ -90,8 +90,8 @@
   ],
   "extra": {
     "eas": {
-      "projectId": "a55e94cf-b370-42ef-b825-6dc8f5ca7f72"
+      "projectId": "7c7d628d-341e-4bf5-8295-af09ddb714fb"
     }
   },
-  "owner": "divvi"
+  "owner": "ckash"
 }
