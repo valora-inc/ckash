@@ -5,7 +5,7 @@ import BrandLogo from './assets/BrandLogo'
 import WelcomeLogo from './assets/WelcomeLogo'
 import HomeScreen from './screens/HomeScreen'
 import ActivityIcon from './assets/ActivityTabIcon'
-import { CKES_TOKEN_ID, CUSD_TOKEN_ID, colors } from './utils'
+import { CKES_TOKEN_ID, CUSD_TOKEN_ID,USDC_TOKEN_ID, USDT_TOKEN_ID, cGHS_TOKEN_ID, colors } from './utils'
 import GetStarted from './components/GetStarted'
 import React from 'react'
 
@@ -85,11 +85,17 @@ const App = createApp({
       hideActionsCarousel: true,
     },
     tokens: {
-      enabledTokenIds: [CUSD_TOKEN_ID, CKES_TOKEN_ID],
+      enabledTokenIds: [CUSD_TOKEN_ID, CKES_TOKEN_ID, USDC_TOKEN_ID, USDT_TOKEN_ID, cGHS_TOKEN_ID],
       overrides: {
         [CKES_TOKEN_ID]: {
           showZeroBalance: true,
         },
+        [USDC_TOKEN_ID]:{
+          showZeroBalance:true,
+        },
+        [cGHS_TOKEN_ID]:{
+          showZeroBalance:true,
+        }
       },
     },
     transactions: {
