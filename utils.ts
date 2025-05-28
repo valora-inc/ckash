@@ -10,6 +10,8 @@ export const USDC_TOKEN_ID =
   'celo-mainnet:0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e'
   export const cGHS_TOKEN_ID =
   'celo-mainnet:0xfaea5f3404bba20d3cc2f8c4b0a888f55a3c7313'  
+  export const cZAR_TOKEN_ID = 
+  'celo-mainnet:0x4c35853a3b4e647fd266f4de678dcc8fec410bf6'
 
 export function useTokens() {
   const { tokens } = useWallet()
@@ -18,10 +20,10 @@ export function useTokens() {
   const uSDCToken = tokens.find((token) => token.tokenId === USDC_TOKEN_ID)
   const uSDTToken = tokens.find((token) => token.tokenId === USDT_TOKEN_ID)
   const cGHSToken = tokens.find((token) => token.tokenId === cGHS_TOKEN_ID)
+  const cZARToken = tokens.find((token) => token.tokenId === cZAR_TOKEN_ID)
   console.log("The Tokens are", tokens)
-  return { cKESToken, cUSDToken,uSDCToken,uSDTToken,cGHSToken }
+  return { cKESToken, cUSDToken,uSDCToken,uSDTToken,cGHSToken,cZARToken,tokens }
 }
-
 export const colors = {
   // backgrounds
   backgroundPrimary: '#FFFFFF', // Main background color for the app, used for primary surfaces (screens, navigation).

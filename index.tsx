@@ -5,9 +5,17 @@ import BrandLogo from './assets/BrandLogo'
 import WelcomeLogo from './assets/WelcomeLogo'
 import HomeScreen from './screens/HomeScreen'
 import ActivityIcon from './assets/ActivityTabIcon'
-import { CKES_TOKEN_ID, CUSD_TOKEN_ID,USDC_TOKEN_ID, USDT_TOKEN_ID, cGHS_TOKEN_ID, colors } from './utils'
+import { CKES_TOKEN_ID, CUSD_TOKEN_ID,USDC_TOKEN_ID, USDT_TOKEN_ID, cGHS_TOKEN_ID, cZAR_TOKEN_ID, colors } from './utils'
 import GetStarted from './components/GetStarted'
 import React from 'react'
+import ServiceScreen from './screens/ServiceScreen'
+import WalletScreen from './screens/WalletScreen'
+import SendMoney from './screens/services/kenya/SendMoney'
+
+export function createStaticLabel(label: string): (t: (key: string) => string) => string {
+  return () => label
+}
+
 
 const expoConfig = Constants.expoConfig
 if (!expoConfig) {
@@ -58,21 +66,50 @@ const App = createApp({
       return {
         screens: [
           defaultTabs.wallet,
+          // {
+          //   name: 'Home',
+          //   component: HomeScreen,
+          //   icon: defaultTabs.activity.icon,
+          //   label: defaultTabs.activity.label,
+          // },
           {
-            name: 'Home',
-            component: HomeScreen,
+            name: 'Utilities',
+            component: ServiceScreen,
             icon: defaultTabs.activity.icon,
-            label: defaultTabs.activity.label,
+            // label: defaultTabs.activity.label,
+            label:createStaticLabel("Utility")
           },
           {
             ...defaultTabs.activity,
             label: (t) => t('activity'),
             icon: ActivityIcon,
           },
+          {
+            name: 'Wallet',
+            component: WalletScreen,
+            icon: defaultTabs.activity.icon,
+            // label: defaultTabs.activity.label,
+            label: createStaticLabel("Wallet"),
+          },
         ],
-        initialScreen: 'Home',
+        // initialScreen: 'Home',
+        initialScreen: 'Wallet',
       }
     },
+    custom:(Screen)=> (
+     <>
+     <Screen name="KenyaSendMoney"
+     component={SendMoney}
+     options={{
+      headerBackVisible:true,
+      headerShown:true
+     }}
+     />
+
+     
+     </>
+      
+    ),
   },
   locales: {
     'en-US': require('./locales/en-US.json'),
@@ -84,8 +121,8 @@ const App = createApp({
     activity: {
       hideActionsCarousel: true,
     },
-    tokens: {
-      enabledTokenIds: [CUSD_TOKEN_ID, CKES_TOKEN_ID, USDC_TOKEN_ID, USDT_TOKEN_ID, cGHS_TOKEN_ID],
+     tokens: {
+      enabledTokenIds: [CUSD_TOKEN_ID, CKES_TOKEN_ID, USDC_TOKEN_ID, USDT_TOKEN_ID, cGHS_TOKEN_ID,cZAR_TOKEN_ID],
       overrides: {
         [CKES_TOKEN_ID]: {
           showZeroBalance: true,
@@ -94,6 +131,9 @@ const App = createApp({
           showZeroBalance:true,
         },
         [cGHS_TOKEN_ID]:{
+          showZeroBalance:true,
+        },
+        [cZAR_TOKEN_ID]:{
           showZeroBalance:true,
         }
       },
