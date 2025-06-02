@@ -11,7 +11,8 @@ import debounce from 'lodash.debounce';
 import { useTokens } from "../../../utils"
 import { TokenBalance } from "src/tokens/slice"
 import { Pretium_api } from "../../../contants/constant"
-import { sendTransactionStable } from "../../../hooks/sendtransaction"
+import { sendTransactionStable } from "../../../services/sendtransaction"
+import { useSendTransactionStable } from "../../../hooks/useSendTransactionStable"
 
 
 export type TransactionRequest = (TransactionRequestCIP64 | TransactionRequestEIP1559) & {
@@ -24,6 +25,7 @@ export default function SendMoney(_props: RootStackScreenProps<'KenyaSendMoney'>
      const {data:walletClient} = useWalletClient({networkId:"celo-mainnet"})
      const [amount,setAmount]= React.useState<string>("");
      const [tokenAmount,setTokenAmount] = React.useState<string>("")
+      const { sendStableToken, loading, error, txHash } = useSendTransactionStable();
      const recipientAddress = "0x8005ee53E57aB11E11eAA4EFe07Ee3835Dc02F98" //"0x8005ee53E57aB11E11eAA4EFe07Ee3835Dc02F98" //"0x3668e51a4463b6250e73763458ba7a5e759424ed"  //meta//"0xEDE548D2fcEB23D27BfCa246995522D6e13Cbbc6" //pretium//"0x8005ee53E57aB11E11eAA4EFe07Ee3835Dc02F98"  mine//"0xEDE548D2fcEB23D27BfCa246995522D6e13Cbbc6"
      const {cKESToken,cUSDToken} = useTokens()
      const pub = usePublicClient({networkId:"celo-mainnet"})
@@ -94,7 +96,7 @@ if (!tokenAmount || tokenAmount ==null || tokenAmount == undefined){
 
 
 
-const txHash = await sendTransactionStable({from:walletClient?.account?.address as `0x${string}`,to:cUSDToken?.address as `0x${string}`,tokenBalance:cUSDToken as TokenBalance,type:"cip64",recipient:recipientAddress,amount:tokenAmount,feeCurrency:cUSDToken?.address as `0x${string}`})
+const txHash = await sendStableToken({from:walletClient?.account?.address as `0x${string}`,to:cUSDToken?.address as `0x${string}`,tokenBalance:cUSDToken as TokenBalance,type:"cip64",recipient:recipientAddress,amount:tokenAmount,feeCurrency:cUSDToken?.address as `0x${string}`})
     console.log("THE HASH PLAIN",txHash)
 
     if(!txHash){
