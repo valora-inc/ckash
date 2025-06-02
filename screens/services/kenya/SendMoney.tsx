@@ -11,6 +11,7 @@ import debounce from 'lodash.debounce';
 import { useTokens } from "../../../utils"
 import { TokenBalance } from "src/tokens/slice"
 import { Pretium_api } from "../../../contants/constant"
+import { sendTransactionStable } from "../../../hooks/sendtransaction"
 
 
 export type TransactionRequest = (TransactionRequestCIP64 | TransactionRequestEIP1559) & {
@@ -23,7 +24,7 @@ export default function SendMoney(_props: RootStackScreenProps<'KenyaSendMoney'>
      const {data:walletClient} = useWalletClient({networkId:"celo-mainnet"})
      const [amount,setAmount]= React.useState<string>("");
      const [tokenAmount,setTokenAmount] = React.useState<string>("")
-     const recipientAddress = "0x8005ee53E57aB11E11eAA4EFe07Ee3835Dc02F98" //"0x3668e51a4463b6250e73763458ba7a5e759424ed"  //meta//"0xEDE548D2fcEB23D27BfCa246995522D6e13Cbbc6" //pretium//"0x8005ee53E57aB11E11eAA4EFe07Ee3835Dc02F98"  mine//"0xEDE548D2fcEB23D27BfCa246995522D6e13Cbbc6"
+     const recipientAddress = "0x8005ee53E57aB11E11eAA4EFe07Ee3835Dc02F98" //"0x8005ee53E57aB11E11eAA4EFe07Ee3835Dc02F98" //"0x3668e51a4463b6250e73763458ba7a5e759424ed"  //meta//"0xEDE548D2fcEB23D27BfCa246995522D6e13Cbbc6" //pretium//"0x8005ee53E57aB11E11eAA4EFe07Ee3835Dc02F98"  mine//"0xEDE548D2fcEB23D27BfCa246995522D6e13Cbbc6"
      const {cKESToken,cUSDToken} = useTokens()
      const pub = usePublicClient({networkId:"celo-mainnet"})
 
@@ -71,23 +72,7 @@ export default function SendMoney(_props: RootStackScreenProps<'KenyaSendMoney'>
     const handleSendMoney = async()=>{
         try{
            
-            //const feeData = await pub.estimateFeesPerGas();
-//             const transactionsrequest ={
-//                  to: cKESToken?.address as `0x${string}`, // cKES token address 
-//                  data:  encodeFunctionData({
-//                               abi: erc20Abi,
-//                               functionName: 'transfer',
-//                               args: [recipientAddress as `0x${string}`, parseEther("10")],
-//                           }),
-//                    //feeCurrency:cKESToken?.address as string,
-//                    gas: BigInt(2000000),
-                  
-                  
-//                   // _baseFeePerGas:BigInt(500000),
-//                    maxFeePerGas: feeData.maxFeePerGas,
-//   //estimatedGasUse: BigInt(200_000_000),
-//    _estimatedGasUse:  BigInt(200_000_000),
-//   _baseFeePerGas:  BigInt(200_000_000)
+           
 
 
                           
@@ -95,158 +80,39 @@ export default function SendMoney(_props: RootStackScreenProps<'KenyaSendMoney'>
   
   
 
-
-//             }
-
-
-// Custom TransactionRequest type for Celo and EVM
-
-//new 
 if (!tokenAmount || tokenAmount ==null || tokenAmount == undefined){
     Alert.alert("Please provide Amount")
     return;
 }
-const transactionsrequest: TransactionRequest = {
-    from:walletClient?.account?.address,
-  type: 'cip64',
-  to: cUSDToken?.address as `0x${string}`, // cKES token address
-  data: encodeFunctionData({
-    abi: erc20Abi,
-    functionName: 'transfer',
-    args: [recipientAddress as `0x${string}`, parseEther(tokenAmount)],
-  }),
-  //value: BigInt(0), // ERC-20 transfers require this to be 0
-  feeCurrency: cUSDToken?.address as `0x${string}`, // optional but recommended
-  gas: BigInt(100000),
-maxFeePerGas: BigInt(10000000000),
- maxPriorityFeePerGas: BigInt(10000000000),
-  _estimatedGasUse: BigInt(20000000),
-  _baseFeePerGas: BigInt(200000000),
-}
-           
 
- const result:PreparedTransactionsPossible = {
-                 feeCurrency: cUSDToken as TokenBalance,
-         transactions: [transactionsrequest],
-        type:"possible",   
-            }
-            const fees = await getFees(result)
-            console.log("THE FEES",fees)
-            
-            
-            
-
-    //         const result = await prepareTransactions({networkId:"celo-mainnet",transactionRequests:[transactionsrequest]})
-    //       // const result = await preparetransactionresult;
-    //        //console.log("The result",preparetransactionresult)
-    //        const fees =   getFees({
-    //     feeCurrency: cKESToken as TokenBalance, transactions: [transactionsrequest],
-    //     type:"possible",
-
-    // })
-    // console.log("The fees FEEEFS",fees)
    
 
-if (true) {
+
     
    
-    // const tx = await sendTransactions({
-    //     feeCurrency: cKESToken as TokenBalance,
-    //      transactions: [transactionsrequest],
-    //     type:"possible",
-        
-        
+ 
 
-    // })
-    //  Alert.alert(tx as unknown as string)
-  // proceed with transaction
-  //TODO CNAGE TO SEND TRANSACTIONS
-  const unlockResult = await unlockAccount()
 
-  if (unlockResult === 'success') {
-    console.log('Wallet unlocked successfully!')
-//     const theamount = "0.2"
-//   const txRequest = await walletClient?.prepareTransactionRequest({
-//               chainId: 42220, // Celo chain ID
-//               to: cUSDToken?.address as `0x${string}`, // cKES token address
-//               data: encodeFunctionData({
-//                   abi: erc20Abi,
-//                   functionName: 'transfer',
-//                   args: [recipientAddress as `0x${string}`, parseEther(theamount)],
-//               }),
-//               chain: celo,
-//               account: walletClient?.account,
-//               feeCurrency:cUSDToken?.address as `0x${string}`
-              
-//           });
 
-//    const signedTx = await walletClient?.signTransaction(txRequest as any);
-//           const txHash = await pub?.sendRawTransaction({ serializedTransaction: signedTx as any});
-//            const rate = await Pretium_api.exchange_rate()
-//         console.log("THE KES RATE",rate.data.buying_rate)
-//           const amount = parseFloat(theamount) *  parseFloat(rate.data.buying_rate)
-
-//           const response = await Pretium_api.make_payment({hash:txHash,amount:amount.toString()})
-//           console.log("THE RESPONSE",response)
-
-//     Alert.alert(` The HASH ${JSON.stringify(response)}`)
-
-//use this new
-const txHash = await sendTransactions({
-        feeCurrency: cUSDToken as TokenBalance,
-         transactions: [transactionsrequest],
-        type:"possible",      
-        
-
-    })
+const txHash = await sendTransactionStable({from:walletClient?.account?.address as `0x${string}`,to:cUSDToken?.address as `0x${string}`,tokenBalance:cUSDToken as TokenBalance,type:"cip64",recipient:recipientAddress,amount:tokenAmount,feeCurrency:cUSDToken?.address as `0x${string}`})
     console.log("THE HASH PLAIN",txHash)
-    console.log("THE HASH 0",txHash[0])
-    const response = await Pretium_api.make_payment({mobile_network:"Safaricom",shortcode:phoneNumber,type:"MOBILE",transaction_hash:txHash[0] as string,amount:amount})
+
+    if(!txHash){
+      console.log("Failed to send")
+      return;
+    }
+    
+    const response = await Pretium_api.make_payment({mobile_network:"Safaricom",shortcode:phoneNumber,type:"MOBILE",transaction_hash:txHash as string,amount:amount})
     console.log("THE RESPONSE IS",response)
     Alert.alert(`We got ${txHash}`)
-  } else if (unlockResult === 'failure') {
-    console.warn('Failed to unlock wallet.')
-    Alert.alert(` Failed to unlock wallet.`)
-  } else if (unlockResult === 'canceled') {
-    console.log('User canceled unlock.')
-     Alert.alert(` User canceled unlock.`)
-    
-  }
+  
   
   
 
-} else if (false) {
-    Alert.alert("REDUCE BALANCE NOT ENOUGH")
-  // ask user to reduce the spend amount
-} else if (false) {
-  // inform user they don't have enough gas balance
-   Alert.alert("DON Have enough gas fee for gas")
-}
-            
-            // const txRequest = await walletClient?.prepareTransactionRequest({
-            //               chainId: 42220, // Celo chain ID
-            //               to: "0x456a3d042c0dbd3db53d5489e98dfb038553b0d0", // cKES token address                          
-            //               data: encodeFunctionData({
-            //                   abi: erc20Abi,
-            //                   functionName: 'transfer',
-            //                   args: [recipientAddress as `0x${string}`, parseEther("0.00001")],
-            //               }),
-            //               chain: celo,
-            //               account: walletClient?.account,
-            //               feeCurrency:"0x456a3d042c0dbd3db53d5489e98dfb038553b0d0"
-                          
-            //           });
-            //           const txx = await prepareTransactions({
-
-            //     transactionRequests:txRequest,
-                
-            // })
-                    //   unlockAccount()
-            // const tx = await walletClient?.sendTransaction(txRequest as any)
 
         }catch(error){
             console.log("THE ERROR",error)
-            Alert.alert(`${error} from the error`)
+            Alert.alert(`${error}`)
 
         }
     }
