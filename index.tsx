@@ -5,17 +5,29 @@ import BrandLogo from './assets/BrandLogo'
 import WelcomeLogo from './assets/WelcomeLogo'
 import HomeScreen from './screens/HomeScreen'
 import ActivityIcon from './assets/ActivityTabIcon'
-import { CKES_TOKEN_ID, CUSD_TOKEN_ID,USDC_TOKEN_ID, USDT_TOKEN_ID, cGHS_TOKEN_ID, cZAR_TOKEN_ID, colors } from './utils'
+import {
+  CKES_TOKEN_ID,
+  CUSD_TOKEN_ID,
+  USDC_TOKEN_ID,
+  USDT_TOKEN_ID,
+  cGHS_TOKEN_ID,
+  cZAR_TOKEN_ID,
+  colors,
+} from './utils'
 import GetStarted from './components/GetStarted'
 import React from 'react'
 import ServiceScreen from './screens/ServiceScreen'
 import WalletScreen from './screens/WalletScreen'
-import SendMoney from './screens/services/kenya/SendMoney'
+import KenyaSendMoney from './screens/services/kenya/SendMoney'
+import NigeriaSendMoney from './screens/services/nigeria/SendMoney'
+import NigeriaAirtime from './screens/services/nigeria/Airtime'
+import UgandaAirtime from './screens/services/uganda/Airtime'
 
-export function createStaticLabel(label: string): (t: (key: string) => string) => string {
+export function createStaticLabel(
+  label: string,
+): (t: (key: string) => string) => string {
   return () => label
 }
-
 
 const expoConfig = Constants.expoConfig
 if (!expoConfig) {
@@ -77,7 +89,7 @@ const App = createApp({
             component: ServiceScreen,
             icon: defaultTabs.activity.icon,
             // label: defaultTabs.activity.label,
-            label:createStaticLabel("Utility")
+            label: createStaticLabel('Utility'),
           },
           {
             ...defaultTabs.activity,
@@ -89,28 +101,57 @@ const App = createApp({
             component: WalletScreen,
             icon: defaultTabs.activity.icon,
             // label: defaultTabs.activity.label,
-            label: createStaticLabel("Wallet"),
+            label: createStaticLabel('Wallet'),
           },
         ],
         // initialScreen: 'Home',
         initialScreen: 'Wallet',
       }
     },
-    custom:(Screen)=> (
-     <>
-     <Screen name="KenyaSendMoney"
-     component={SendMoney}
-     options={{
-      headerBackVisible:true,
-      headerShown:true
-     }}
-     />
+    custom: (Screen) => (
+      <>
+        <Screen
+          name="KenyaSendMoney"
+          component={KenyaSendMoney}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+          }}
+        />
 
-     
-     </>
-      
+        <Screen
+          name="NigeriaSendMoney"
+          component={NigeriaSendMoney}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            title: 'Send Money',
+          }}
+        />
+
+        <Screen
+          name="NigeriaAirtime"
+          component={NigeriaAirtime}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            title: 'Buy Airtime',
+          }}
+        />
+
+        <Screen
+          name="UgandaAirtime"
+          component={UgandaAirtime}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            title: 'Buy Airtime',
+          }}
+        />
+      </>
     ),
   },
+
   locales: {
     'en-US': require('./locales/en-US.json'),
   },
@@ -121,21 +162,28 @@ const App = createApp({
     activity: {
       hideActionsCarousel: true,
     },
-     tokens: {
-      enabledTokenIds: [CUSD_TOKEN_ID, CKES_TOKEN_ID, USDC_TOKEN_ID, USDT_TOKEN_ID, cGHS_TOKEN_ID,cZAR_TOKEN_ID],
+    tokens: {
+      enabledTokenIds: [
+        CUSD_TOKEN_ID,
+        CKES_TOKEN_ID,
+        USDC_TOKEN_ID,
+        USDT_TOKEN_ID,
+        cGHS_TOKEN_ID,
+        cZAR_TOKEN_ID,
+      ],
       overrides: {
         [CKES_TOKEN_ID]: {
           showZeroBalance: true,
         },
-        [USDC_TOKEN_ID]:{
-          showZeroBalance:true,
+        [USDC_TOKEN_ID]: {
+          showZeroBalance: true,
         },
-        [cGHS_TOKEN_ID]:{
-          showZeroBalance:true,
+        [cGHS_TOKEN_ID]: {
+          showZeroBalance: true,
         },
-        [cZAR_TOKEN_ID]:{
-          showZeroBalance:true,
-        }
+        [cZAR_TOKEN_ID]: {
+          showZeroBalance: true,
+        },
       },
     },
     transactions: {

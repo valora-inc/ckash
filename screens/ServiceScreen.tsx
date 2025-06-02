@@ -19,7 +19,7 @@ const services: Record<string, Service[]> = {
   ],
 
   "Uganda": [
-    { name: "MTN ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/MTN" },
+    { name: "MTN ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "UgandaAirtime" },
     { name: "Airtel ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/AirtelMoney" },
     { name: "Airtime", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/airTime" },
     { name: "Data ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/Data" },
@@ -28,8 +28,8 @@ const services: Record<string, Service[]> = {
   ],
 
   "Nigeria": [
-    { name: "Bank ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/BankTransfer" },
-    { name: "Airtime ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/airTime" },
+    { name: "Bank ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "NigeriaSendMoney" },
+    { name: "Airtime ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "NigeriaAirtime" },
     { name: "Data ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/Data" },
     { name: "Electricity ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/PHCN" },
     { name: "DSTV ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/TV" },
