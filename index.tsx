@@ -18,17 +18,14 @@ import GetStarted from './components/GetStarted'
 import React from 'react'
 import ServiceScreen from './screens/ServiceScreen'
 import WalletScreen from './screens/WalletScreen'
-<<<<<<< HEAD
 import KenyaSendMoney from './screens/services/kenya/SendMoney'
 import NigeriaSendMoney from './screens/services/nigeria/SendMoney'
 import NigeriaAirtime from './screens/services/nigeria/Airtime'
 import UgandaAirtime from './screens/services/uganda/Airtime'
-=======
 import SendMoney from './screens/services/kenya/SendMoney'
 import BuyAirtime from './screens/services/kenya/Airtime'
 import BuyGoods from './screens/services/kenya/BuyGoods'
 import PayBills from './screens/services/kenya/PayBills'
->>>>>>> dev
 
 export function createStaticLabel(
   label: string,
@@ -115,7 +112,6 @@ const App = createApp({
         initialScreen: 'Wallet',
       }
     },
-<<<<<<< HEAD
     custom: (Screen) => (
       <>
         <Screen
@@ -156,18 +152,8 @@ const App = createApp({
             title: 'Buy Airtime',
           }}
         />
-      </>
-=======
-    custom:(Screen)=> (
-     <>
-     <Screen name="KenyaSendMoney"
-     component={SendMoney}
-     options={{
-      headerBackVisible:true,
-      headerShown:true
-     }}
-     />
-     <Screen name="KenyaBuyAirtime"
+       
+      <Screen name="KenyaBuyAirtime"
      component={BuyAirtime}
      options={{
       headerBackVisible:true,
@@ -188,9 +174,8 @@ const App = createApp({
       headerShown:true
      }}
      />
-     </>
->>>>>>> dev
-    ),
+      </>
+    )
   },
 
   locales: {

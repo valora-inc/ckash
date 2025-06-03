@@ -1,5 +1,6 @@
 import * as React from "react"
 import { View, StyleSheet, TextInput, Text, TouchableOpacity, ScrollView, Image } from "react-native"
+import { RootStackScreenProps } from "../../types";
 
 interface SavedContact {
     phone: string;
@@ -12,7 +13,7 @@ interface Bank {
     logo: string;
 }
 
-export default function GhanaSendMoney() {
+export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMoney'>) {
     const [selectedBank, setSelectedBank] = React.useState<Bank | null>(null)
     const [accountNumber, setAccountNumber] = React.useState<string>("")
     const [accountName, setAccountName] = React.useState<string>("PABLO LEMONR")

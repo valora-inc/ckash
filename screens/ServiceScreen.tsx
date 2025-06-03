@@ -20,32 +20,24 @@ const services: Record<string, Service[]> = {
 
   "Uganda": [
     { name: "MTN ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "UgandaAirtime" },
-    { name: "Airtel ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/AirtelMoney" },
-    { name: "Airtime", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/airTime" },
-    { name: "Data ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/Data" },
-    { name: "Bank ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/BankTransfer" },
-    { name: "UMEME", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/UMEME" },
+    { name: "Airtel ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "AirtelMoney" },
+   
   ],
 
   "Nigeria": [
     { name: "Bank ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "NigeriaSendMoney" },
     { name: "Airtime ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "NigeriaAirtime" },
-    { name: "Data ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/Data" },
-    { name: "Electricity ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/PHCN" },
-    { name: "DSTV ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/TV" },
-    { name: "WAEC ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/Results" },
+   
   ],
 
   "Ghana": [
-    { name: "MTN ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/MTN" },
-    { name: "Vodafone ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/Vodafone" },
-    { name: "Airtime ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/airTime" },
-    { name: "Internet ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/Data" },
-    { name: "ECG ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/ECG" },
-    { name: "Bank ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/BankTransfer" },
+    { name: "MTN ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "GhanaSendMoney" },
+    { name: "Airtel ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "GhanaSendMoney" },
+    { name: "Telcel ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "GhanaSendMoney" },
+   
   ],
 };
-
+//MTN | Airtel | Telcel
 
 
 
