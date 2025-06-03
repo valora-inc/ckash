@@ -10,12 +10,11 @@ import { Service } from "./WalletScreen"
 const services: Record<string, Service[]> = {
   "Kenya": [
     { name: "M-Pesa", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate:  "KenyaSendMoney" },
-    { name: "Airtime", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/KenyaBuyAirtime" },
-    { name: "Data", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/Data" },
-    { name: "Paybill", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/KenyaPayBill" },
-    { name: "Till", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/KenyaBuyGoods" },
-    { name: "Bank ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/BankTransfer" },
-    { name: "Electricity ", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "/Electricity" },
+    { name: "Airtime", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "KenyaBuyAirtime" },
+    
+    { name: "Paybill", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "KenyaPayBills" },
+    { name: "Till", icon: "https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png", navigate: "KenyaBuyGoods" },
+    
   ],
 
   "Uganda": [

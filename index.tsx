@@ -5,6 +5,8 @@ import BrandLogo from './assets/BrandLogo'
 import WelcomeLogo from './assets/WelcomeLogo'
 import HomeScreen from './screens/HomeScreen'
 import ActivityIcon from './assets/ActivityTabIcon'
+import WalletIcon from './assets/WalletTabIcon'
+import UtilityIcon from './assets/UtilityTabIcon'
 import {
   CKES_TOKEN_ID,
   CUSD_TOKEN_ID,
@@ -32,6 +34,7 @@ export function createStaticLabel(
 ): (t: (key: string) => string) => string {
   return () => label
 }
+
 
 const expoConfig = Constants.expoConfig
 if (!expoConfig) {
@@ -91,7 +94,7 @@ const App = createApp({
           {
             name: 'Utilities',
             component: ServiceScreen,
-            icon: defaultTabs.activity.icon,
+            icon: UtilityIcon,
             // label: defaultTabs.activity.label,
             label: createStaticLabel('Utility'),
           },
@@ -103,7 +106,7 @@ const App = createApp({
           {
             name: 'Wallet',
             component: WalletScreen,
-            icon: defaultTabs.activity.icon,
+            icon: WalletIcon,
             // label: defaultTabs.activity.label,
             label: createStaticLabel('Wallet'),
           },

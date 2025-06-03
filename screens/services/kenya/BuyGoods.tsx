@@ -1,7 +1,8 @@
 import * as React from "react"
 import { View, StyleSheet, TextInput, Text, TouchableOpacity, ScrollView } from "react-native"
+import { RootStackScreenProps } from "../../types"
 
-export default function MPESABuyGoods() {
+export default function MPESABuyGoods(_props: RootStackScreenProps<'KenyaBuyGoods'>) {
     const [tillNumber, setTillNumber] = React.useState<string>("100")
     const [amount, setAmount] = React.useState<string>("5035")
 
