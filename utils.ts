@@ -21,7 +21,7 @@ export function useTokens() {
   const uSDTToken = tokens.find((token) => token.tokenId === USDT_TOKEN_ID)
   const cGHSToken = tokens.find((token) => token.tokenId === cGHS_TOKEN_ID)
   const cZARToken = tokens.find((token) => token.tokenId === cZAR_TOKEN_ID)
-  console.log("The Tokens are", tokens)
+  //console.log("The Tokens are", tokens)
   return { cKESToken, cUSDToken,uSDCToken,uSDTToken,cGHSToken,cZARToken,tokens }
 }
 export const colors = {

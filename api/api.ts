@@ -1,19 +1,21 @@
-const baseURL = "https://api.xwift.africa"
-const key = "niISiP9gF9cpgk9z"
+import { MAKEPAYMENT } from "./types";
+
 
 
 
 class Pretium {
     api_key: string;
+    baseURL:string;
 
-    constructor(api_Key: string) {
+    constructor(api_Key: string,baseURL:string) {
         this.api_key = api_Key;
+        this.baseURL = baseURL;
     }
 
     getHeaders = () => {
         return {
             'Content-Type': 'application/json',
-            'x-api-key': this.api_key || key
+            'x-api-key': this.api_key 
         };
     };
 
@@ -25,7 +27,7 @@ class Pretium {
                 "currency_code": "KES"
             })
         };
-        const url = `${baseURL}/v1/exchange-rate`
+        const url = `${this.baseURL}/v1/exchange-rate`
 
         try {
             const response = await fetch(url, requestOptions);
@@ -46,7 +48,7 @@ class Pretium {
     "mobile_network": "Safaricom"
             })
         };
-        const url = `${baseURL}/v1/validation`
+        const url = `${this.baseURL}/v1/validation`
         try{
             const response = await fetch(url, requestOptions);
             const data = await response.json();
@@ -62,27 +64,28 @@ class Pretium {
 
     }
 
-    make_payment = async({hash,amount}:{hash:string,amount:string})=>{
+    make_payment = async(makepayment:MAKEPAYMENT)=>{
 
     //     "transaction_hash":"0x325caeb3cbb408faacb438a03e5b30f6f1068f65ec5b7de934f8d4a9ac2717b5",
     // "type": "MOBILE",
     // "shortcode": "0725212418",
     // "amount": "5000",
     // "mobile_network": "Safaricom"
+    const payload:MAKEPAYMENT ={
+        transaction_hash:makepayment.transaction_hash,
+        type:makepayment.type,
+        shortcode:makepayment.shortcode,
+        amount:makepayment.amount,
+        mobile_network:makepayment.mobile_network
+    }
     const requestOptions = {
             method: "POST" as const,
             headers: this.getHeaders(),
-            body: JSON.stringify({
-                "transaction_hash":hash,
-    "type": "MOBILE",
-    "shortcode": "0701707772",
-    "amount": amount,
-    "mobile_network": "Safaricom"
-            })
+            body: JSON.stringify(payload)
         };
 
 
-        const url = `${baseURL}/v1/pay`
+        const url = `${this.baseURL}/v1/pay`
         try{
             const response = await fetch(url, requestOptions);
             const data = await response.json();

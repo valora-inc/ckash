@@ -1,11 +1,11 @@
 
-
+import {API_KEY,BASE_URL} from "@env"
 import { Pretium } from "../api/api";
 
 
-const key = "niISiP9gF9cpgk9z"
 
-const Pretium_api = new Pretium(key)
+
+const Pretium_api = new Pretium(API_KEY,BASE_URL)
 
 
 
