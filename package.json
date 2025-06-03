@@ -2,7 +2,7 @@
   "name": "ckash",
   "version": "1.0.0",
   "engines": {
-    "node": "^20"
+    "node": ">=20"
   },
   "main": "index.tsx",
   "scripts": {
@@ -83,7 +83,8 @@
     "react-native-share": "^11.1.0",
     "react-native-simple-toast": "^3.3.1",
     "react-native-sms-retriever": "^1.1.1",
-    "react-native-svg": "^15.7.1",
+    "react-native-svg": "^15.12.0",
+    "react-native-vector-icons": "^10.2.0",
     "react-native-video": "^6.6.4"
   },
   "devDependencies": {

@@ -11,6 +11,9 @@ import React from 'react'
 import ServiceScreen from './screens/ServiceScreen'
 import WalletScreen from './screens/WalletScreen'
 import SendMoney from './screens/services/kenya/SendMoney'
+import BuyAirtime from './screens/services/kenya/Airtime'
+import BuyGoods from './screens/services/kenya/BuyGoods'
+import PayBills from './screens/services/kenya/PayBills'
 
 export function createStaticLabel(label: string): (t: (key: string) => string) => string {
   return () => label
@@ -105,10 +108,28 @@ const App = createApp({
       headerShown:true
      }}
      />
-
-     
+     <Screen name="KenyaBuyAirtime"
+     component={BuyAirtime}
+     options={{
+      headerBackVisible:true,
+      headerShown:true
+     }}
+     />
+     <Screen name="KenyaBuyGoods"
+     component={BuyGoods}
+     options={{
+      headerBackVisible:true,
+      headerShown:true
+     }}
+     />
+     <Screen name="KenyaPayBills"
+     component={PayBills}
+     options={{
+      headerBackVisible:true,
+      headerShown:true
+     }}
+     />
      </>
-      
     ),
   },
   locales: {

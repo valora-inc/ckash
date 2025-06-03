@@ -5,6 +5,9 @@ type RootStackParamList = StackParamList & {
   CustomWallet: undefined,
   Service:undefined,
   KenyaSendMoney:undefined,
+  KenyaBuyAirtime: undefined;
+  KenyaBuyGoods: undefined;
+  KenyaPayBills: undefined;
 }
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =

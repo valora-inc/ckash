@@ -1,6 +1,5 @@
 import * as React from "react"
-
-import { View ,StyleSheet,TextInput,Text, Alert} from "react-native"
+import { View ,StyleSheet,TextInput,Text, Alert, ScrollView, TouchableOpacity} from "react-native"
 import { RootStackScreenProps } from "../../types"
 import Card from "../../../components/ui/Card"
 import Button from "../../../components/ui/Button"
@@ -11,10 +10,20 @@ import { useTokens } from "../../../utils"
 import { TokenBalance } from "src/tokens/slice"
 import { Pretium_api } from "../../../contants/constant"
 
+interface Contact {
+    phone: string;
+    name: string;
+}
+
 export default function SendMoney(_props: RootStackScreenProps<'KenyaSendMoney'>){
     const [phoneNumber,setPhoneNumber]= React.useState<string>("")
-     const {data:walletClient} = useWalletClient({networkId:"celo-mainnet"})
-     const [amount,setAmount]= React.useState<number>(0);
+    const [activeTab, setActiveTab] = React.useState<'saved' | 'recent'>('saved')
+    const [savedContacts] = React.useState<Contact[]>([
+        { phone: '254700000000', name: 'John Doe' },
+        { phone: '254711111111', name: 'Jane Smith' }
+    ])
+    const {data:walletClient} = useWalletClient({networkId:"celo-mainnet"})
+    const [amount,setAmount]= React.useState<string>('0');
      const recipientAddress = "0x8005ee53E57aB11E11eAA4EFe07Ee3835Dc02F98" //"0xEDE548D2fcEB23D27BfCa246995522D6e13Cbbc6"
      const {cKESToken,cUSDToken} = useTokens()
      const pub = usePublicClient({networkId:"celo-mainnet"})
@@ -155,87 +164,330 @@ if (true) {
 
         }
     }
-    return(
-        <View style={styles.container}>
-            <View style={styles.sendMoney_card}>
-                <Card style={styles.card}>
-                    <View>
-<Text style={styles.label}>Phone Number</Text>
-                    <TextInput style={styles.phoneNumber_input}
-                    value={phoneNumber}
-                    onChangeText={handlePhoneChange}
-                    placeholder="0701707772"
-                    keyboardType="phone-pad"
-                    maxLength={15}
+    function selectContact(contact: Contact): void {
+        setPhoneNumber(contact.phone)
+    }
+    return (
+        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+            {/* Header */}
+            <View style={styles.header}>
+                <TouchableOpacity style={styles.backButton}>
+                    <Text style={styles.backArrow}>‹</Text>
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Send Money</Text>
+            </View>
+
+            {/* Bank Selection Card */}
+            <View style={styles.bankCard}>
+                <Text style={styles.bankLabel}>Select Bank</Text>
+                <View style={styles.bankSelector}>
+                    <View style={styles.mpesaContainer}>
+                        <Text style={styles.mpesaText}>M-</Text>
+                        <Text style={[styles.mpesaText, styles.mpesaGreen]}>PESA</Text>
+                    </View>
+                    <Text style={styles.mpesaSubtext}>Mpesa</Text>
+                </View>
+            </View>
+
+            {/* Account Input Card */}
+            <View style={styles.inputCard}>
+                <Text style={styles.inputLabel}>Account Number/Mobile Number</Text>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.phoneInput}
+                        value={phoneNumber}
+                        onChangeText={handlePhoneChange}
+                        placeholder="Enter account Number"
+                        placeholderTextColor="#A0A0A0"
+                        keyboardType="phone-pad"
+                        maxLength={15}
                     />
-                    </View>
-
-                    <View>
- <Text style={styles.label}>Amount</Text>
-                    
-                      <TextInput style={styles.phoneNumber_input}  placeholder="KES 50"
-                    keyboardType="phone-pad"/>
-                    </View>
-                    
-                    
-
-                </Card>
-
+                    <TouchableOpacity style={styles.contactButton}>
+                        <Text style={styles.contactIcon}>📞</Text>
+                    </TouchableOpacity>
+                </View>
+                {phoneNumber && (
+                    <Text style={styles.accountName}>Account name: PABLO LEMONR</Text>
+                )}
             </View>
 
-            {/* confirm button */}
-            <View style={styles.confirm}>
-                <Button style={styles.send_button} title="SEND" onPress={handleSendMoney}/>
-
+            {/* Amount Input */}
+            <View style={styles.amountSection}>
+                <View style={styles.amountHeader}>
+                    <Text style={styles.amountLabel}>Enter Amount (NGN)</Text>
+                    <Text style={styles.amountDisplay}>₦ 245.31</Text>
+                </View>
+                <TextInput
+                    style={styles.amountInput}
+                    value={amount}
+                    onChangeText={text => setAmount(text)}
+                    placeholder="₦ 100"
+                    placeholderTextColor="#A0A0A0"
+                    keyboardType="numeric"
+                />
+                <Text style={styles.amountLimit}>(min. 200 max 60,000)</Text>
             </View>
 
-        </View>
+            {/* Continue Button */}
+            <TouchableOpacity style={styles.continueButton} onPress={handleSendMoney}>
+                <Text style={styles.continueButtonText}>Continue</Text>
+            </TouchableOpacity>
 
+            {/* Contacts Section */}
+            <View style={styles.contactsSection}>
+                <View style={styles.contactsHeader}>
+                    <TouchableOpacity
+                        style={[styles.tab, activeTab === 'saved' && styles.activeTab]}
+                        onPress={() => setActiveTab('saved')}
+                    >
+                        <Text style={[styles.tabText, activeTab === 'saved' && styles.activeTabText]}>
+                            Saved Contact
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.tab, activeTab === 'recent' && styles.activeTab]}
+                        onPress={() => setActiveTab('recent')}
+                    >
+                        <Text style={[styles.tabText, activeTab === 'recent' && styles.activeTabText]}>
+                            Recent Contact
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.moreButton}>
+                        <Text style={styles.moreIcon}>⚙️</Text>
+                    </TouchableOpacity>
+                </View>
+
+                {/* Contact List */}
+                <View style={styles.contactsList}>
+                    {savedContacts.map((contact, index) => (
+                        <TouchableOpacity
+                            key={index}
+                            style={styles.contactItem}
+                            onPress={() => selectContact(contact)}
+                        >
+                            <View style={styles.contactInfo}>
+                                <Text style={styles.contactPhone}>{contact.phone}</Text>
+                                <Text style={styles.contactName}>{contact.name}</Text>
+                            </View>
+                            <View style={styles.contactAvatar}>
+                                <Text style={styles.avatarText}>M</Text>
+                            </View>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+            </View>
+        </ScrollView>
     )
 }
-
-
 const styles = StyleSheet.create({
-    container:{
-        flex:1,
-        paddingHorizontal:16
+    container: {
+        flex: 1,
+        backgroundColor: '#F5F7FA',
+        paddingHorizontal: 16,
     },
-    sendMoney_card:{
-        flex:1.5,
-        gap:16
-
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 16,
+        marginBottom: 8,
     },
-    card:{
-        width:"100%",
-        height:"50%",
-        gap:16,
-        backgroundColor:"#AEC5FF"
-
+    backButton: {
+        marginRight: 16,
     },
-    confirm:{
-        flex:1,
-        justifyContent:"center",
-        alignItems:"center",
-        width:"100%"
-
+    backArrow: {
+        fontSize: 24,
+        color: '#333',
+        fontWeight: '300',
     },
-    send_button:{
-        width:"100%",
-        alignItems:"center",
-        backgroundColor:"blue"
+    headerTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#333',
     },
-    phoneNumber_input:{
-        borderWidth:1,
-        backgroundColor:"#DAE3FF",
-        borderColor:"#AEC5FF",
-        paddingHorizontal:20,
-        paddingVertical:12,
-        borderRadius:2,
-        fontSize:16
+    bankCard: {
+        backgroundColor: '#E8F0FF',
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 16,
     },
-    label:{
-        fontSize:16,
-        marginBottom:4,
-        fontWeight:"400"
-    }
+    bankLabel: {
+        fontSize: 14,
+        color: '#666',
+        marginBottom: 12,
+    },
+    bankSelector: {
+        alignItems: 'flex-start',
+    },
+    mpesaContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    mpesaText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#FF0000',
+    },
+    mpesaGreen: {
+        color: '#00AA00',
+    },
+    mpesaSubtext: {
+        fontSize: 12,
+        color: '#666',
+        marginTop: 4,
+    },
+    inputCard: {
+        backgroundColor: '#E8F0FF',
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 16,
+    },
+    inputLabel: {
+        fontSize: 14,
+        color: '#666',
+        marginBottom: 12,
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF',
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 12,
+    },
+    phoneInput: {
+        flex: 1,
+        fontSize: 16,
+        color: '#333',
+    },
+    contactButton: {
+        padding: 4,
+    },
+    contactIcon: {
+        fontSize: 16,
+        color: '#2B5CE6',
+    },
+    accountName: {
+        fontSize: 12,
+        color: '#2B5CE6',
+        marginTop: 8,
+    },
+    amountSection: {
+        backgroundColor: '#E8F0FF',
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 24,
+    },
+    amountHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    amountLabel: {
+        fontSize: 14,
+        color: '#666',
+    },
+    amountDisplay: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#333',
+    },
+    amountInput: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 16,
+        fontSize: 24,
+        fontWeight: '300',
+        color: '#333',
+        marginBottom: 8,
+    },
+    amountLimit: {
+        fontSize: 12,
+        color: '#FF6B6B',
+    },
+    continueButton: {
+        backgroundColor: '#2B5CE6',
+        borderRadius: 12,
+        paddingVertical: 16,
+        alignItems: 'center',
+        marginBottom: 24,
+    },
+    continueButtonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    contactsSection: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 24,
+    },
+    contactsHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    tab: {
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        marginRight: 16,
+    },
+    activeTab: {
+        borderBottomWidth: 2,
+        borderBottomColor: '#2B5CE6',
+    },
+    tabText: {
+        fontSize: 14,
+        color: '#666',
+    },
+    activeTabText: {
+        color: '#2B5CE6',
+        fontWeight: '600',
+    },
+    moreButton: {
+        marginLeft: 'auto',
+    },
+    moreIcon: {
+        fontSize: 16,
+    },
+    contactsList: {
+        gap: 12,
+    },
+    contactItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        backgroundColor: '#F8F9FA',
+        borderRadius: 8,
+    },
+    contactInfo: {
+        flex: 1,
+    },
+    contactPhone: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#333',
+        marginBottom: 2,
+    },
+    contactName: {
+        fontSize: 12,
+        color: '#666',
+    },
+    contactAvatar: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        backgroundColor: '#2B5CE6',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    avatarText: {
+        color: '#FFFFFF',
+        fontSize: 14,
+        fontWeight: '600',
+    },
 })
