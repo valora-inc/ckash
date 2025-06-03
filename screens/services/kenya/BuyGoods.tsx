@@ -14,7 +14,7 @@ export default function MPESABuyGoods() {
             {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity style={styles.backButton}>
-                    <Text style={styles.backArrow}>‹</Text>
+                    <Text style={styles.backArrow}>{'‹'}</Text>
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>MPESA Buy Goods</Text>
             </View>

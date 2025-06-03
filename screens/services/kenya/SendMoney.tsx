@@ -172,7 +172,7 @@ if (true) {
             {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity style={styles.backButton}>
-                    <Text style={styles.backArrow}>‹</Text>
+                    <Text style={styles.backArrow}>{'‹'}</Text>
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Send Money</Text>
             </View>
