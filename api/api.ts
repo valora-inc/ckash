@@ -1,101 +1,99 @@
-import { MAKEPAYMENT } from "./types";
-
-
-
+import { MAKEPAYMENT } from './types'
 
 class Pretium {
-    api_key: string;
-    baseURL:string;
+  api_key: string
+  baseURL: string
 
-    constructor(api_Key: string,baseURL:string) {
-        this.api_key = api_Key;
-        this.baseURL = baseURL;
+  constructor(api_Key: string, baseURL: string) {
+    this.api_key = api_Key
+    this.baseURL = baseURL
+  }
+
+  getHeaders = () => {
+    const requestHeaders: HeadersInit = new Headers()
+    requestHeaders.set('Content-Type', 'application/json')
+    requestHeaders.set('x-api-key', this.api_key)
+    console.log('THE REQUEST HEADERS', requestHeaders)
+    return requestHeaders
+  }
+
+  exchange_rate = async (local_currency_code: string = 'KES') => {
+    const requestOptions = {
+      method: 'POST' as const,
+      headers: this.getHeaders(),
+      body: JSON.stringify({
+        currency_code: local_currency_code,
+      }),
     }
+    const url = `${this.baseURL}v1/exchange-rate`
+    try {
+      const response = await fetch(url, requestOptions)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
 
-    getHeaders = () => {
-        return {
-            'Content-Type': 'application/json',
-            'x-api-key': this.api_key 
-        };
-    };
-
-    exchange_rate = async () => {
-        const requestOptions = {
-            method: "POST" as const,
-            headers: this.getHeaders(),
-            body: JSON.stringify({
-                "currency_code": "KES"
-            })
-        };
-        const url = `${this.baseURL}/v1/exchange-rate`
-
-        try {
-            const response = await fetch(url, requestOptions);
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error("Error fetching exchange rate:", error);
-            throw error;
-        }
-    };
-    account_validation = async()=>{
-        const requestOptions = {
-            method: "POST" as const,
-            headers: this.getHeaders(),
-            body: JSON.stringify({
-                "shortcode": "0701707772",
-    "type": "MOBILE",
-    "mobile_network": "Safaricom"
-            })
-        };
-        const url = `${this.baseURL}/v1/validation`
-        try{
-            const response = await fetch(url, requestOptions);
-            const data = await response.json();
-            return data;
-
-        }catch(error){
-            console.error("Error validating account:", error);
-            console.log("THE ERROR IS",error)
-            //throw error;
-
-        }
-
-
+      const result = await response.json()
+      return result
+    } catch (error) {
+      console.error('Exchange rate fetch failed:', error)
+      throw error
     }
+  }
+    
+  account_validation = async (shortcode: string, type: string, mobile_network: string) => {
+    const requestOptions = {
+      method: 'POST' as const,
+      headers: this.getHeaders(),
+      body: JSON.stringify({
+        shortcode: shortcode,
+        type: type,
+        mobile_network: mobile_network,
+      }),
+    }
+    const url = `${this.baseURL}v1/validation`
+    try {
+      const response = await fetch(url, requestOptions)
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.error('Error validating account:', error)
+      console.log('THE ERROR IS', error)
+      //throw error;
+    }
+  }
 
-    make_payment = async(makepayment:MAKEPAYMENT)=>{
-
+  make_payment = async (makepayment: MAKEPAYMENT) => {
     //     "transaction_hash":"0x325caeb3cbb408faacb438a03e5b30f6f1068f65ec5b7de934f8d4a9ac2717b5",
     // "type": "MOBILE",
     // "shortcode": "0725212418",
     // "amount": "5000",
-    // "mobile_network": "Safaricom"
-    const payload:MAKEPAYMENT ={
-        transaction_hash:makepayment.transaction_hash,
-        type:makepayment.type,
-        shortcode:makepayment.shortcode,
-        amount:makepayment.amount,
-        mobile_network:makepayment.mobile_network
+    // country: "Uganda"
+    // Kenya "mobile_network": "Safaricom"
+    // Uganda (mobile_network): Airtel,MTN
+    // Ghana (mobile_network): Tigo,MTN
+
+    const payload: MAKEPAYMENT = {
+      transaction_hash: makepayment.transaction_hash,
+      type: makepayment.type,
+      shortcode: makepayment.shortcode,
+      amount: makepayment.amount,
+      mobile_network: makepayment.mobile_network,
     }
     const requestOptions = {
-            method: "POST" as const,
-            headers: this.getHeaders(),
-            body: JSON.stringify(payload)
-        };
-
-
-        const url = `${this.baseURL}/v1/pay`
-        try{
-            const response = await fetch(url, requestOptions);
-            const data = await response.json();
-            return data;
-
-        }catch(error){
-            console.log("ERROR making payment");
-
-        }
+      method: 'POST' as const,
+      headers: this.getHeaders(),
+      body: JSON.stringify(payload),
     }
+
+    const url = `${this.baseURL}v1/pay`
+    try {
+      const response = await fetch(url, requestOptions)
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.log('ERROR making payment')
+    }
+  }
 }
 
-export  {Pretium}
+export { Pretium }

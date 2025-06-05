@@ -38,3 +38,17 @@ ckash/
 ├── assets/          # Static assets
 └── screens/         # Custom screens
 ```
+
+# Decoded logic
+-  Buy goods for Till
+-  Pay bill
+-  Send Money Mpesa/Airtel
+
+
+# LOGIC
+
+Inputed data from the form:
+eg: 100 Kesh
+phone #: Lemon's
+
+token A
