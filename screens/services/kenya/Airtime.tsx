@@ -1,14 +1,17 @@
 import * as React from "react"
 import { View, StyleSheet, TextInput, Text, Alert, TouchableOpacity, ScrollView } from "react-native"
 import { RootStackScreenProps } from "../../types"
-import Card from "../../../components/ui/Card"
-import Button from "../../../components/ui/Button"
+// import Card from "../../../components/ui/Card"
+// import Button from "../../../components/ui/Button"
 import { usePublicClient, useWallet, useWalletClient, unlockAccount, navigate, TransactionRequest, prepareTransactions, PreparedTransactionsNotEnoughBalanceForGas, sendTransactions, getFees, usePrepareTransactions } from '@divvi/mobile'
-import { encodeFunctionData, erc20Abi, parseEther, parseUnits } from "viem"
+// import { encodeFunctionData, erc20Abi, parseEther, parseUnits } from "viem"
 import { celo } from "viem/chains"
 import { useTokens } from "../../../utils"
+// import { TokenBalance } from "src/tokens/slice"
+// import { Pretium_api } from "../../../constants/index"
+import { executeCKashTransaction, getExchangeRate, getRatedAmount   , sendTransactionStable } from "../../../lib/cKash"
+import { PRETIUM_ADDRESS } from "../../../constants"
 import { TokenBalance } from "src/tokens/slice"
-import { Pretium_api } from "../../../contants/constant"
 
 interface SavedContact {
     phone: string;
@@ -27,16 +30,16 @@ export default function BuyAirtime(_props: RootStackScreenProps<'KenyaBuyAirtime
     const [activeTab, setActiveTab] = React.useState<'saved' | 'recent'>('saved')
     
     const { data: walletClient } = useWalletClient({ networkId: "celo-mainnet" })
-    const { cKESToken, cUSDToken } = useTokens()
-    const pub = usePublicClient({ networkId: "celo-mainnet" })
+    const { cUSDToken,uSDCToken,uSDTToken} = useTokens()
+ 
 
     const amountOptions: AmountOption[] = [
-        { value: 100, label: "₦ 100" },
-        { value: 200, label: "₦ 200" },
-        { value: 500, label: "₦ 500" },
-        { value: 1000, label: "₦ 1000" },
-        { value: 2000, label: "₦ 2000" },
-        { value: 5000, label: "₦ 5000" }
+        { value: 100, label: "KES 100" },
+        { value: 200, label: "KES 200" },
+        { value: 500, label: "KES 500" },
+        { value: 1000, label: "KES 1000" },
+        { value: 2000, label: "KES 2000" },
+        { value: 5000, label: "KES 5000" }
     ]
 
     const savedContacts: SavedContact[] = [
@@ -45,13 +48,6 @@ export default function BuyAirtime(_props: RootStackScreenProps<'KenyaBuyAirtime
         { phone: "0816 057 3659", name: "PABLO LEMONR" },
         { phone: "0816 057 3659", name: "PABLO LEMONR" }
     ]
-
-    const handleGetRate = async () => {
-        const rate = await Pretium_api.exchange_rate()
-        console.log("THE KES RATE", rate.data.buying_rate)
-        const accountValidation = await Pretium_api.account_validation()
-        console.log("Account Validation", accountValidation)
-    }
 
     const handlePhoneChange = (text: string) => {
         const cleaned = text.replace(/[^0-9]/g, '')
@@ -78,33 +74,21 @@ export default function BuyAirtime(_props: RootStackScreenProps<'KenyaBuyAirtime
                 return
             }
 
-            const feeData = await pub.estimateFeesPerGas();
-
             if (true) {
-                unlockAccount()
-                const amountInEther = (amount / 1000).toString() // Convert NGN to appropriate token amount
-                const txRequest = await walletClient?.prepareTransactionRequest({
-                    chainId: 42220,
-                    to: cUSDToken?.address as `0x${string}`,
-                    data: encodeFunctionData({
-                        abi: erc20Abi,
-                        functionName: 'transfer',
-                        args: ["0x8005ee53E57aB11E11eAA4EFe07Ee3835Dc02F98" as `0x${string}`, parseEther(amountInEther)],
-                    }),
-                    chain: celo,
-                    account: walletClient?.account,
-                    feeCurrency: cUSDToken?.address as `0x${string}`
-                });
+                const calculatedAmount = await getRatedAmount(amount, 'KES')
 
-                const signedTx = await walletClient?.signTransaction(txRequest as any);
-                const txHash = await pub?.sendRawTransaction({ serializedTransaction: signedTx as any });
-                
-                const rate = await Pretium_api.exchange_rate()
-                const calculatedAmount = amount * parseFloat(rate.data.buying_rate)
-
-                
-
-                Alert.alert("Success", `Airtime purchase successful! Hash: ${txHash}`)
+               const txHash = await sendTransactionStable({
+                  to: cUSDToken?.address as `0x${string}`,
+                  recipient: PRETIUM_ADDRESS as `0x${string}`,
+                  from: walletClient?.account?.address as `0x${string}`,
+                  amount: calculatedAmount.toString(),
+                  feeCurrency: cUSDToken?.address as `0x${string}`,
+                  tokenBalance: cUSDToken as TokenBalance,
+                  type: 'cip64',
+               })
+                console.log("The txHash is ", txHash)
+               Alert.alert("Success", `Airtime purchase successful! Hash: ${txHash}`)
+              
             }
         } catch (error) {
             console.log("THE ERROR", error)
@@ -114,10 +98,6 @@ export default function BuyAirtime(_props: RootStackScreenProps<'KenyaBuyAirtime
 
     const selectContact = (contact: SavedContact) => {
         setPhoneNumber(contact.phone)
-    }
-
-    const getCurrentAmount = () => {
-        return selectedAmount || parseFloat(customAmount) || 0
     }
 
     return (
@@ -132,7 +112,7 @@ export default function BuyAirtime(_props: RootStackScreenProps<'KenyaBuyAirtime
 
             {/* Amount Selection Card */}
             <View style={styles.amountCard}>
-                <Text style={styles.sectionLabel}>Choose Amount (NGN)</Text>
+                <Text style={styles.sectionLabel}>Choose Amount (KES)</Text>
                 <View style={styles.amountGrid}>
                     {amountOptions.map((option, index) => (
                         <TouchableOpacity
@@ -156,14 +136,14 @@ export default function BuyAirtime(_props: RootStackScreenProps<'KenyaBuyAirtime
                 {/* Custom Amount Input */}
                 <View style={styles.customAmountSection}>
                     <View style={styles.customAmountHeader}>
-                        <Text style={styles.customAmountLabel}>Input an Amount (NGN)</Text>
-                        <Text style={styles.balanceDisplay}>₦ 245.31</Text>
+                        <Text style={styles.customAmountLabel}>Input an Amount (KES)</Text>
+                        <Text style={styles.balanceDisplay}>KES 245.31</Text>
                     </View>
                     <TextInput
                         style={styles.customAmountInput}
                         value={customAmount}
                         onChangeText={handleCustomAmountChange}
-                        placeholder="₦ 100"
+                        placeholder="KES 100"
                         placeholderTextColor="#A0A0A0"
                         keyboardType="numeric"
                     />
