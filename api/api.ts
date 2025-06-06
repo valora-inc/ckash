@@ -40,7 +40,7 @@ class Pretium {
     }
   }
     
-  account_validation = async (shortcode: string, type: string, mobile_network: string) => {
+  account_validation = async (shortcode: string, type: string, mobile_network: string,country_code?:string) => {
     const requestOptions = {
       method: 'POST' as const,
       headers: this.getHeaders(),
@@ -50,7 +50,7 @@ class Pretium {
         mobile_network: mobile_network,
       }),
     }
-    const url = `${this.baseURL}v1/validation`
+    const url = country_code? `${this.baseURL}v1/validation/${country_code}` : `${this.baseURL}v1/validation`
     try {
       const response = await fetch(url, requestOptions)
       const data = await response.json()
@@ -78,14 +78,18 @@ class Pretium {
       shortcode: makepayment.shortcode,
       amount: makepayment.amount,
       mobile_network: makepayment.mobile_network,
+      account_number:makepayment.account_number,
+      account_name:makepayment.account_name
     }
+    console.log("THE PAYLOAD",payload)
     const requestOptions = {
       method: 'POST' as const,
       headers: this.getHeaders(),
       body: JSON.stringify(payload),
     }
 
-    const url = `${this.baseURL}v1/pay`
+    const url = makepayment.country_code? `${this.baseURL}v1/pay/${makepayment.country_code}` : `${this.baseURL}v1/pay`
+    console.log("URL",url)
     try {
       const response = await fetch(url, requestOptions)
       const data = await response.json()

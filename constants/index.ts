@@ -6,7 +6,7 @@ if (!process.env.API_KEY || !process.env.BASE_URL) {
   )
 }
 
-const Pretium_api = new Pretium(process.env.API_KEY, process.env.BASE_URL)
+const Pretium_api = new Pretium(process.env.API_KEY , process.env.BASE_URL )
 
 export { Pretium_api }
 

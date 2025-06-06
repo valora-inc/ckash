@@ -15,7 +15,7 @@ import { TransactionRequestCIP64 } from 'viem/chains'
 import debounce from 'lodash.debounce'
 import { useTokens } from '../../../utils'
 import { TokenBalance } from 'src/tokens/slice'
-import { getRatedAmount } from '../../../lib/cKash'
+import { getRatedAmount, validateAccount } from '../../../lib/cKash'
 import { useSend } from '../../../hooks/useSend'
 import AlertModal from '../../../components/AlertModal'
 import { Pretium_api } from '../../../constants'
@@ -86,9 +86,10 @@ export default function SendMoney(
         return
       }
       const {response } = await sendMoney({
-        phoneNumber: phoneNumber,
+        shortcode: phoneNumber,
         ratedTokenAmount: tokenAmount,
         rawAmount: amount,
+        type:"MOBILE",
         mobileNetwork: 'Safaricom',
         tokenBalance: cUSDToken as TokenBalance,
         from: walletClient?.account?.address as `0x${string}`,
@@ -106,17 +107,13 @@ export default function SendMoney(
     setPhoneNumber(contact.phone)
   }
 
-  const validateAccount = async (shortcode: string) => {
+  const account_name = async (shortcode: string) => {
     try {
       // Adjust type and mobile_network as needed for your use case
-      const result = await Pretium_api.account_validation(
-        shortcode,
-        'MOBILE',
-        'Safaricom',
-      )
-      console.log('THE RESULT', result?.data?.public_name)
+      const result =await  validateAccount(shortcode,"Safaricom")
+      // console.log('THE RESULT', result?.data?.public_name)
       // Assume result.data.name or similar contains the public name
-      setAccountName(result?.data?.public_name || null)
+      setAccountName(result || null)
     } catch (error) {
       setAccountName(null)
     }
@@ -125,7 +122,7 @@ export default function SendMoney(
   React.useEffect(() => {
     if (phoneNumber.length >= 10) {
       // or your validation logic
-      validateAccount(phoneNumber)
+      account_name(phoneNumber)
     } else {
       setAccountName(null)
     }

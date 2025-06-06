@@ -3,11 +3,19 @@
 
 export type MAKEPAYMENT ={
      "transaction_hash":string,
-    "type": string,
+    "type": PaymentType,
     "shortcode": string,
+    account_number?:string,
     "amount": string,
-    "mobile_network": string
+    "mobile_network": MobileNetwork,
+    country_code?:string
+    account_name?:string
 }
+export type PaymentType = 'MOBILE' | 'PAYBILL' | 'BUY_GOODS'
+
+export type MobileNetwork = 'Safaricom' | 'MTN' | 'AirtelTigo' | 'Telcel'  | 'Airtel'
+
+export type CountryCodes =  'KES' |  'GHS' | 'UGX' | 'NGN' 
 
 //ALL SERVICES USES baseurl/v1/pay
 

@@ -26,6 +26,7 @@ import {
 } from '@divvi/mobile'
 
 
+
 export interface SendTransactionProp {
   to: `0x${string}`
   type: 'eip1559' | 'cip64' | undefined
@@ -210,8 +211,73 @@ export const getRatedAmount = async (amount: number,currencyCode: CurrencyCode) 
 
 export const getAmountToLocalCurrency = async (amount: number, currencyCode: CurrencyCode) => {
     const rate = await getExchangeRate(currencyCode)
+    console.log("RATE RATE",rate)
     
   const calculatedAmount = amount * parseFloat(rate?.buying_rate.toString())
   return  calculatedAmount
 }
 
+
+
+
+export const validateAccount = async (shortcode: string,mobile_network:string,country_code?:string) => {
+   
+      // Adjust type and mobile_network as needed for your use case
+      const result = await Pretium_api.account_validation(
+        shortcode,
+        'MOBILE',
+        mobile_network,
+        country_code
+      )
+      console.log('THE RESULT', result?.data?.public_name)
+      return result?.data?.public_name
+      // Assume result.data.name or similar contains the public name
+      //setAccountName(result?.data?.public_name || null)
+    // } catch (error) {
+    //   setAccountName(null)
+    // }
+  }
+
+
+
+// export const sendTransactionStable = async (send: SendTransactionProp) => {
+//   let decimal = send.tokenDecimal ? send.tokenDecimal : 18
+
+//   const transactionsrequest: TransactionRequest = {
+//     from: send.from,
+//     type: send.type,
+//     to: send.to,
+//     data: encodeFunctionData({
+//       abi: erc20Abi,
+//       functionName: 'transfer',
+//       args: [send.recipient, parseUnits(send.amount, decimal)],
+//     }),
+
+//     feeCurrency: send.feeCurrency,
+//     gas: BigInt(100000),
+//     maxFeePerGas: BigInt(10000000000),
+//     //  maxPriorityFeePerGas: BigInt(10000000000),
+//     //   _estimatedGasUse: BigInt(20000000),
+//     //   _baseFeePerGas: BigInt(200000000),
+//   }
+
+//   try {
+//     const unlockResult = await unlockAccount()
+//     if (unlockResult === 'success') {
+//       const txHash = await sendTransactions({
+//         feeCurrency: send.tokenBalance,
+//         transactions: [transactionsrequest],
+//         type: 'possible',
+//       })
+//       return txHash[0]
+//     } else if (unlockResult === 'failure') {
+//       console.warn('Failed to unlock wallet.')
+//       throw new Error('Failed to unlock Wallet')
+//     } else if (unlockResult === 'canceled') {
+//       console.log('User canceled unlock.')
+//       throw new Error('canceled unlock')
+//     }
+//   } catch (error) {
+//     throw new Error('Failed to send')
+//   }
+// }

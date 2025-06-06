@@ -1,6 +1,14 @@
 import * as React from "react"
-import { View, StyleSheet, TextInput, Text, TouchableOpacity, ScrollView, Image } from "react-native"
+import { View, StyleSheet, TextInput, Text, TouchableOpacity, ScrollView, Image, Alert } from "react-native"
 import { RootStackScreenProps } from "../../types";
+import { useSend } from "../../../hooks/useSend"
+import { useTokens } from "../../../utils"
+import { useWalletClient } from '@divvi/mobile'
+import { getExchangeRate, getRatedAmount, validateAccount } from "../../../lib/cKash"
+import debounce from "lodash.debounce"
+import { TokenBalance } from "src/tokens/slice"
+import AlertModal from "../../../components/AlertModal"
+import { MobileNetwork } from "../../../api/types";
 
 interface SavedContact {
     phone: string;
@@ -16,13 +24,44 @@ interface Bank {
 export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMoney'>) {
     const [selectedBank, setSelectedBank] = React.useState<Bank | null>(null)
     const [accountNumber, setAccountNumber] = React.useState<string>("")
-    const [accountName, setAccountName] = React.useState<string>("PABLO LEMONR")
-    const [amount, setAmount] = React.useState<string>("100")
+    const [accountName, setAccountName] = React.useState<string | null>(null)
+    
     const [activeTab, setActiveTab] = React.useState<'saved' | 'recent'>('saved')
+
+    const [amount, setAmount] = React.useState<string>("")
+        const [modalVisible, setModalVisible] = React.useState(false)
+        const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })
+        
+          const [tokenAmount, setTokenAmount] = React.useState<string>('')
+    
+        const { sendMoney, loading } = useSend()
+        
+          const { cUSDToken } = useTokens()
+    
+          const fetchTokenAmount = React.useCallback(
+              debounce(async (text: string) => {
+                const numericValue = parseFloat(text)
+                if (isNaN(numericValue)) {
+                  setTokenAmount('0')
+                  return
+                }
+          
+                try {
+                  const ratedAmountToDeduct = await getRatedAmount(numericValue, 'GHS')
+                  console.log("RATE AMOUNT",ratedAmountToDeduct)
+                  const rate = await getExchangeRate("GHS")
+                      console.log("RATE RATE",rate)
+                  setTokenAmount(ratedAmountToDeduct.toString())
+                } catch (error) {
+                  console.error('Failed to fetch exchange rate:', error)
+                }
+              }, 500), // Delay in ms
+              [],
+            )
 
     const banks: Bank[] = [
         { id: 'mtn', name: 'MTN', logo: '🟡' },
-        { id: 'telecel', name: 'Telecel', logo: '🔴' },
+        { id: 'telecel', name: 'Telcel', logo: '🔴' },
         { id: 'airteltigo', name: 'AirtelTigo', logo: '🔵' }
     ]
 
@@ -35,14 +74,78 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
         setSelectedBank(bank)
     }
 
+    const account_name = async (shortcode: string) => {
+        try {
+          // Adjust type and mobile_network as needed for your use case
+          const result =await  validateAccount(shortcode,selectedBank?.name as string,"GHS")
+          // console.log('THE RESULT', result?.data?.public_name)
+          // Assume result.data.name or similar contains the public name
+          setAccountName(result || null)
+        } catch (error) {
+          setAccountName(null)
+        }
+      }
+    
+      React.useEffect(() => {
+        if (accountNumber.length >=0) {
+          // or your validation logic
+          account_name(accountNumber)
+        } else {
+          setAccountName(null)
+        }
+      }, [accountNumber])
+
     const handleContinue = () => {
         console.log("Continue pressed", { selectedBank, accountNumber, accountName, amount })
     }
+
+    const handleAmountChange = (text: string) => {
+    setAmount(text)
+    fetchTokenAmount(text)
+  }
 
     const selectContact = (contact: SavedContact) => {
         setAccountNumber(contact.phone)
         setAccountName(contact.name)
     }
+
+    const resetForm = () => {
+    setAccountNumber('')
+    setAmount('')
+    setTokenAmount('')
+    
+  }
+  const handleSendMoney = async () => {
+        try {
+          if (!tokenAmount || tokenAmount == null || tokenAmount == undefined || !accountName) {
+            Alert.alert('All Fields required')
+            return
+          }
+          if( !selectedBank){
+            Alert.alert('Please Select Mobile Network')
+            return
+          }  
+          const {response } = await sendMoney({
+            shortcode: accountNumber,
+            account_name:accountName,
+            ratedTokenAmount: tokenAmount,
+            rawAmount: amount,
+            country_code:"GHS",
+            //account_number:accountNumber,
+            type:"MOBILE",
+            mobileNetwork: selectedBank?.name as MobileNetwork,
+            tokenBalance: cUSDToken as TokenBalance,
+            from: walletClient?.account?.address as `0x${string}`,
+            to: cUSDToken?.address as `0x${string}`,
+            feeCurrency: cUSDToken?.address as `0x${string}`,
+          })
+          console.log('THE RESPONSE', response)
+          setModalVisible(true)
+        } catch (error) {
+          console.log('THE ERROR', error)
+          Alert.alert(`${error}`)
+        }
+      }
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -115,7 +218,7 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
                     <TextInput
                         style={styles.amountInput}
                         value={amount}
-                        onChangeText={setAmount}
+                        onChangeText={handleAmountChange}
                         placeholder="100"
                         placeholderTextColor="#A0A0A0"
                         keyboardType="numeric"
@@ -125,7 +228,7 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
             </View>
 
             {/* Continue Button */}
-            <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
+            <TouchableOpacity style={styles.continueButton} onPress={handleSendMoney}>
                 <Text style={styles.continueButtonText}>Continue</Text>
             </TouchableOpacity>
 
@@ -172,6 +275,18 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
                     ))}
                 </View>
             </View>
+            <AlertModal
+                    visible={modalVisible}
+                    onClose={() => {
+                      setModalVisible(false)
+                      resetForm()
+                    }}
+                    title="Transaction Successful"
+                    amount={amount ? `Amount: ${amount} GHS` : ''}
+                    iconType="success"
+                    loading={loading}
+                    accountName={accountName ? `Recipient: ${accountName}` : ''}
+                  />
         </ScrollView>
     )
 }

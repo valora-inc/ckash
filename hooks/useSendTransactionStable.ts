@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Alert } from 'react-native';
-import { SendTransactionProp, sendTransactionStable } from '../services/sendtransaction';
+import { SendTransactionProp, sendTransactionStable } from '../lib/cKash';
+
 
 
 export const useSendTransactionStable = () => {
