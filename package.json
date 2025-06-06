@@ -87,8 +87,10 @@
     "react-native-simple-toast": "^3.3.1",
     "react-native-sms-retriever": "^1.1.1",
     "react-native-svg": "^15.12.0",
+    "react-native-svg-transformer": "^1.5.1",
     "react-native-vector-icons": "^10.2.0",
-    "react-native-video": "^6.6.4"
+    "react-native-video": "^6.6.4",
+    "twrnc": "^4.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",

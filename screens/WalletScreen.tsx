@@ -13,16 +13,20 @@ import {
 import { RootStackScreenProps } from './types'
 import { navigate } from '@divvi/mobile'
 import Card from '../components/ui/Card'
-import { Picker } from '@react-native-picker/picker'
-import Button from '../components/ui/Button'
 import { useTokens } from '../utils'
 import DropDownPicker from 'react-native-dropdown-picker'
-//import Icon from "react-native-vector-icons/Feather"
-//import Feather from "react-native-vector-icons/Feather";
+import MpesaIcon from '../assets/icons/sendmoney-icon.svg'
+import AirtimeIcon from '../assets/icons/airtime-icon.svg'
+import DataIcon from '../assets/icons/network-icon.svg'
+import PaybillIcon from '../assets/icons/paybills-icon.svg'
+import AirtelTigoIcon from '../assets/icons/airteltigo-icon.svg'
+import SendMoneyIcon from '../assets/icons/opay-icon.svg'
+import MTNIcon from '../assets/icons/mtn-icon.svg'
+import TelecelIcon from '../assets/icons/telecel-icon.svg'
+import SearchIcon from '../assets/icons/search.svg'
 
-import ckashxmento from '../assets/ckashxmento.png'
 import IconButton from '../components/ui/IconButton'
-
+import tw from 'twrnc'
 const Token = [
   {
     address: '0x765de816845861e75a25fca122bb6898b8b1282a',
@@ -177,55 +181,55 @@ const Token = [
 
 export type Service = {
   name: string
-  icon: string
+  icon: any
   navigate: string | any
 }
 const services: Record<string, Service[]> = {
   Kenya: [
     {
       name: 'M-Pesa',
-      icon: 'https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png',
+      icon: MpesaIcon,
       navigate: 'KenyaSendMoney',
     },
     {
       name: 'Air-time',
-      icon: 'https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png',
+      icon: AirtimeIcon,
       navigate: 'KenyaSendMoney', // Temporarily point to an existing screen until KenyaAirtime is implemented
     },
     {
       name: 'Data',
-      icon: 'https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png',
+      icon: DataIcon,
       navigate: 'KenyaSendMoney', // Temporarily point to an existing screen until KenyaData is implemented
     },
     {
       name: 'Paybill',
-      icon: 'https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png',
+      icon: PaybillIcon,
       navigate: 'KenyaSendMoney', // Temporarily point to an existing screen until KenyaPaybill is implemented
     },
   ],
   Uganda: [
     {
       name: 'MTN',
-      icon: 'https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png',
+      icon: MTNIcon,
       navigate: 'UgandaAirtime',
     },
   ],
   Nigeria: [
     {
       name: 'Send',
-      icon: 'https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png',
+      icon: SendMoneyIcon,
       navigate: 'NigeriaSendMoney',
     },
     {
       name: 'Air-time',
-      icon: 'https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png',
+      icon: AirtimeIcon,
       navigate: 'NigeriaAirtime',
     },
   ],
   Ghana: [
     {
       name: 'MTN',
-      icon: 'https://raw.githubusercontent.com/valora-inc/address-metadata/main/assets/tokens/cZAR.png',
+      icon: MTNIcon,
       navigate: 'KenyaSendMoney', // Temporarily point to an existing screen until GhanaMTN is implemented
     },
   ],
@@ -319,24 +323,25 @@ export default function WalletScreen(
   }, [tokens])
 
   return (
-    <View style={style.container}>
-      <View style={style.wallet}>
-        <View style={style.cardWallet}>
-          <Card style={style.card_wallet}>
+    <View style={tw`flex-1 pt-0 gap-4 items-center`}>
+      <View
+        style={tw`flex-5 bg-[#D7E1FF] w-[100%] justify-center items-center`}
+      >
+        <View style={tw`flex-2.5 pt-2 w-[100%] justify-center items-center`}>
+          <Card
+            style={tw` flex-1 bg-[#0034BB] w-[90%] h-[95%] gap-4 justify-between z-10`}
+          >
             {/* Wallet Title */}
-            <View style={style.wallet_title}>
+            <View style={tw`flex-row gap-4`}>
               <Text style={{ color: '#AEC5FF' }}>Wallet Balance</Text>
               <TouchableOpacity
                 onPress={() => setBalanceHidden(!balanceHidden)}
-              >
-                {/** <FeatherIcon name={balanceHidden? "eye-off":"eye"} size={22} color="#E4EBFE"/>
-                 <FeatherIcon name={balanceHidden? "eye-off":"eye"} size={22} color="#E4EBFE"/> */}
-              </TouchableOpacity>
+              ></TouchableOpacity>
             </View>
 
             {/* Wallet Balance */}
-            <View style={style.wallet_balance}>
-              <View style={style.balance}>
+            <View style={tw`flex-row justify-between`}>
+              <View style={tw`flex-row gap-2`}>
                 <Text
                   style={{
                     color: '#AEC5FF',
@@ -367,15 +372,6 @@ export default function WalletScreen(
                   zIndex: 1000,
                 }}
               >
-                {/* <Picker
-        selectedValue={selectedCountry}
-        onValueChange={(value) => setSelectedCountry(value)}
-        style={{ marginBottom: 4 }}
-      >
-        {Object.keys(services).map((country) => (
-          <Picker.Item key={country} label={country} value={country} />
-        ))}
-      </Picker> */}
                 <DropDownPicker
                   open={open}
                   value={value}
@@ -389,110 +385,68 @@ export default function WalletScreen(
                     letterSpacing: 0,
                     verticalAlign: 'bottom',
                   }}
-                  // zIndex={1000}
                   dropDownContainerStyle={{ zIndex: 1000 }}
-                  style={{
-                    marginBottom: open ? 0 : 0,
-                    zIndex: 1000,
-                    height: 30,
-                    borderColor: 'transparent',
-                    backgroundColor: '#8DADFE',
-                    paddingVertical: 0,
-                  }}
+                  style={tw`h-6 w-32 border-transparent bg-[#8DADFE] ml-2 px-4  rounded-md`}
                 />
               </View>
             </View>
 
             {/* Buttons */}
-            <View style={style.button_wallet}>
+            <View style={tw`flex-row justify-between items-center gap-2`}>
               <IconButton
-                style={style.button}
-                textStyle={style.button_text}
+                style={tw`border-1 border-[#789EFF]`}
+                textStyle={tw`font-medium text-sm text-[#1B1A46]`}
                 iconName="send"
                 iconPostion="left"
                 lable="Send"
                 onPress={onPressSendMoney}
               />
               <IconButton
-                style={style.button}
-                textStyle={style.button_text}
+                style={tw`border-1 border-[#789EFF]`}
+                textStyle={tw`font-medium text-sm text-[#1B1A46]`}
                 iconName="arrow-down"
                 iconPostion="left"
                 lable="Receive"
                 onPress={onPressRecieveMoney}
               />
               <IconButton
-                style={style.button}
-                textStyle={style.button_text}
+                style={tw`border-1 border-[#789EFF]`}
+                textStyle={tw`font-medium text-sm text-[#1B1A46]`}
                 iconName="swap-horizontal"
                 iconPostion="left"
                 lable="Swap"
                 onPress={onPressHoldUSD}
               />
-              {/* <IconButton style={style.button} textStyle={style.button_text} iconName="send" iconPostion="left"  lable="Buy" onPress={() => {}} /> */}
             </View>
           </Card>
         </View>
 
         {/* Services */}
-        <View style={style.wallet_services}>
-          <View
-            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
-          >
-            <Text
-              style={{
-                fontWeight: '400',
-                fontSize: 12,
-                letterSpacing: 0,
-                verticalAlign: 'bottom',
-                color: '#1B1A46',
-              }}
-            >
-              Quick Utilities
-            </Text>
-            {/* <Text>Edit</Text> */}
-          </View>
-          <View style={style.services}>
+        <View
+          style={tw`flex-1.5 w-[90%] bg-transparent justify-center pb-4`}
+        >
+          <View style={tw`flex flex-col justify-start pt-2 pb-2`}>
+              <Text style={tw`pt-2 pb-2 text-left self-start font-medium text-sm text-[#1B1A46]`}>
+                Quick Utilities
+              </Text>
             <FlatList
               data={services[selectedCountry]}
-              keyExtractor={(item, index) => index.toString()}
+              keyExtractor={(item) => item.name}
               horizontal
               showsHorizontalScrollIndicator={false}
-              ItemSeparatorComponent={() => <View style={{ width: 8 }} />}
+              ItemSeparatorComponent={() => <View style={tw`w-2.5`} />}
               renderItem={({ item }) => (
                 <Pressable
+                  key={item.name}
                   onPress={() => {
                     console.log(`Navigate to ${item.navigate}`)
                     navigate(item.navigate)
                   }}
-                  style={{
-                    alignItems: 'center',
-
-                    backgroundColor: '#C0D0FF',
-                    borderRadius: 4,
-                    width: 75,
-                    height: 61,
-                    paddingHorizontal: 12,
-                    borderWidth: 1,
-                    borderColor: '#AEC5FF',
-                    paddingVertical: 12,
-                    gap: 7,
-                  }}
+                  style={tw`justify-center items-center bg-[#C0D0FF] rounded  px-6.5 border border-[#AEC5FF] py-2.5`}
                 >
-                  <Image
-                    source={{ uri: item.icon }}
-                    style={{ width: 20, height: 20 }}
-                  />
+                  <item.icon width={16} height={16} />
                   <Text
-                    style={{
-                      fontSize: 10,
-                      textAlign: 'center',
-                      fontWeight: '400',
-                      color: '#002586',
-                      verticalAlign: 'bottom',
-                      lineHeight: 16,
-                      letterSpacing: 0,
-                    }}
+                    style={tw`text-[10px] text-center font-normal text-[#002586] leading-4`}
                   >
                     {item.name}
                   </Text>
@@ -504,244 +458,70 @@ export default function WalletScreen(
       </View>
 
       {/* Promotion */}
-      <View style={style.promotion}>
-        <Card style={style.promotion_card}>
+      <View
+        style={tw`flex-1.5 w-[100%] bg-transparent justify-center items-center`}
+      >
+        <View style={tw`w-full bg-transparent h-[90%] p-0 m-0 shadow-none`}>
           <TouchableOpacity
-            style={style.promotion_logo}
+            style={tw`justify-center items-center`}
             onPress={() => Linking.openURL(currentPromo.externalLink)}
           >
-            {/* <Image source={{ uri: requirecurrentPromo.logoOne }} style={{ width: 100, height: 100 }} /> */}
             <Image
-              resizeMode="contain"
+              resizeMode="cover"
               source={require('../assets/ckashxmento.png')}
-              style={{ width: '100%' }}
+              style={tw`w-[90%] h-[100%] rounded-xl`}
             />
           </TouchableOpacity>
-        </Card>
+        </View>
       </View>
 
       {/* Tokens */}
-      <View style={style.tokens}>
-        <View style={style.tokens_title}>
-          <Text>My Assets</Text>
-          <Text>Search</Text>
-        </View>
+      <View
+        style={tw`flex-4 w-[100%] px-4`}
+      >
+        <View style={tw`px-2 pt-2 pb-2`}>
+          <View style={tw`flex-row justify-between items-center mb-2`}>
+            <Text style={tw`font-medium text-base text-[#1B1A46]`}>
+              My Assets
+            </Text>
+            <SearchIcon width={22} height={22} />
+          </View>
 
-        <FlatList
-          data={tokens}
-          keyExtractor={(item) => item.symbol}
-          contentContainerStyle={style.tokens_container}
-          renderItem={({ item }) => (
-            <Card style={style.tokens_card}>
-              <View style={style.token_image_name_symbol}>
+          <FlatList
+            data={tokens}
+            keyExtractor={(item) => item.tokenId}
+            contentContainerStyle={tw`pb-4`}
+            renderItem={({ item }) => (
+              <View
+                style={tw`flex-row items-center bg-white rounded-lg  py-2 mb-2`}
+              >
                 <Image
                   source={{ uri: item.imageUrl }}
-                  style={style.token_image}
+                  style={tw`w-9 h-9 mr-3`}
                   resizeMode="contain"
                 />
-                <View style={style.token_name_info}>
-                  <Text style={style.token_symbol}>{item.symbol}</Text>
-
-                  <Text style={style.token_name}>{item.name}</Text>
+                <View style={tw`flex-1`}>
+                  <Text style={tw`font-bold text-sm text-[#0034BB]`}>
+                    {item.symbol}
+                  </Text>
+                  <Text style={tw`text-xs text-gray-500`}>{item.name}</Text>
                 </View>
-              </View>
-
-              <View style={style.token_name_info}>
-                <View style={style.token_balance_symbol}>
-                  <Text style={style.token_balance}>
+                <View style={tw`items-end`}>
+                  <Text style={tw`font-bold text-base text-[#0034BB]`}>
                     {Number(item.balance).toFixed(4)}
                   </Text>
-                  <Text style={style.token_symbol}>{item.symbol}</Text>
+                  <Text style={tw`text-xs text-gray-500`}>
+                    $
+                    {(
+                      Number(item.balance) * Number(item.lastKnownPriceUsd)
+                    ).toFixed(4)}
+                  </Text>
                 </View>
-
-                <Text style={style.token_dollar_amount}>
-                  $
-                  {(
-                    Number(item.balance) * Number(item.lastKnownPriceUsd)
-                  ).toFixed(4)}
-                </Text>
               </View>
-            </Card>
-          )}
-        />
+            )}
+          />
+        </View>
       </View>
     </View>
   )
 }
-
-const style = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 0,
-    gap: 4,
-    alignItems: 'center',
-  },
-  wallet: {
-    flex: 5,
-    backgroundColor: '#D7E1FF',
-    width: '100%',
-  },
-  cardWallet: {
-    flex: 2.5,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  card_wallet: {
-    backgroundColor: '#0034BB',
-    width: '90%',
-    height: '90%',
-    paddingHorizontal: 16,
-    gap: 4,
-    justifyContent: 'space-between',
-    zIndex: 1000,
-  },
-  wallet_title: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  wallet_balance: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  balance: {
-    flexDirection: 'row',
-    gap: 8,
-    verticalAlign: 'bottom',
-  },
-  button_wallet: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: 2,
-  },
-  button: {
-    borderWidth: 1,
-    borderColor: '#789EFF',
-  },
-  button_text: {
-    fontWeight: '500',
-    fontSize: 12,
-    lineHeight: 12,
-    letterSpacing: 0,
-    textAlign: 'center',
-  },
-  wallet_services: {
-    flex: 1.5,
-    paddingHorizontal: 16,
-    gap: 10,
-  },
-  services: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  promotion: {
-    flex: 1.5,
-    width: '100%',
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  tokens: {
-    flex: 4,
-    width: '100%',
-    paddingHorizontal: 16,
-    // backgroundColor: "green",
-  },
-  tokens_title: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  tokens_container: {
-    paddingHorizontal: 16,
-    // paddingBottom: 100
-  },
-  tokens_card: {
-    // height:"20%",
-    flexDirection: 'row',
-    backgroundColor: 'transparent',
-    borderRadius: 0,
-    shadowColor: 'transparent',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0,
-    shadowRadius: 0,
-    elevation: 0,
-    gap: 1,
-    padding: 0,
-    justifyContent: 'space-between',
-  },
-  token_name: {
-    fontWeight: '400',
-    fontSize: 10,
-    lineHeight: 16,
-    letterSpacing: 0,
-    color: '#000F35',
-    verticalAlign: 'bottom',
-  },
-  image: {
-    width: 20,
-    height: 20,
-    marginBottom: 12,
-  },
-  token_image: {
-    width: 36,
-    height: 36,
-    marginBottom: 12,
-  },
-  token_symbol: {
-    fontWeight: '600',
-    fontSize: 16,
-    lineHeight: 16,
-    letterSpacing: 0,
-    color: '#001E6B',
-    verticalAlign: 'bottom',
-  },
-  token_name_info: {
-    flexDirection: 'column',
-    gap: 1,
-  },
-  token_image_name_symbol: {
-    flexDirection: 'row',
-    gap: 16,
-  },
-  token_balance_symbol: {
-    flexDirection: 'row',
-    gap: 4,
-  },
-  token_balance: {
-    color: '#001E6B',
-    fontWeight: '600',
-    fontSize: 16,
-    lineHeight: 16,
-    letterSpacing: 0,
-    verticalAlign: 'bottom',
-  },
-  token_dollar_amount: {
-    fontWeight: '400',
-    fontSize: 10,
-    lineHeight: 16,
-    letterSpacing: 0,
-    verticalAlign: 'bottom',
-  },
-  promotion_logo: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  promotion_card: {
-    backgroundColor: 'transparent',
-    width: '90%',
-    height: '90%',
-    paddingHorizontal: 16,
-    gap: 4,
-    justifyContent: 'space-between',
-    padding: 0,
-    shadowColor: 'transparent',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 0,
-    marginVertical: 0,
-  },
-})
