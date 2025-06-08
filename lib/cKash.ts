@@ -24,6 +24,7 @@ import {
 //   getFees,
 //   usePrepareTransactions,
 } from '@divvi/mobile'
+import { ACCOUNTVALIDATION } from '../api/types'
 
 
 
@@ -89,7 +90,7 @@ export const sendTransactionStable = async (send: SendTransactionProp) => {
 }
 
 // Supported currency codes
-export type CurrencyCode = 'UGX' | 'KES' | 'GHS'
+export type CurrencyCode = 'UGX' | 'KES' | 'GHS' | 'NGN'
 
 interface TransactionParams {
   walletClient: any
@@ -199,6 +200,7 @@ export const getCurrencySymbol = (currencyCode: CurrencyCode): string => {
     KES: 'KSh',
     UGX: 'USh',
     GHS: 'GH₵',
+    NGN: "NGN"
   }
   return symbols[currencyCode]
 }
@@ -220,17 +222,26 @@ export const getAmountToLocalCurrency = async (amount: number, currencyCode: Cur
 
 
 
-export const validateAccount = async (shortcode: string,mobile_network:string,country_code?:string) => {
-   
-      // Adjust type and mobile_network as needed for your use case
-      const result = await Pretium_api.account_validation(
-        shortcode,
-        'MOBILE',
-        mobile_network,
-        country_code
+export const validateAccount = async (validation:ACCOUNTVALIDATION) => {
+  // shortcode,
+  // 'MOBILE',
+  // mobile_network,
+  // country_code
+  // Adjust type and mobile_network as needed for your use case
+  console.log("THE DETAILS",validation)
+  const result = await Pretium_api.account_validation({
+    shortcode: validation.shortcode,
+    type: validation.type || "MOBILE",
+    mobile_network: validation.mobile_network,
+    bank_code: validation.bank_code,
+    account_number: validation.account_number,
+    country_code:validation.country_code
+    
+      }
+        
       )
-      console.log('THE RESULT', result?.data?.public_name)
-      return result?.data?.public_name
+      console.log('THE RESULT', result?.data?.public_name || result?.data?.account_name)
+      return result?.data?.public_name || result?.data?.account_name
       // Assume result.data.name or similar contains the public name
       //setAccountName(result?.data?.public_name || null)
     // } catch (error) {

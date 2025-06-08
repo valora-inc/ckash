@@ -1,4 +1,4 @@
-import { MAKEPAYMENT } from './types'
+import { ACCOUNTVALIDATION, MAKEPAYMENT } from './types'
 
 class Pretium {
   api_key: string
@@ -40,17 +40,20 @@ class Pretium {
     }
   }
     
-  account_validation = async (shortcode: string, type: string, mobile_network: string,country_code?:string) => {
+  account_validation = async (validation:ACCOUNTVALIDATION) => {
     const requestOptions = {
       method: 'POST' as const,
       headers: this.getHeaders(),
       body: JSON.stringify({
-        shortcode: shortcode,
-        type: type,
-        mobile_network: mobile_network,
+        shortcode: validation.shortcode,
+        type: validation.type,
+        mobile_network: validation.mobile_network,
+        account_number: validation.account_number,
+        bank_code:validation.bank_code,
       }),
     }
-    const url = country_code? `${this.baseURL}v1/validation/${country_code}` : `${this.baseURL}v1/validation`
+    const url = validation.country_code ? `${this.baseURL}v1/validation/${validation.country_code}` : `${this.baseURL}v1/validation`
+    console.log("THE URL",url)
     try {
       const response = await fetch(url, requestOptions)
       const data = await response.json()
@@ -79,7 +82,9 @@ class Pretium {
       amount: makepayment.amount,
       mobile_network: makepayment.mobile_network,
       account_number:makepayment.account_number,
-      account_name:makepayment.account_name
+      account_name: makepayment.account_name,
+      bank_code: makepayment.bank_code,
+      bank_name:makepayment.bank_name
     }
     console.log("THE PAYLOAD",payload)
     const requestOptions = {
@@ -98,6 +103,8 @@ class Pretium {
       console.log('ERROR making payment')
     }
   }
+
+  //banks
 }
 
 export { Pretium }

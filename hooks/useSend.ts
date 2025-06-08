@@ -12,12 +12,14 @@ type MobileNetwork = 'Safaricom' | 'MTN' | 'Airtel' | 'AirtelTigo' | 'Telcel'
 //  * account_number:string, i.e "0701707772"
 //  * amount:string  , i.e "5000"
 interface SendMoneyProps {
-  shortcode: string
+  shortcode?: string
   rawAmount?: string
   account_number?:string
   country_code?:CountryCodes
-  type:PaymentType
-  account_name?:string
+  type?:PaymentType
+  account_name?: string
+  bank_name?: string
+  bank_code?:string
   ratedTokenAmount?: string
   mobileNetwork: MobileNetwork
   tokenBalance: TokenBalance
@@ -38,6 +40,8 @@ export const useSend = () => {
     account_number,
     country_code,
     ratedTokenAmount,
+    bank_code,
+    bank_name,
     account_name,
     mobileNetwork,
     tokenBalance,
@@ -73,7 +77,9 @@ export const useSend = () => {
         transaction_hash: txHash,
         amount: rawAmount as string,
         country_code:country_code,
-        account_name:account_name
+        account_name: account_name,
+        bank_code: bank_code,
+        bank_name:bank_name
       })
       console.log("THE ACCOUNT Name",account_name)
        console.log("Country Code",country_code)

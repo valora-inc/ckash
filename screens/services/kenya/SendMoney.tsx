@@ -110,7 +110,7 @@ export default function SendMoney(
   const account_name = async (shortcode: string) => {
     try {
       // Adjust type and mobile_network as needed for your use case
-      const result =await  validateAccount(shortcode,"Safaricom")
+      const result =await  validateAccount({shortcode:shortcode,mobile_network:"Safaricom"})
       // console.log('THE RESULT', result?.data?.public_name)
       // Assume result.data.name or similar contains the public name
       setAccountName(result || null)

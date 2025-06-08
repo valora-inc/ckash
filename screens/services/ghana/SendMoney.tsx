@@ -76,8 +76,9 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
 
     const account_name = async (shortcode: string) => {
         try {
+            //shortcode,selectedBank?.name as string,"GHS"
           // Adjust type and mobile_network as needed for your use case
-          const result =await  validateAccount(shortcode,selectedBank?.name as string,"GHS")
+          const result =await  validateAccount({shortcode:shortcode,mobile_network:selectedBank?.name as MobileNetwork,country_code:"GHS"})
           // console.log('THE RESULT', result?.data?.public_name)
           // Assume result.data.name or similar contains the public name
           setAccountName(result || null)

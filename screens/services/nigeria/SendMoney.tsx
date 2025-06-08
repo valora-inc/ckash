@@ -16,7 +16,14 @@ import {
 import { RootStackScreenProps } from '../../types'
 import Card from '../../../components/ui/Card'
 import Button from '../../../components/ui/Button'
-
+import { useSend } from "../../../hooks/useSend"
+import { useTokens } from "../../../utils"
+import { useWalletClient } from '@divvi/mobile'
+import { getExchangeRate, getRatedAmount, validateAccount } from "../../../lib/cKash"
+import debounce from "lodash.debounce"
+import { TokenBalance } from "src/tokens/slice"
+import AlertModal from "../../../components/AlertModal"
+import { MobileNetwork, NigeriaBanks } from "../../../api/types";
 const popularBanks = [
   {
     id: '1',
@@ -56,11 +63,24 @@ export default function SendMoney(
   const [selectedBank, setSelectedBank] = React.useState('')
   const [accountNumber, setAccountNumber] = React.useState('')
   const [amount, setAmount] = React.useState('')
-  const [accountName, setAccountName] = React.useState('PABLO LEMONR')
+  const [bankcode, setBankCode] = React.useState('')
+ 
+      const [accountName, setAccountName] = React.useState<string | null>(null)
   const [savedContacts, setSavedContacts] = React.useState(initialSavedContacts)
+  
+          const [modalVisible, setModalVisible] = React.useState(false)
+          const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })
+          
+            const [tokenAmount, setTokenAmount] = React.useState<string>('')
+      
+          const { sendMoney, loading } = useSend()
+          
+            const { cUSDToken } = useTokens()
 
   const handleBankSelect = (bankName: string) => {
     setSelectedBank(bankName)
+    const bank_code = NigeriaBanks[bankName]
+    setBankCode(bank_code)
   }
 
   const handleAccountNumberChange = (text: string) => {
@@ -69,10 +89,10 @@ export default function SendMoney(
     // In a real app, you would trigger account name fetch here
   }
 
-  const handleAmountChange = (text: string) => {
-    const cleaned = text.replace(/[^0-9]/g, '')
-    setAmount(cleaned)
-  }
+  // const handleAmountChange = (text: string) => {
+  //   const cleaned = text.replace(/[^0-9]/g, '')
+  //   setAmount(cleaned)
+  // }
 
   const addToRecentContacts = () => {
     if (accountNumber && selectedBank) {
@@ -138,6 +158,106 @@ export default function SendMoney(
       }
     }
   }
+
+   
+      
+            const fetchTokenAmount = React.useCallback(
+                debounce(async (text: string) => {
+                  const numericValue = parseFloat(text)
+                  if (isNaN(numericValue)) {
+                    setTokenAmount('0')
+                    return
+                  }
+            
+                  try {
+                    const ratedAmountToDeduct = await getRatedAmount(numericValue, 'NGN')
+                    console.log("RATE AMOUNT",ratedAmountToDeduct)
+                    const rate = await getExchangeRate("NGN")
+                        console.log("RATE RATE",rate)
+                    setTokenAmount(ratedAmountToDeduct.toString())
+                  } catch (error) {
+                    console.error('Failed to fetch exchange rate:', error)
+                  }
+                }, 500), // Delay in ms
+                [],
+            )
+  
+  
+            const handleAmountChange = (text: string) => {
+              setAmount(text)
+              fetchTokenAmount(text)
+            }
+              
+            
+                
+            
+                const resetForm = () => {
+                setAccountNumber('')
+                setAmount('')
+                  setTokenAmount('')
+                  
+    setSelectedBank('')
+    setAmount('')
+    setAccountName('')
+                
+              }
+
+
+  const account_name = async (account_number: string) => {
+          try {
+            // Adjust type and mobile_network as needed for your use case
+            const result =await  validateAccount({account_number:account_number,bank_code:bankcode,country_code:"NGN"})
+            // console.log('THE RESULT', result?.data?.public_name)
+            // Assume result.data.name or similar contains the public name
+            setAccountName(result || null)
+          } catch (error) {
+            setAccountName(null)
+          }
+        }
+      
+        React.useEffect(() => {
+          if (accountNumber.length >=0) {
+            // or your validation logic
+            account_name(accountNumber)
+          } else {
+            setAccountName(null)
+          }
+        }, [accountNumber])
+  
+  
+  const handleSendMoney = async () => {
+          try {
+            if (!tokenAmount || tokenAmount == null || tokenAmount == undefined) {
+              Alert.alert('All Fields required')
+              return
+            }
+            if( !selectedBank){
+              Alert.alert('Please Select Mobile Network')
+              return
+            }  
+            const {response } = await sendMoney({
+              //shortcode: accountNumber,
+              account_name:accountName as string,
+              ratedTokenAmount: tokenAmount,
+              rawAmount: amount,
+              country_code:"NGN",
+              account_number: accountNumber,
+              bank_code: bankcode,
+              bank_name:selectedBank,
+              //type:"MOBILE",
+              mobileNetwork: selectedBank as MobileNetwork,
+              tokenBalance: cUSDToken as TokenBalance,
+              from: walletClient?.account?.address as `0x${string}`,
+              to: cUSDToken?.address as `0x${string}`,
+              feeCurrency: cUSDToken?.address as `0x${string}`,
+            })
+            console.log('THE RESPONSE', response)
+            setModalVisible(true)
+          } catch (error) {
+            console.log('THE ERROR', error)
+            Alert.alert(`${error}`)
+          }
+        }
 
   return (
     <ScrollView style={styles.container}>
@@ -258,10 +378,22 @@ export default function SendMoney(
         {/* Continue Button */}
         <Button
           title="Continue"
-          onPress={handleContinue}
+          onPress={handleSendMoney}
           style={styles.continueButton}
         />
       </View>
+      <AlertModal
+                          visible={modalVisible}
+                          onClose={() => {
+                            setModalVisible(false)
+                            resetForm()
+                          }}
+                          title="Transaction Successful"
+                          amount={amount ? `Amount: ${amount} GHS` : ''}
+                          iconType="success"
+                          loading={loading}
+                          accountName={accountName ? `Recipient: ${accountName}` : ''}
+                        />
     </ScrollView>
   )
 }
