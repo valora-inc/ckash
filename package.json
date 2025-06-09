@@ -97,6 +97,7 @@
     "@expo/config-plugins": "~9.0.17",
     "@types/lodash.debounce": "^4.0.9",
     "@types/react": "~18.3.20",
+    "@types/react-native-vector-icons": "^6.4.18",
     "@valora/prettier-config": "^0.0.1",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3"

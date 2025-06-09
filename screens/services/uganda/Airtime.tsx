@@ -15,6 +15,13 @@ import {
 import { RootStackScreenProps } from '../../types'
 import Card from '../../../components/ui/Card'
 import Button from '../../../components/ui/Button'
+import debounce from 'lodash.debounce'
+import { useTokens } from '../../../utils'
+import { TokenBalance } from 'src/tokens/slice'
+import { getExchangeRate, getRatedAmount } from '../../../lib/cKash'
+import { useSend } from '../../../hooks/useSend'
+import AlertModal from '../../../components/AlertModal'
+import { useWalletClient } from '@divvi/mobile'
 
 const PRESET_AMOUNTS = [
   { value: '100', display: 'USh100' },
@@ -50,14 +57,80 @@ export default function Airtime(_props: RootStackScreenProps<'UgandaAirtime'>) {
   const [phoneNumber, setPhoneNumber] = React.useState('')
   const [savedContacts, setSavedContacts] = React.useState(initialSavedContacts)
 
+  const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })
+   
+    const [tokenAmount, setTokenAmount] = React.useState<string>('')
+    const { sendMoney, loading } = useSend()
+  
+    const { cUSDToken } = useTokens()
+    const [modalVisible, setModalVisible] = React.useState(false)
+    const [accountName, setAccountName] = React.useState<string | null>(null)
+  
+    const handlePhoneChange = (text: string) => {
+      const cleaned = text.replace(/[^0-9]/g, '')
+      setPhoneNumber(cleaned)
+    }
+  
+    const fetchTokenAmount = React.useCallback(
+      debounce(async (text: string) => {
+        const numericValue = parseFloat(text)
+        if (isNaN(numericValue)) {
+          setTokenAmount('0')
+          return
+        }
+  
+        try {
+          const ratedAmountToDeduct = await getRatedAmount(numericValue, 'UGX')
+           const rate = await getExchangeRate('UGX')
+              console.log("RATE RATE",rate)
+              console.log("THE Rated",ratedAmountToDeduct.toString())
+          setTokenAmount(ratedAmountToDeduct.toString())
+        } catch (error) {
+          console.error('Failed to fetch exchange rate:', error)
+        }
+      }, 500), // Delay in ms
+      [],
+    )
+  
+    const handleAmountChange = (text: string) => {
+      setAmount(text)
+      fetchTokenAmount(text)
+    }
+    const handleSendMoney = async () => {
+      try {
+        if (!tokenAmount || tokenAmount == null || tokenAmount == undefined || !amount) {
+          Alert.alert('Please provide Amount')
+          return
+        }
+        const {response } = await sendMoney({
+          shortcode: phoneNumber,
+          ratedTokenAmount: tokenAmount,
+          rawAmount: amount,
+          country_code:"UGX",
+          type:"MOBILE",
+          mobileNetwork: "MTN",
+          tokenBalance: cUSDToken as TokenBalance,
+          from: walletClient?.account?.address as `0x${string}`,
+          to: cUSDToken?.address as `0x${string}`,
+          feeCurrency: cUSDToken?.address as `0x${string}`,
+
+        })
+        console.log('THE RESPONSE', response)
+        setModalVisible(true)
+      } catch (error) {
+        console.log('THE ERROR', error)
+        Alert.alert(`${error}`)
+      }
+    }
+
   const handleAmountPress = (value: string) => {
     setAmount(value)
   }
 
-  const handleAmountChange = (text: string) => {
-    const cleaned = text.replace(/[^0-9]/g, '')
-    setAmount(cleaned)
-  }
+  // const handleAmountChange = (text: string) => {
+  //   const cleaned = text.replace(/[^0-9]/g, '')
+  //   setAmount(cleaned)
+  // }
 
   const handlePhoneNumberChange = (text: string) => {
     // Remove any non-numeric characters
@@ -108,6 +181,13 @@ export default function Airtime(_props: RootStackScreenProps<'UgandaAirtime'>) {
         }
       }
     }
+  }
+
+  const resetForm = () => {
+    setPhoneNumber('')
+    setAmount('')
+    setTokenAmount('')
+    
   }
 
   const handleContinue = () => {
@@ -183,7 +263,7 @@ export default function Airtime(_props: RootStackScreenProps<'UgandaAirtime'>) {
             <TextInput
               style={styles.phoneInput}
               value={phoneNumber}
-              onChangeText={handlePhoneNumberChange}
+              onChangeText={handlePhoneChange}
               placeholder="0776 057 3659"
               placeholderTextColor="#A0A0A0"
               keyboardType="numeric"
@@ -204,7 +284,7 @@ export default function Airtime(_props: RootStackScreenProps<'UgandaAirtime'>) {
         {/* Continue Button */}
         <Button
           title="Continue"
-          onPress={handleContinue}
+          onPress={handleSendMoney}
           style={styles.continueButton}
         />
 
@@ -228,6 +308,18 @@ export default function Airtime(_props: RootStackScreenProps<'UgandaAirtime'>) {
           ))}
         </View>
       </View>
+        <AlertModal
+              visible={modalVisible}
+              onClose={() => {
+                setModalVisible(false)
+                resetForm()
+              }}
+              title="Transaction Successful"
+              amount={amount ? `Amount: ${amount} KES` : ''}
+              iconType="success"
+              loading={loading}
+              accountName={accountName ? `Recipient: ${accountName}` : ''}
+            />
     </ScrollView>
   )
 }

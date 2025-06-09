@@ -1,13 +1,81 @@
 import * as React from "react"
-import { View, StyleSheet, TextInput, Text, TouchableOpacity, ScrollView } from "react-native"
+import { View, StyleSheet, TextInput, Text, TouchableOpacity, ScrollView, Alert } from "react-native"
 import { RootStackScreenProps } from "../../types"
+import { useSend } from "../../../hooks/useSend"
+import { useTokens } from "../../../utils"
+import { useWalletClient } from '@divvi/mobile'
+import { getRatedAmount } from "../../../lib/cKash"
+import debounce from "lodash.debounce"
+import { TokenBalance } from "src/tokens/slice"
+import AlertModal from "../../../components/AlertModal"
 
 export default function MPESABuyGoods(_props: RootStackScreenProps<'KenyaBuyGoods'>) {
     const [tillNumber, setTillNumber] = React.useState<string>("100")
     const [amount, setAmount] = React.useState<string>("5035")
+      const [tokenAmount, setTokenAmount] = React.useState<string>('')
+     const [modalVisible, setModalVisible] = React.useState(false)
+        const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })
 
     const handleContinue = () => {
         console.log("Continue pressed", { tillNumber, amount })
+    }
+const { sendMoney, loading } = useSend()
+    
+      const { cUSDToken } = useTokens()
+
+      const fetchTokenAmount = React.useCallback(
+          debounce(async (text: string) => {
+            const numericValue = parseFloat(text)
+            if (isNaN(numericValue)) {
+              setTokenAmount('0')
+              return
+            }
+      
+            try {
+              const ratedAmountToDeduct = await getRatedAmount(numericValue, 'KES')
+              setTokenAmount(ratedAmountToDeduct.toString())
+            } catch (error) {
+              console.error('Failed to fetch exchange rate:', error)
+            }
+          }, 500), // Delay in ms
+          [],
+        )
+
+        const handleAmountChange = (text: string) => {
+    setAmount(text)
+    fetchTokenAmount(text)
+  }
+
+   const resetForm = () => {
+    setTillNumber('')
+    setAmount('')
+    setTokenAmount('')
+    
+  }
+
+const handleBuyGoods = async () => {
+      try {
+        if (!tokenAmount || tokenAmount == null || tokenAmount == undefined) {
+          Alert.alert('Please provide Amount')
+          return
+        }
+        const {response } = await sendMoney({
+          shortcode: tillNumber,
+          ratedTokenAmount: tokenAmount,
+          rawAmount: amount,          
+          type:"BUY_GOODS",
+          mobileNetwork: 'Safaricom',
+          tokenBalance: cUSDToken as TokenBalance,
+          from: walletClient?.account?.address as `0x${string}`,
+          to: cUSDToken?.address as `0x${string}`,
+          feeCurrency: cUSDToken?.address as `0x${string}`,
+        })
+        console.log('THE RESPONSE', response)
+        setModalVisible(true)
+      } catch (error) {
+        console.log('THE ERROR', error)
+        Alert.alert(`${error}`)
+      }
     }
 
     return (
@@ -50,17 +118,17 @@ export default function MPESABuyGoods(_props: RootStackScreenProps<'KenyaBuyGood
                         <TextInput
                             style={styles.amountInput}
                             value={amount}
-                            onChangeText={setAmount}
+                            onChangeText={handleAmountChange}
                             placeholder="Enter amount"
                             placeholderTextColor="#A0A0A0"
                             keyboardType="numeric"
                         />
                     </View>
-                    <Text style={styles.limitText}>(min: 200 max 60,000)</Text>
+                    <Text style={styles.limitText}>(min: 20 max 60,000)</Text>
                 </View>
 
                 {/* Continue Button */}
-                <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
+                <TouchableOpacity style={styles.continueButton} onPress={handleBuyGoods}>
                     <Text style={styles.continueButtonText}>Continue</Text>
                 </TouchableOpacity>
 
@@ -72,6 +140,18 @@ export default function MPESABuyGoods(_props: RootStackScreenProps<'KenyaBuyGood
                     </Text>
                 </View>
             </View>
+             <AlertModal
+                    visible={modalVisible}
+                    onClose={() => {
+                      setModalVisible(false)
+                      resetForm()
+                    }}
+                    title="Transaction Successful"
+                    amount={amount ? `Amount: ${amount} KES` : ''}
+                    iconType="success"
+                    loading={loading}
+                    accountName={tillNumber ? `Recipient: ${tillNumber}` : ''}
+                  />
         </ScrollView>
     )
 }

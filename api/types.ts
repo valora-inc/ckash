@@ -3,11 +3,40 @@
 
 export type MAKEPAYMENT ={
      "transaction_hash":string,
-    "type": string,
-    "shortcode": string,
+    "type"?: PaymentType,
+    "shortcode"?: string,
+    account_number?:string,
     "amount": string,
-    "mobile_network": string
+    "mobile_network": MobileNetwork,
+    country_code?:string
+    account_name?: string,
+    bank_name?: string,
+    bank_code?:string
+    
 }
+
+export type ACCOUNTVALIDATION = {
+    type?: string,
+    shortcode?: string,
+    mobile_network?: MobileNetwork ,
+    account_number?: string,
+    bank_code?: string,
+    country_code?:string
+}
+export type PaymentType = 'MOBILE' | 'PAYBILL' | 'BUY_GOODS'
+
+export type MobileNetwork = 'Safaricom' | 'MTN' | 'AirtelTigo' | 'Telcel'  | 'Airtel'
+
+export type CountryCodes = 'KES' | 'GHS' | 'UGX' | 'NGN' 
+
+export type nigeriaBanks = Record<string, string>
+
+export const NigeriaBanks: nigeriaBanks = {
+    "Moniepoint": "090405",
+    "Palmpay": "100033",
+    "Opay": "100004",    
+  };
+  
 
 //ALL SERVICES USES baseurl/v1/pay
 

@@ -28,6 +28,7 @@ import SendMoney from './screens/services/kenya/SendMoney'
 import BuyAirtime from './screens/services/kenya/Airtime'
 import BuyGoods from './screens/services/kenya/BuyGoods'
 import PayBills from './screens/services/kenya/PayBills'
+import GhanaSendMoney from './screens/services/ghana/SendMoney'
 
 export function createStaticLabel(
   label: string,
@@ -137,12 +138,12 @@ const App = createApp({
         />
 
         <Screen
-          name="NigeriaAirtime"
-          component={NigeriaAirtime}
+          name="GhanaSendMoney"
+          component={GhanaSendMoney}
           options={{
             headerBackVisible: true,
             headerShown: true,
-            title: 'Buy Airtime',
+            title: 'Send Money',
           }}
         />
 
