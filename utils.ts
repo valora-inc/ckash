@@ -1,17 +1,31 @@
+
 import { useWallet } from '@divvi/mobile'
+
 
 export const CUSD_TOKEN_ID =
   'celo-mainnet:0x765de816845861e75a25fca122bb6898b8b1282a'
 export const CKES_TOKEN_ID =
   'celo-mainnet:0x456a3d042c0dbd3db53d5489e98dfb038553b0d0'
+export const USDC_TOKEN_ID =
+  'celo-mainnet:0xceba9300f2b948710d2653dd7b07f33a8b32118c'
+  export const USDT_TOKEN_ID =
+  'celo-mainnet:0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e'
+  export const cGHS_TOKEN_ID =
+  'celo-mainnet:0xfaea5f3404bba20d3cc2f8c4b0a888f55a3c7313'  
+  export const cZAR_TOKEN_ID = 
+  'celo-mainnet:0x4c35853a3b4e647fd266f4de678dcc8fec410bf6'
 
 export function useTokens() {
   const { tokens } = useWallet()
   const cKESToken = tokens.find((token) => token.tokenId === CKES_TOKEN_ID)
   const cUSDToken = tokens.find((token) => token.tokenId === CUSD_TOKEN_ID)
-  return { cKESToken, cUSDToken }
+  const uSDCToken = tokens.find((token) => token.tokenId === USDC_TOKEN_ID)
+  const uSDTToken = tokens.find((token) => token.tokenId === USDT_TOKEN_ID)
+  const cGHSToken = tokens.find((token) => token.tokenId === cGHS_TOKEN_ID)
+  const cZARToken = tokens.find((token) => token.tokenId === cZAR_TOKEN_ID)
+  //console.log("The Tokens are", tokens)
+  return { cKESToken, cUSDToken,uSDCToken,uSDTToken,cGHSToken,cZARToken,tokens }
 }
-
 export const colors = {
   // backgrounds
   backgroundPrimary: '#FFFFFF', // Main background color for the app, used for primary surfaces (screens, navigation).
@@ -92,3 +106,6 @@ export const typeScale = {
     color: colors.contentPrimary,
   },
 }
+
+
+

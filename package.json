@@ -62,6 +62,8 @@
     "react-native-config": "^1.5.3",
     "react-native-contacts": "https://github.com/valora-inc/react-native-contacts#9940121",
     "react-native-device-info": "^13.2.0",
+    "react-native-dotenv": "^3.4.11",
+    "react-native-dropdown-picker": "^5.4.6",
     "react-native-exit-app": "^2.0.0",
     "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "^2.21.2",
@@ -82,8 +84,10 @@
     "react-native-share": "^11.1.0",
     "react-native-simple-toast": "^3.3.1",
     "react-native-sms-retriever": "^1.1.1",
-    "react-native-svg": "^15.7.1",
-    "react-native-video": "^6.6.4"
+    "react-native-svg": "^15.12.0",
+    "react-native-svg-transformer": "^1.5.1",
+    "react-native-video": "^6.6.4",
+    "twrnc": "^4.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
