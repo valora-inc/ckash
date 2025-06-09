@@ -32,8 +32,15 @@ yarn-error.*
 # local env files
 .env*.local
 
+.env*
 # typescript
 *.tsbuildinfo
 
 ios/
 android/
+.idea/cKash.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/caches/deviceStreaming.xml

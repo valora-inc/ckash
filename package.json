@@ -2,7 +2,7 @@
   "name": "ckash",
   "version": "1.0.0",
   "engines": {
-    "node": "^20"
+    "node": ">=20"
   },
   "main": "index.tsx",
   "scripts": {
@@ -53,8 +53,10 @@
     "expo-font": "^13.0.4",
     "expo-splash-screen": "~0.29.13",
     "expo-status-bar": "~2.0.0",
+    "lodash.debounce": "^4.0.8",
     "lottie-react-native": "^5.1.6",
     "react": "18.3.1",
+    "react-icons": "^5.5.0",
     "react-native": "0.76.5",
     "react-native-adjust": "^4.38.1",
     "react-native-auth0": "^3.2.1",
@@ -86,13 +88,16 @@
     "react-native-sms-retriever": "^1.1.1",
     "react-native-svg": "^15.12.0",
     "react-native-svg-transformer": "^1.5.1",
+    "react-native-vector-icons": "^10.2.0",
     "react-native-video": "^6.6.4",
     "twrnc": "^4.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
     "@expo/config-plugins": "~9.0.17",
+    "@types/lodash.debounce": "^4.0.9",
     "@types/react": "~18.3.20",
+    "@types/react-native-vector-icons": "^6.4.18",
     "@valora/prettier-config": "^0.0.1",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3"

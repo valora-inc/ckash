@@ -1,5 +1,5 @@
 import { Pretium } from '../api/api'
-console.log("THE .env",process.env)
+
 
 if (!process.env.API_KEY || !process.env.BASE_URL) {
   throw new Error(

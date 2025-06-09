@@ -37,7 +37,7 @@ export default function HomeScreen(_props: RootStackScreenProps<'Home'>) {
   const { t } = useTranslation()
   const addCKESBottomSheetRef = useRef<BottomSheetModal>(null)
 
-  const { cKESToken, cUSDToken } = useTokens()
+  const { cKESToken, cUSDToken,uSDCToken } = useTokens()
 
   function onPressAddCKES() {
     if (cUSDToken?.balance.isZero()) {
