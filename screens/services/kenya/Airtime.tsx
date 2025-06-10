@@ -30,9 +30,9 @@ import { celo } from 'viem/chains'
 import { useTokens } from '../../../utils'
 // import { TokenBalance } from "src/tokens/slice"
 // import { Pretium_api } from "../../../constants/index"
-import ContactIcon from "../../../assets/icons/contact-icon.svg"
+import ContactIcon from '../../../assets/icons/contact-icon.svg'
 import {
-    calculateTotalUsdValue,
+  calculateTotalUsdValue,
   executeCKashTransaction,
   getExchangeRate,
   getRatedAmount,
@@ -43,6 +43,8 @@ import { PRETIUM_ADDRESS } from '../../../constants'
 import { TokenBalance } from 'src/tokens/slice'
 import tw from 'twrnc'
 import ContactList from '../../../components/ContactList'
+import PrimaryButton from '../../../components/PrimaryButton'
+import InputField from '../../../components/InputField'
 
 interface SavedContact {
   phone: string
@@ -136,8 +138,8 @@ export default function BuyAirtime(
   React.useEffect(() => {
     if (!tokens || tokens.length === 0) return
     let totalUsdValue = calculateTotalUsdValue(tokens)
-    getRatedAmountToLocalCurrency(Number(totalUsdValue), 'KES').then((value:any) =>
-      setLocalBalance(Number(value)),
+    getRatedAmountToLocalCurrency(Number(totalUsdValue), 'KES').then(
+      (value: any) => setLocalBalance(Number(value)),
     )
   }, [tokens])
 
@@ -146,11 +148,6 @@ export default function BuyAirtime(
       style={tw`flex-1 bg-[#F5F7FA] px-4`}
       showsVerticalScrollIndicator={false}
     >
-      {/* Header */}
-      <View style={tw`flex-row items-center py-4  ml-4 mb-2`}>
-        <Text style={tw`text-lg font-bold`}>Buy Airtime</Text>
-      </View>
-
       {/* Amount Selection Card */}
       <View
         style={tw`bg-[#EFF3FF] border border-[#AEC5FF] rounded-lg p-6 mb-4`}
@@ -206,20 +203,14 @@ export default function BuyAirtime(
         <Text style={tw`text-sm text-gray-700 font-medium mb-2`}>
           Phone Number
         </Text>
-        <View
-          style={tw`flex-row items-center bg-white border border-[#DAE3FF] rounded py-2 mb-2 bg-[#DAE3FF]`}
-        >
-          <TextInput
-            style={tw`flex-1 font-size-10 pl-5  text-[#333] `}
-            value={phoneNumber}
-            onChangeText={handlePhoneChange}
-            placeholder="0816 057 3659"
-            placeholderTextColor="#A0A0A0"
-            keyboardType="phone-pad"
-            maxLength={13}
-          />
-          <ContactIcon width={24} height={24} style={tw`mr-4`} />
-        </View>
+        <InputField
+          value={phoneNumber}
+          onChangeText={handlePhoneChange}
+          placeholder="0816 057 3659"
+          keyboardType="phone-pad"
+          maxLength={13}
+          icon={<ContactIcon width={24} height={24} style={tw`mr-4`} />}
+        />
         <View style={tw`flex-row items-center`}>
           <NoteIcon width={16} height={16} style={tw`mr-1`} />
           <Text style={tw`text-[10px] text-gray-700 font-medium`}>
@@ -229,14 +220,7 @@ export default function BuyAirtime(
       </View>
 
       {/* Continue Button */}
-      <TouchableOpacity
-        style={tw`bg-[#2B5CE6] rounded-lg p-4 mb-4`}
-        onPress={handleBuyAirtime}
-      >
-        <Text style={tw`text-white text-center font-semibold text-lg`}>
-          Continue
-        </Text>
-      </TouchableOpacity>
+      <PrimaryButton onPress={handleBuyAirtime} label="Continue" />
 
       {/* Contacts Section */}
       <ContactList

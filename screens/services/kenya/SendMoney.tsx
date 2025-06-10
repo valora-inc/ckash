@@ -26,6 +26,8 @@ import AlertModal from '../../../components/AlertModal'
 import MpesaIcon from '../../../assets/icons/mpesa-icon.svg'
 import ContactListIcon from '../../../assets/icons/list-icon.svg'
 import ContactList from '../../../components/ContactList'
+import PrimaryButton from '../../../components/PrimaryButton'
+import InputField from '../../../components/InputField'
 
 export type TransactionRequest = (
   | TransactionRequestCIP64
@@ -158,13 +160,6 @@ export default function SendMoney(
       style={tw`flex-1 bg-[#F5F7FA] px-4`}
       showsVerticalScrollIndicator={false}
     >
-      {/* Header */}
-      <View style={tw`flex-row items-center py-4 mb-2`}>
-        <Text style={tw`text-left font-medium text-sm text-[#1B1A46]`}>
-          Send Money
-        </Text>
-      </View>
-
       {/* Bank Selection Card */}
       <View
         style={tw`bg-[#EFF3FF] border border-[#AEC5FF] rounded-lg p-6 mb-4`}
@@ -184,20 +179,14 @@ export default function SendMoney(
         >
           Account Number/Mobile Number
         </Text>
-        <View
-          style={tw`flex-row items-center bg-white border border-[#B2C7FF] rounded py-2 mb-2 bg-[#DAE3FF]`}
-        >
-          <TextInput
-            style={tw`flex-1 font-size-10 pl-5  text-[#333] `}
-            value={phoneNumber}
-            onChangeText={handlePhoneChange}
-            placeholder="Enter account Number"
-            placeholderTextColor="#A0A0A0"
-            keyboardType="phone-pad"
-            maxLength={15}
-          />
-          <ContactListIcon width={24} height={24} style={tw`mr-4`} />
-        </View>
+        <InputField
+          value={phoneNumber}
+          onChangeText={handlePhoneChange}
+          placeholder="Enter account Number"
+          keyboardType="phone-pad"
+          maxLength={15}
+          icon={<ContactListIcon width={24} height={24} style={tw`mr-4`} />}
+        />
         {phoneNumber && (
           <Text style={tw`text-left font-medium text-sm text-[#1B1A46]`}>
             Account name: {accountName}
@@ -227,14 +216,7 @@ export default function SendMoney(
       </View>
 
       {/* Continue Button */}
-      <TouchableOpacity
-        style={tw`bg-[#2B5CE6] rounded-lg p-5 mb-4`}
-        onPress={handleSendMoney}
-      >
-        <Text style={tw`text-white text-center font-semibold text-lg`}>
-          Continue
-        </Text>
-      </TouchableOpacity>
+      <PrimaryButton onPress={handleSendMoney} label="Continue" />
 
       {/* Contacts Section */}
       <ContactList

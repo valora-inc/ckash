@@ -19,6 +19,8 @@ import { TokenBalance } from 'src/tokens/slice'
 import AlertModal from '../../../components/AlertModal'
 import ListIcon from '../../../assets/icons/list-icon.svg'
 import NoteIcon from '../../../assets/icons/note-icon.svg'
+import PrimaryButton from '../../../components/PrimaryButton'
+import InputField from '../../../components/InputField'
 
 export default function MPESABuyGoods(
   _props: RootStackScreenProps<'KenyaBuyGoods'>,
@@ -92,11 +94,6 @@ export default function MPESABuyGoods(
       style={tw`flex-1 bg-qhitw px-4`}
       showsVerticalScrollIndicator={false}
     >
-      {/* Header */}
-      <View style={tw`flex-row items-center py-4  ml-4 mb-2`}>
-        <Text style={tw`text-lg font-bold ml-4`}>MPESA Buy Goods</Text>
-      </View>
-
       {/* Form Container */}
       <View
         style={tw`bg-[#EFF3FF] border border-[#AEC5FF] rounded-lg p-6 mb-4`}
@@ -106,19 +103,13 @@ export default function MPESABuyGoods(
           <Text style={tw`text-sm text-gray-900 font-medium mb-2`}>
             Till / Buy Goods
           </Text>
-          <View
-            style={tw`flex-row items-center bg-white border border-[#DAE3FF] rounded py-2 mb-2 bg-[#DAE3FF]`}
-          >
-            <TextInput
-              style={tw`flex-1 font-size-10 pl-5  text-[#333] `}
-              value={tillNumber}
-              onChangeText={setTillNumber}
-              placeholder="Enter till number"
-              placeholderTextColor="#A0A0A0"
-              keyboardType="numeric"
-            />
-            <ListIcon width={24} height={24} style={tw`mr-4`} />
-          </View>
+          <InputField
+            value={tillNumber}
+            onChangeText={setTillNumber}
+            placeholder="Enter till number"
+            keyboardType="numeric"
+            icon={<ListIcon width={24} height={24} style={tw`mr-4`} />}
+          />
         </View>
 
         {/* Amount Section */}
@@ -147,14 +138,7 @@ export default function MPESABuyGoods(
         </View>
 
         {/* Continue Button */}
-        <TouchableOpacity
-          style={tw`bg-[#2B5CE6] rounded-lg p-4 mb-4`}
-          onPress={handleBuyGoods}
-        >
-          <Text style={tw`text-white text-center font-semibold text-lg`}>
-            Continue
-          </Text>
-        </TouchableOpacity>
+        <PrimaryButton onPress={handleBuyGoods} label="Continue" />
 
         {/* Disclaimer */}
         <View style={tw`flex-row items-center`}>

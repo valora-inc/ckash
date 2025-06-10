@@ -22,6 +22,7 @@ import IconButton from '../components/ui/IconButton'
 import tw from 'twrnc'
 import { services } from '../constants'
 import { calculateTotalUsdValue } from '../lib/cKash'
+import ServiceButton from '../components/ServiceButton'
 
 const Token = [
   {
@@ -360,34 +361,20 @@ export default function WalletScreen(
         <View style={tw`flex-1.5 w-[90%] bg-transparent justify-center pb-4`}>
           <View style={tw`flex flex-col justify-start pt-2 pb-2`}>
             <Text
-              style={tw`pt-2 pb-2 text-left self-start font-medium text-sm text-[#1B1A46]`}
+              style={tw`pt-2 pb-4 text-left self-start font-medium text-sm text-[#1B1A46]`}
             >
               Quick Utilities
             </Text>
-            <FlatList
-              data={services[selectedCountry]}
-              keyExtractor={(item) => item.name}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              ItemSeparatorComponent={() => <View style={tw`w-1.5`} />}
-              renderItem={({ item }) => (
-                <Pressable
+            <View style={tw`flex-row flex-wrap gap-1.5`}>
+              {services[selectedCountry].map((item) => (
+                <ServiceButton
                   key={item.name}
-                  onPress={() => {
-                    console.log(`Navigate to ${item.navigate}`)
-                    navigate(item.navigate)
-                  }}
-                  style={tw`justify-center items-center bg-[#C0D0FF] rounded  px-3 w-[88px] border border-[#AEC5FF] py-4`}
-                >
-                  <item.icon width={16} height={20} />
-                  <Text
-                    style={tw`text-[10px] text-center font-normal text-[#002586] leading-4`}
-                  >
-                    {item.name}
-                  </Text>
-                </Pressable>
-              )}
-            />
+                  name={item.name}
+                  navigate={item.navigate}
+                  icon={item.icon}
+                />
+              ))}
+            </View>
           </View>
         </View>
       </View>

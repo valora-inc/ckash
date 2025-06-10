@@ -29,13 +29,11 @@ import BuyAirtime from './screens/services/kenya/Airtime'
 import BuyGoods from './screens/services/kenya/BuyGoods'
 import PayBills from './screens/services/kenya/PayBills'
 import GhanaSendMoney from './screens/services/ghana/SendMoney'
-
 export function createStaticLabel(
   label: string,
 ): (t: (key: string) => string) => string {
   return () => label
 }
-
 
 const expoConfig = Constants.expoConfig
 if (!expoConfig) {
@@ -85,13 +83,20 @@ const App = createApp({
     tabs: ({ defaultTabs }) => {
       return {
         screens: [
-          defaultTabs.wallet,
+          // defaultTabs.wallet,
           // {
           //   name: 'Home',
           //   component: HomeScreen,
           //   icon: defaultTabs.activity.icon,
           //   label: defaultTabs.activity.label,
-          // },
+          // }
+          {
+            name: 'Wallet',
+            component: WalletScreen,
+            icon: WalletIcon,
+            // label: defaultTabs.activity.label,
+            label: createStaticLabel('Wallet'),
+          },
           {
             name: 'Utilities',
             component: ServiceScreen,
@@ -103,13 +108,6 @@ const App = createApp({
             ...defaultTabs.activity,
             label: (t) => t('activity'),
             icon: ActivityIcon,
-          },
-          {
-            name: 'Wallet',
-            component: WalletScreen,
-            icon: WalletIcon,
-            // label: defaultTabs.activity.label,
-            label: createStaticLabel('Wallet'),
           },
         ],
         // initialScreen: 'Home',
@@ -124,16 +122,16 @@ const App = createApp({
           options={{
             headerBackVisible: true,
             headerShown: true,
+            headerTitle: 'Send Money',
           }}
         />
-
         <Screen
           name="NigeriaSendMoney"
           component={NigeriaSendMoney}
           options={{
             headerBackVisible: true,
             headerShown: true,
-            title: 'Send Money',
+            headerTitle: 'Send Money',
           }}
         />
 
@@ -143,7 +141,7 @@ const App = createApp({
           options={{
             headerBackVisible: true,
             headerShown: true,
-            title: 'Send Money',
+            headerTitle: 'Send Money',
           }}
         />
 
@@ -153,33 +151,39 @@ const App = createApp({
           options={{
             headerBackVisible: true,
             headerShown: true,
-            title: 'Buy Airtime',
+            headerTitle: 'Buy Airtime',
           }}
         />
-       
-      <Screen name="KenyaBuyAirtime"
-     component={BuyAirtime}
-     options={{
-      headerBackVisible:true,
-      headerShown:true
-     }}
-     />
-     <Screen name="KenyaBuyGoods"
-     component={BuyGoods}
-     options={{
-      headerBackVisible:true,
-      headerShown:true
-     }}
-     />
-     <Screen name="KenyaPayBills"
-     component={PayBills}
-     options={{
-      headerBackVisible:true,
-      headerShown:true
-     }}
-     />
+
+        <Screen
+          name="KenyaBuyAirtime"
+          component={BuyAirtime}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            headerTitle: 'Buy Airtime',
+          }}
+        />
+        <Screen
+          name="KenyaBuyGoods"
+          component={BuyGoods}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            headerTitle: 'Buy Goods',
+          }}
+        />
+        <Screen
+          name="KenyaPayBills"
+          component={PayBills}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            headerTitle: 'Pay Bills',
+          }}
+        />
       </>
-    )
+    ),
   },
 
   locales: {
