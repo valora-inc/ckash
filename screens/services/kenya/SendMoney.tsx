@@ -24,7 +24,8 @@ import {
 import { useSend } from '../../../hooks/useSend'
 import AlertModal from '../../../components/AlertModal'
 import MpesaIcon from '../../../assets/icons/mpesa-icon.svg'
-import SearchIcon from '../../../assets/icons/search.svg'
+import ContactList from '../../../components/ContactList'
+
 export type TransactionRequest = (
   | TransactionRequestCIP64
   | TransactionRequestEIP1559
@@ -147,8 +148,8 @@ export default function SendMoney(
   React.useEffect(() => {
     if (!tokens || tokens.length === 0) return
     let totalUsdValue = calculateTotalUsdValue(tokens)
-    getRatedAmountToLocalCurrency(Number(totalUsdValue), 'KES').then(
-      (value) => setLocalBalance(Number(value)),
+    getRatedAmountToLocalCurrency(Number(totalUsdValue), 'KES').then((value) =>
+      setLocalBalance(Number(value)),
     )
   }, [tokens])
   return (
@@ -183,7 +184,7 @@ export default function SendMoney(
           Account Number/Mobile Number
         </Text>
         <View
-          style={tw`flex-row items-center bg-white border border-[#DAE3FF] rounded py-2 mb-2 bg-[#DAE3FF]`}
+          style={tw`flex-row items-center bg-white border border-[#B2C7FF] rounded py-2 mb-2 bg-[#DAE3FF]`}
         >
           <TextInput
             style={tw`flex-1 font-size-10 pl-5  text-[#333] `}
@@ -216,7 +217,7 @@ export default function SendMoney(
           </Text>
         </View>
         <TextInput
-          style={tw`bg-white border border-[#AEC5FF] rounded px-4 py-4 mb-1 bg-[#DAE3FF]`}
+          style={tw`bg-white border border-[#B2C7FF] rounded px-4 py-4 mb-1 bg-[#DAE3FF]`}
           value={amount}
           onChangeText={handleAmountChange}
           placeholder="KES 100"
@@ -237,64 +238,12 @@ export default function SendMoney(
       </TouchableOpacity>
 
       {/* Contacts Section */}
-      <View
-        style={tw`bg-[#EFF3FF] border border-[#AEC5FF] rounded-lg p-6 mb-4`}
-      >
-        <View style={tw`flex-row justify-between items-center mb-2`}>
-          <TouchableOpacity
-            style={[tw`p-2`, activeTab === 'saved' && tw` mb-1`]}
-            onPress={() => setActiveTab('saved')}
-          >
-            <Text
-              style={[
-                tw`text-sm text-gray-900`,
-                activeTab === 'saved' && tw` text-balck font-semibold`,
-              ]}
-            >
-              Saved Contact
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[tw`p-2`, activeTab === 'recent' && tw`  text-black`]}
-            onPress={() => setActiveTab('recent')}
-          >
-            <Text
-              style={[
-                tw`text-sm text-gray-900`,
-                activeTab === 'recent' && tw`  text-black font-semibold`,
-              ]}
-            >
-              Recent Contact
-            </Text>
-          </TouchableOpacity>
-          <SearchIcon width={22} height={22} />
-        </View>
-
-        {/* Contact List */}
-        <View style={tw`flex flex-col gap-2`}>
-          {savedContacts.map((contact, index) => (
-            <TouchableOpacity
-              key={index}
-              style={tw`flex-row items-center justify-between p-4 bg-[#DAE3FF] rounded`}
-              onPress={() => selectContact(contact)}
-            >
-              <View style={tw`flex flex-col `}>
-                <Text style={tw`text-sm font-medium text-sm text-black`}>
-                  {contact.phone}
-                </Text>
-                <Text style={tw`text-sm font-medium text-base text-gray-400`}>
-                  {contact.name}
-                </Text>
-              </View>
-              <View
-                style={tw`w-10 h-10 bg-[#2B5CE6] rounded-full items-center justify-center`}
-              >
-                <Text style={tw`text-white text-sm font-medium`}>M</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
+      <ContactList
+        contacts={savedContacts}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onContactSelect={selectContact}
+      />
 
       <AlertModal
         visible={modalVisible}

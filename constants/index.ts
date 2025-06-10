@@ -44,7 +44,7 @@ export const services: Record<string, Service[]> = {
     {
       name: 'Air-time',
       icon: AirtimeIcon,
-      navigate: 'KenyaSendMoney', // Temporarily point to an existing screen until KenyaAirtime is implemented
+      navigate: 'KenyaBuyAirtime', // Temporarily point to an existing screen until KenyaAirtime is implemented
     },
     {
       name: 'Data',
