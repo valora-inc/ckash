@@ -369,7 +369,7 @@ export default function WalletScreen(
               keyExtractor={(item) => item.name}
               horizontal
               showsHorizontalScrollIndicator={false}
-              ItemSeparatorComponent={() => <View style={tw`w-2`} />}
+              ItemSeparatorComponent={() => <View style={tw`w-1.5`} />}
               renderItem={({ item }) => (
                 <Pressable
                   key={item.name}
@@ -377,7 +377,7 @@ export default function WalletScreen(
                     console.log(`Navigate to ${item.navigate}`)
                     navigate(item.navigate)
                   }}
-                  style={tw`justify-center items-center bg-[#C0D0FF] rounded  px-6 border border-[#AEC5FF] py-2.5`}
+                  style={tw`justify-center items-center bg-[#C0D0FF] rounded  px-3 w-[88px] border border-[#AEC5FF] py-4`}
                 >
                   <item.icon width={16} height={20} />
                   <Text

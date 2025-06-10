@@ -8,6 +8,9 @@ import { getRatedAmount } from "../../../lib/cKash"
 import debounce from "lodash.debounce"
 import { TokenBalance } from "src/tokens/slice"
 import AlertModal from "../../../components/AlertModal"
+import NoteIcon from '../../../assets/icons/note-icon.svg'
+import ListIcon from '../../../assets/icons/list-icon.svg'
+import tw from 'twrnc'
 
 export default function MPESAPaybills(_props: RootStackScreenProps<'KenyaPayBills'>) {
     const [paybillNumber, setPaybillNumber] = React.useState<string>("")
@@ -77,101 +80,115 @@ export default function MPESAPaybills(_props: RootStackScreenProps<'KenyaPayBill
         Alert.alert(`${error}`)
       }
     }
-
-    const handleContinue = () => {
-        console.log("Continue pressed", { paybillNumber, accountNumber, amount })
-    }
-
     return (
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            {/* Header */}
-            <View style={styles.header}>
-                <TouchableOpacity style={styles.backButton}>
-                    <Text style={styles.backArrow}>‹</Text>
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>MPESA Paybills</Text>
+      <ScrollView
+        style={tw`flex-1 bg-qhitw px-4`}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header */}
+        <View style={tw`flex-row items-center py-4  ml-4 mb-2`}>
+          <Text style={tw`text-lg font-bold ml-4`}>MPESA Paybills</Text>
+        </View>
+
+        {/* Form Container */}
+        <View
+          style={tw`bg-[#EFF3FF] border border-[#AEC5FF] rounded-lg p-6 mb-4`}
+        >
+          {/* Paybill Number Section */}
+          <View style={tw`mb-4`}>
+            <Text style={tw`text-sm text-gray-900 font-medium mb-2`}>
+              Paybill Number
+            </Text>
+            <View
+              style={tw`flex-row items-center bg-white border border-[#DAE3FF] rounded py-2 mb-2 bg-[#DAE3FF]`}
+            >
+              <TextInput
+                style={tw`flex-1 font-size-10 pl-5  text-[#333] `}
+                value={paybillNumber}
+                onChangeText={setPaybillNumber}
+                placeholder="Enter paybill number"
+                placeholderTextColor="#A0A0A0"
+                keyboardType="numeric"
+              />
+              <ListIcon width={24} height={24} style={tw`mr-4`} />
             </View>
+          </View>
 
-            {/* Form Container */}
-            <View style={styles.formContainer}>
-                {/* Paybill Number Section */}
-                <View style={styles.inputSection}>
-                    <Text style={styles.inputLabel}>Paybill Number</Text>
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.textInput}
-                            value={paybillNumber}
-                            onChangeText={setPaybillNumber}
-                            placeholder="Enter paybill number"
-                            placeholderTextColor="#A0A0A0"
-                            keyboardType="numeric"
-                        />
-                        <TouchableOpacity style={styles.copyButton}>
-                            <Text style={styles.copyIcon}>📋</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-                {/* Account Number Section */}
-                <View style={styles.inputSection}>
-                    <Text style={styles.inputLabel}>Account Number</Text>
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.textInput}
-                            value={accountNumber}
-                            onChangeText={setAccountNumber}
-                            placeholder="Enter account number"
-                            placeholderTextColor="#A0A0A0"
-                            keyboardType="numeric"
-                        />
-                    </View>
-                </View>
-
-                {/* Amount Section */}
-                <View style={styles.amountSection}>
-                    <View style={styles.amountHeader}>
-                        <Text style={styles.inputLabel}>Amount</Text>
-                        <Text style={styles.balanceText}>Kes 245.31</Text>
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.amountInput}
-                            value={amount}
-                            onChangeText={handleAmountChange}
-                            placeholder="Enter amount"
-                            placeholderTextColor="#A0A0A0"
-                            keyboardType="numeric"
-                        />
-                    </View>
-                    <Text style={styles.limitText}>(min: 20 max 60,000)</Text>
-                </View>
-
-                {/* Continue Button */}
-                <TouchableOpacity style={styles.continueButton} onPress={handleSendMoney}>
-                    <Text style={styles.continueButtonText}>Continue</Text>
-                </TouchableOpacity>
-
-                {/* Disclaimer */}
-                <View style={styles.disclaimerContainer}>
-                    <Text style={styles.disclaimerIcon}>⚠️</Text>
-                    <Text style={styles.disclaimerText}>
-                        Payment made to the wrong PayBill number is non-refundable
-                    </Text>
-                </View>
+          {/* Account Number Section */}
+          <View style={tw`mb-4`}>
+            <Text style={tw`text-sm text-gray-900 font-medium mb-2`}>
+              Account Number
+            </Text>
+            <View
+              style={tw`flex-row items-center bg-white border border-[#DAE3FF] rounded py-2 mb-2 bg-[#DAE3FF]`}
+            >
+              <TextInput
+                style={tw`flex-1 font-size-10 pl-5  text-[#333] `}
+                value={accountNumber}
+                onChangeText={setAccountNumber}
+                placeholder="Enter account number"
+                placeholderTextColor="#A0A0A0"
+                keyboardType="numeric"
+              />
             </View>
-            <AlertModal
-                    visible={modalVisible}
-                    onClose={() => {
-                      setModalVisible(false)
-                      resetForm()
-                    }}
-                    title="Transaction Successful"
-                    amount={amount ? `Amount: ${amount} KES` : ''}
-                    iconType="success"
-                    loading={loading}
-                    accountName={accountNumber ? `Recipient: ${accountNumber }` : ''}
-                  />
-        </ScrollView>
+          </View>
+
+          {/* Amount Section */}
+          <View style={tw`mb-4`}>
+            <View style={tw`flex-row justify-between items-center mb-2`}>
+              <Text style={tw`text-sm text-gray-900 font-medium`}>Amount</Text>
+              <Text style={tw`text-sm font-medium text-sm text-black`}>
+                Kes 245.31
+              </Text>
+            </View>
+            <View
+              style={tw`flex-row items-center bg-white border border-[#DAE3FF] rounded py-2 mb-2 bg-[#DAE3FF]`}
+            >
+              <TextInput
+                style={tw`flex-1 font-size-10 pl-5  text-[#333] `}
+                value={amount}
+                onChangeText={handleAmountChange}
+                placeholder="Enter amount"
+                placeholderTextColor="#A0A0A0"
+                keyboardType="numeric"
+              />
+            </View>
+            <Text style={tw`text-xs text-[#EEA329] font-medium`}>
+              (min: 20 max 60,000)
+            </Text>
+          </View>
+
+          {/* Continue Button */}
+          <TouchableOpacity
+            style={tw`bg-[#2B5CE6] rounded-lg p-4 mb-4`}
+            onPress={handleSendMoney}
+          >
+            <Text style={tw`text-white text-center font-semibold text-lg`}>
+              Continue
+            </Text>
+          </TouchableOpacity>
+
+          {/* Disclaimer */}
+          <View style={tw`flex-row items-center`}>
+            <NoteIcon width={16} height={16} style={tw`mr-1`} />
+            <Text style={tw`text-[10px] text-gray-700 font-medium`}>
+              Payment made to the wrong PayBill number is non-refundable
+            </Text>
+          </View>
+        </View>
+        <AlertModal
+          visible={modalVisible}
+          onClose={() => {
+            setModalVisible(false)
+            resetForm()
+          }}
+          title="Transaction Successful"
+          amount={amount ? `Amount: ${amount} KES` : ''}
+          iconType="success"
+          loading={loading}
+          accountName={accountNumber ? `Recipient: ${accountNumber}` : ''}
+        />
+      </ScrollView>
     )
 }
 

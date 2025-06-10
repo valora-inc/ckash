@@ -24,6 +24,7 @@ import {
 import { useSend } from '../../../hooks/useSend'
 import AlertModal from '../../../components/AlertModal'
 import MpesaIcon from '../../../assets/icons/mpesa-icon.svg'
+import ContactListIcon from '../../../assets/icons/list-icon.svg'
 import ContactList from '../../../components/ContactList'
 
 export type TransactionRequest = (
@@ -195,9 +196,7 @@ export default function SendMoney(
             keyboardType="phone-pad"
             maxLength={15}
           />
-          <TouchableOpacity style={tw`p-`}>
-            <Text style={tw`text-2xl mr-4`}>📞</Text>
-          </TouchableOpacity>
+          <ContactListIcon width={24} height={24} style={tw`mr-4`} />
         </View>
         {phoneNumber && (
           <Text style={tw`text-left font-medium text-sm text-[#1B1A46]`}>
@@ -224,7 +223,7 @@ export default function SendMoney(
           placeholderTextColor="#A0A0A0"
           keyboardType="numeric"
         />
-        <Text style={tw`text-[#EEA329]`}>(min. 20 max 60,000)</Text>
+        <Text style={tw`text-[#EEA329] text-xs`}>(min. 20 max 60,000)</Text>
       </View>
 
       {/* Continue Button */}

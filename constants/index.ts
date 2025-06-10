@@ -7,6 +7,7 @@ import AirtelTigoIcon from '../assets/icons/airteltigo-icon.svg'
 import SendMoneyIcon from '../assets/icons/opay-icon.svg'
 import MTNIcon from '../assets/icons/mtn-icon.svg'
 import TelecelIcon from '../assets/icons/telecel-icon.svg'
+import BuyGoodsIcon from '../assets/icons/buygoods-icon.svg'
 
 if (!process.env.API_KEY || !process.env.BASE_URL) {
   throw new Error(
@@ -43,18 +44,18 @@ export const services: Record<string, Service[]> = {
     },
     {
       name: 'Air-time',
-      icon: AirtimeIcon,
+      icon: DataIcon,
       navigate: 'KenyaBuyAirtime', // Temporarily point to an existing screen until KenyaAirtime is implemented
     },
     {
-      name: 'Data',
-      icon: DataIcon,
-      navigate: 'KenyaSendMoney', // Temporarily point to an existing screen until KenyaData is implemented
+      name: 'Buy Goods',
+      icon: BuyGoodsIcon,
+      navigate: 'KenyaBuyGoods', // Temporarily point to an existing screen until KenyaData is implemented
     },
     {
       name: 'Paybill',
       icon: PaybillIcon,
-      navigate: 'KenyaSendMoney', // Temporarily point to an existing screen until KenyaPaybill is implemented
+      navigate: 'KenyaPayBills', // Temporarily point to an existing screen until KenyaPaybill is implemented
     },
   ],
   Uganda: [

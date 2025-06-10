@@ -11,6 +11,7 @@ import {
 import { RootStackScreenProps } from '../../types'
 // import Card from "../../../components/ui/Card"
 // import Button from "../../../components/ui/Button"
+import NoteIcon from '../../../assets/icons/note-icon.svg'
 import {
   //   usePublicClient,
   //   useWallet,
@@ -219,9 +220,12 @@ export default function BuyAirtime(
           />
           <ContactIcon width={24} height={24} style={tw`mr-4`} />
         </View>
-        <Text style={tw`text-sm text-gray-700 font-medium`}>
-          📶 All mobile networks are supported
-        </Text>
+        <View style={tw`flex-row items-center`}>
+          <NoteIcon width={16} height={16} style={tw`mr-1`} />
+          <Text style={tw`text-[10px] text-gray-700 font-medium`}>
+            All mobile networks are supported
+          </Text>
+        </View>
       </View>
 
       {/* Continue Button */}
