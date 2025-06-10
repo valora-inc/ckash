@@ -1,7 +1,7 @@
 import * as React from 'react'
+import tw from 'twrnc'
 import {
   View,
-  StyleSheet,
   TextInput,
   Text,
   Alert,
@@ -15,11 +15,16 @@ import { TransactionRequestCIP64 } from 'viem/chains'
 import debounce from 'lodash.debounce'
 import { useTokens } from '../../../utils'
 import { TokenBalance } from 'src/tokens/slice'
-import { getRatedAmount, validateAccount } from '../../../lib/cKash'
+import {
+  calculateTotalUsdValue,
+  getRatedAmount,
+  getRatedAmountToLocalCurrency,
+  validateAccount,
+} from '../../../lib/cKash'
 import { useSend } from '../../../hooks/useSend'
 import AlertModal from '../../../components/AlertModal'
-import { Pretium_api } from '../../../constants'
-
+import MpesaIcon from '../../../assets/icons/mpesa-icon.svg'
+import SearchIcon from '../../../assets/icons/search.svg'
 export type TransactionRequest = (
   | TransactionRequestCIP64
   | TransactionRequestEIP1559
@@ -39,16 +44,17 @@ export default function SendMoney(
   const [phoneNumber, setPhoneNumber] = React.useState<string>('')
   const [activeTab, setActiveTab] = React.useState<'saved' | 'recent'>('saved')
   const [savedContacts] = React.useState<Contact[]>([
-    { phone: '254700000000', name: 'John Doe' },
-    { phone: '254711111111', name: 'Jane Smith' },
+    { phone: '0701707772', name: 'Ronex' },
+    { phone: '0703449363', name: 'Saint Brisa' },
   ])
 
   const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })
   const [amount, setAmount] = React.useState<string>('')
   const [tokenAmount, setTokenAmount] = React.useState<string>('')
   const { sendMoney, loading } = useSend()
+  const [localBalance, setLocalBalance] = React.useState<number>(0.0)
 
-  const { cUSDToken } = useTokens()
+  const { tokens, cUSDToken } = useTokens()
   const [modalVisible, setModalVisible] = React.useState(false)
   const [accountName, setAccountName] = React.useState<string | null>(null)
 
@@ -85,11 +91,11 @@ export default function SendMoney(
         Alert.alert('Please provide Amount')
         return
       }
-      const {response } = await sendMoney({
+      const { response } = await sendMoney({
         shortcode: phoneNumber,
         ratedTokenAmount: tokenAmount,
         rawAmount: amount,
-        type:"MOBILE",
+        type: 'MOBILE',
         mobileNetwork: 'Safaricom',
         tokenBalance: cUSDToken as TokenBalance,
         from: walletClient?.account?.address as `0x${string}`,
@@ -110,7 +116,10 @@ export default function SendMoney(
   const account_name = async (shortcode: string) => {
     try {
       // Adjust type and mobile_network as needed for your use case
-      const result =await  validateAccount({shortcode:shortcode,mobile_network:"Safaricom"})
+      const result = await validateAccount({
+        shortcode: shortcode,
+        mobile_network: 'Safaricom',
+      })
       // console.log('THE RESULT', result?.data?.public_name)
       // Assume result.data.name or similar contains the public name
       setAccountName(result || null)
@@ -135,34 +144,49 @@ export default function SendMoney(
     setAccountName(null)
   }
 
+  React.useEffect(() => {
+    if (!tokens || tokens.length === 0) return
+    let totalUsdValue = calculateTotalUsdValue(tokens)
+    getRatedAmountToLocalCurrency(Number(totalUsdValue), 'KES').then(
+      (value) => setLocalBalance(Number(value)),
+    )
+  }, [tokens])
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={tw`flex-1 bg-[#F5F7FA] px-4`}
+      showsVerticalScrollIndicator={false}
+    >
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
-          <Text style={styles.backArrow}>{'‹'}</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Send Money</Text>
+      <View style={tw`flex-row items-center py-4 mb-2`}>
+        <Text style={tw`text-left font-medium text-sm text-[#1B1A46]`}>
+          Send Money
+        </Text>
       </View>
 
       {/* Bank Selection Card */}
-      <View style={styles.bankCard}>
-        <Text style={styles.bankLabel}>Select Bank</Text>
-        <View style={styles.bankSelector}>
-          <View style={styles.mpesaContainer}>
-            <Text style={styles.mpesaText}>M-</Text>
-            <Text style={[styles.mpesaText, styles.mpesaGreen]}>PESA</Text>
-          </View>
-          <Text style={styles.mpesaSubtext}>Mpesa</Text>
+      <View
+        style={tw`bg-[#EFF3FF] border border-[#AEC5FF] rounded-lg p-6 mb-4`}
+      >
+        <Text style={tw`text-left font-medium text-sm  mb-2 text-[#1B1A46]`}>
+          Select Bank
+        </Text>
+        <View style={tw`flex flex-coljustify-start`}>
+          <MpesaIcon width={200} height={40} />
+          <Text style={tw`ml-20 mt-1 font-medium text-sm text-[#1B1A46]`}>
+            M-pesa
+          </Text>
         </View>
-      </View>
 
-      {/* Account Input Card */}
-      <View style={styles.inputCard}>
-        <Text style={styles.inputLabel}>Account Number/Mobile Number</Text>
-        <View style={styles.inputContainer}>
+        <Text
+          style={tw`text-left mt-6 mb-2 font-medium text-sm text-[#1B1A46]`}
+        >
+          Account Number/Mobile Number
+        </Text>
+        <View
+          style={tw`flex-row items-center bg-white border border-[#DAE3FF] rounded py-2 mb-2 bg-[#DAE3FF]`}
+        >
           <TextInput
-            style={styles.phoneInput}
+            style={tw`flex-1 font-size-10 pl-5  text-[#333] `}
             value={phoneNumber}
             onChangeText={handlePhoneChange}
             placeholder="Enter account Number"
@@ -170,85 +194,102 @@ export default function SendMoney(
             keyboardType="phone-pad"
             maxLength={15}
           />
-          <TouchableOpacity style={styles.contactButton}>
-            <Text style={styles.contactIcon}>📞</Text>
+          <TouchableOpacity style={tw`p-`}>
+            <Text style={tw`text-2xl mr-4`}>📞</Text>
           </TouchableOpacity>
         </View>
         {phoneNumber && (
-          <Text style={styles.accountName}>Account name: {accountName}</Text>
+          <Text style={tw`text-left font-medium text-sm text-[#1B1A46]`}>
+            Account name: {accountName}
+          </Text>
         )}
       </View>
 
       {/* Amount Input */}
-      <View style={styles.amountSection}>
-        <View style={styles.amountHeader}>
-          <Text style={styles.amountLabel}>Enter Amount (KES)</Text>
-          <Text style={styles.amountDisplay}>KES 245.31</Text>
+      <View style={tw` mb-4`}>
+        <View style={tw`flex-row justify-between items-center my-2`}>
+          <Text style={tw`text-left font-medium text-sm text-[#1B1A46]`}>
+            Enter Amount (KES)
+          </Text>
+          <Text style={tw`text-left font-medium text-sm text-[#1B1A46]`}>
+            KES {localBalance}
+          </Text>
         </View>
         <TextInput
-          style={styles.amountInput}
+          style={tw`bg-white border border-[#AEC5FF] rounded px-4 py-4 mb-1 bg-[#DAE3FF]`}
           value={amount}
           onChangeText={handleAmountChange}
           placeholder="KES 100"
           placeholderTextColor="#A0A0A0"
           keyboardType="numeric"
         />
-        <Text style={styles.amountLimit}>(min. 20 max 60,000)</Text>
+        <Text style={tw`text-[#EEA329]`}>(min. 20 max 60,000)</Text>
       </View>
 
       {/* Continue Button */}
-      <TouchableOpacity style={styles.continueButton} onPress={handleSendMoney}>
-        <Text style={styles.continueButtonText}>Continue</Text>
+      <TouchableOpacity
+        style={tw`bg-[#2B5CE6] rounded-lg p-5 mb-4`}
+        onPress={handleSendMoney}
+      >
+        <Text style={tw`text-white text-center font-semibold text-lg`}>
+          Continue
+        </Text>
       </TouchableOpacity>
 
       {/* Contacts Section */}
-      <View style={styles.contactsSection}>
-        <View style={styles.contactsHeader}>
+      <View
+        style={tw`bg-[#EFF3FF] border border-[#AEC5FF] rounded-lg p-6 mb-4`}
+      >
+        <View style={tw`flex-row justify-between items-center mb-2`}>
           <TouchableOpacity
-            style={[styles.tab, activeTab === 'saved' && styles.activeTab]}
+            style={[tw`p-2`, activeTab === 'saved' && tw` mb-1`]}
             onPress={() => setActiveTab('saved')}
           >
             <Text
               style={[
-                styles.tabText,
-                activeTab === 'saved' && styles.activeTabText,
+                tw`text-sm text-gray-900`,
+                activeTab === 'saved' && tw` text-balck font-semibold`,
               ]}
             >
               Saved Contact
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.tab, activeTab === 'recent' && styles.activeTab]}
+            style={[tw`p-2`, activeTab === 'recent' && tw`  text-black`]}
             onPress={() => setActiveTab('recent')}
           >
             <Text
               style={[
-                styles.tabText,
-                activeTab === 'recent' && styles.activeTabText,
+                tw`text-sm text-gray-900`,
+                activeTab === 'recent' && tw`  text-black font-semibold`,
               ]}
             >
               Recent Contact
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.moreButton}>
-            <Text style={styles.moreIcon}>⚙️</Text>
-          </TouchableOpacity>
+          <SearchIcon width={22} height={22} />
         </View>
 
         {/* Contact List */}
-        <View style={styles.contactsList}>
+        <View style={tw`flex flex-col gap-2`}>
           {savedContacts.map((contact, index) => (
             <TouchableOpacity
               key={index}
-              style={styles.contactItem}
+              style={tw`flex-row items-center justify-between p-4 bg-[#DAE3FF] rounded`}
               onPress={() => selectContact(contact)}
             >
-              <View style={styles.contactInfo}>
-                <Text style={styles.contactPhone}>{contact.phone}</Text>
-                <Text style={styles.contactName}>{contact.name}</Text>
+              <View style={tw`flex flex-col `}>
+                <Text style={tw`text-sm font-medium text-sm text-black`}>
+                  {contact.phone}
+                </Text>
+                <Text style={tw`text-sm font-medium text-base text-gray-400`}>
+                  {contact.name}
+                </Text>
               </View>
-              <View style={styles.contactAvatar}>
-                <Text style={styles.avatarText}>M</Text>
+              <View
+                style={tw`w-10 h-10 bg-[#2B5CE6] rounded-full items-center justify-center`}
+              >
+                <Text style={tw`text-white text-sm font-medium`}>M</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -270,224 +311,3 @@ export default function SendMoney(
     </ScrollView>
   )
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F7FA',
-    paddingHorizontal: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 16,
-    marginBottom: 8,
-  },
-  backButton: {
-    marginRight: 16,
-  },
-  backArrow: {
-    fontSize: 24,
-    color: '#333',
-    fontWeight: '300',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-  },
-  bankCard: {
-    backgroundColor: '#E8F0FF',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-  },
-  bankLabel: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 12,
-  },
-  bankSelector: {
-    alignItems: 'flex-start',
-  },
-  mpesaContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  mpesaText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FF0000',
-  },
-  mpesaGreen: {
-    color: '#00AA00',
-  },
-  mpesaSubtext: {
-    fontSize: 12,
-    color: '#666',
-    marginTop: 4,
-  },
-  inputCard: {
-    backgroundColor: '#E8F0FF',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-  },
-  inputLabel: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 12,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-  },
-  phoneInput: {
-    flex: 1,
-    fontSize: 16,
-    color: '#333',
-  },
-  contactButton: {
-    padding: 4,
-  },
-  contactIcon: {
-    fontSize: 16,
-    color: '#2B5CE6',
-  },
-  accountName: {
-    fontSize: 12,
-    color: '#2B5CE6',
-    marginTop: 8,
-  },
-  amountSection: {
-    backgroundColor: '#E8F0FF',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 24,
-  },
-  amountHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  amountLabel: {
-    fontSize: 14,
-    color: '#666',
-  },
-  amountDisplay: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-  },
-  amountInput: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 16,
-    fontSize: 24,
-    fontWeight: '300',
-    color: '#333',
-    marginBottom: 8,
-  },
-  amountLimit: {
-    fontSize: 12,
-    color: '#FF6B6B',
-  },
-  continueButton: {
-    backgroundColor: '#2B5CE6',
-    borderRadius: 12,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  continueButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  contactsSection: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 24,
-  },
-  contactsHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  tab: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginRight: 16,
-  },
-  activeTab: {
-    borderBottomWidth: 2,
-    borderBottomColor: '#2B5CE6',
-  },
-  tabText: {
-    fontSize: 14,
-    color: '#666',
-  },
-  activeTabText: {
-    color: '#2B5CE6',
-    fontWeight: '600',
-  },
-  moreButton: {
-    marginLeft: 'auto',
-  },
-  moreIcon: {
-    fontSize: 16,
-  },
-  contactsList: {
-    gap: 12,
-  },
-  contactItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: '#F8F9FA',
-    borderRadius: 8,
-  },
-  contactInfo: {
-    flex: 1,
-  },
-  contactPhone: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 2,
-  },
-  contactName: {
-    fontSize: 12,
-    color: '#666',
-  },
-  contactAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#2B5CE6',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  linkContainer: {
-    marginBottom: 8,
-  },
-  linkText: {
-    color: '#2979FF',
-    textDecorationLine: 'underline',
-    fontSize: 15,
-    textAlign: 'center',
-  },
-})

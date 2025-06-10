@@ -12,21 +12,19 @@ import { TokenBalance } from '@divvi/mobile/src/tokens/slice'
 
 import { TransactionRequestCIP64 } from 'viem/chains'
 import {
-//   usePublicClient,
-//   useWallet,
-//   useWalletClient,
+  //   usePublicClient,
+  //   useWallet,
+  //   useWalletClient,
   unlockAccount,
-//   navigate,
-//   prepareTransactions,
-//   PreparedTransactionsNotEnoughBalanceForGas,
-//   PreparedTransactionsPossible,
+  //   navigate,
+  //   prepareTransactions,
+  //   PreparedTransactionsNotEnoughBalanceForGas,
+  //   PreparedTransactionsPossible,
   sendTransactions,
-//   getFees,
-//   usePrepareTransactions,
+  //   getFees,
+  //   usePrepareTransactions,
 } from '@divvi/mobile'
 import { ACCOUNTVALIDATION } from '../api/types'
-
-
 
 export interface SendTransactionProp {
   to: `0x${string}`
@@ -124,7 +122,6 @@ export const getExchangeRate = async (
   }
 }
 
-
 export const executeCKashTransaction = async ({
   walletClient,
   publicClient,
@@ -200,56 +197,72 @@ export const getCurrencySymbol = (currencyCode: CurrencyCode): string => {
     KES: 'KSh',
     UGX: 'USh',
     GHS: 'GH₵',
-    NGN: "NGN"
+    NGN: 'NGN',
   }
   return symbols[currencyCode]
 }
 
-export const getRatedAmount = async (amount: number,currencyCode: CurrencyCode) => {
-   const rate = await getExchangeRate(currencyCode)
-   const calculatedAmount = amount / parseFloat(rate?.buying_rate.toString())
-  return  calculatedAmount
+export const getRatedAmount = async (
+  amount: number,
+  currencyCode: CurrencyCode,
+) => {
+  const rate = await getExchangeRate(currencyCode)
+  const calculatedAmount = amount / parseFloat(rate?.buying_rate.toString())
+  return calculatedAmount
 }
 
-export const getAmountToLocalCurrency = async (amount: number, currencyCode: CurrencyCode) => {
-    const rate = await getExchangeRate(currencyCode)
-    console.log("RATE RATE",rate)
-    
+export const getRatedAmountToLocalCurrency = async (
+  amount: number,
+  currencyCode: CurrencyCode,
+) => {
+  const rate = await getExchangeRate(currencyCode)
+  const calculatedAmount = (amount * rate?.buying_rate).toFixed(2)
+  return calculatedAmount
+}
+
+export const getAmountToLocalCurrency = async (
+  amount: number,
+  currencyCode: CurrencyCode,
+) => {
+  const rate = await getExchangeRate(currencyCode)
+  console.log('RATE RATE', rate)
+
   const calculatedAmount = amount * parseFloat(rate?.buying_rate.toString())
-  return  calculatedAmount
+  return calculatedAmount
 }
 
-
-
-
-export const validateAccount = async (validation:ACCOUNTVALIDATION) => {
-  // shortcode,
-  // 'MOBILE',
-  // mobile_network,
-  // country_code
-  // Adjust type and mobile_network as needed for your use case
-  console.log("THE DETAILS",validation)
+export const validateAccount = async (validation: ACCOUNTVALIDATION) => {
+  console.log('THE DETAILS', validation)
   const result = await Pretium_api.account_validation({
     shortcode: validation.shortcode,
-    type: validation.type || "MOBILE",
+    type: validation.type || 'MOBILE',
     mobile_network: validation.mobile_network,
     bank_code: validation.bank_code,
     account_number: validation.account_number,
-    country_code:validation.country_code
-    
-      }
-        
-      )
-      console.log('THE RESULT', result?.data?.public_name || result?.data?.account_name)
-      return result?.data?.public_name || result?.data?.account_name
-      // Assume result.data.name or similar contains the public name
-      //setAccountName(result?.data?.public_name || null)
-    // } catch (error) {
-    //   setAccountName(null)
-    // }
-  }
+    country_code: validation.country_code,
+  })
+  console.log(
+    'THE RESULT',
+    result?.data?.public_name || result?.data?.account_name,
+  )
+  return result?.data?.public_name || result?.data?.account_name
+}
 
-
+// Reusable function to calculate total USD value from a token array
+export function calculateTotalUsdValue(
+  tokens: Array<{ balance: any; lastKnownPriceUsd: any }>,
+): number {
+  if (!tokens || tokens.length === 0) return 0
+  const totalValueInUsd = tokens.reduce((total, token) => {
+    const balance = parseFloat(token.balance || '0')
+    const price = parseFloat(token.lastKnownPriceUsd || '0')
+    if (isNaN(balance) || isNaN(price) || balance === 0 || price === 0) {
+      return total
+    }
+    return total + balance * price
+  }, 0)
+  return parseFloat(totalValueInUsd.toFixed(4))
+}
 
 // export const sendTransactionStable = async (send: SendTransactionProp) => {
 //   let decimal = send.tokenDecimal ? send.tokenDecimal : 18

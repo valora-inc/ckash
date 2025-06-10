@@ -15,18 +15,14 @@ import { navigate } from '@divvi/mobile'
 import Card from '../components/ui/Card'
 import { useTokens } from '../utils'
 import DropDownPicker from 'react-native-dropdown-picker'
-import MpesaIcon from '../assets/icons/sendmoney-icon.svg'
-import AirtimeIcon from '../assets/icons/airtime-icon.svg'
-import DataIcon from '../assets/icons/network-icon.svg'
-import PaybillIcon from '../assets/icons/paybills-icon.svg'
-import AirtelTigoIcon from '../assets/icons/airteltigo-icon.svg'
-import SendMoneyIcon from '../assets/icons/opay-icon.svg'
-import MTNIcon from '../assets/icons/mtn-icon.svg'
-import TelecelIcon from '../assets/icons/telecel-icon.svg'
+
 import SearchIcon from '../assets/icons/search.svg'
 
 import IconButton from '../components/ui/IconButton'
 import tw from 'twrnc'
+import { services } from '../constants'
+import { calculateTotalUsdValue } from '../lib/cKash'
+
 const Token = [
   {
     address: '0x765de816845861e75a25fca122bb6898b8b1282a',
@@ -179,62 +175,6 @@ const Token = [
   },
 ]
 
-export type Service = {
-  name: string
-  icon: any
-  navigate: string | any
-}
-const services: Record<string, Service[]> = {
-  Kenya: [
-    {
-      name: 'M-Pesa',
-      icon: MpesaIcon,
-      navigate: 'KenyaSendMoney',
-    },
-    {
-      name: 'Air-time',
-      icon: AirtimeIcon,
-      navigate: 'KenyaSendMoney', // Temporarily point to an existing screen until KenyaAirtime is implemented
-    },
-    {
-      name: 'Data',
-      icon: DataIcon,
-      navigate: 'KenyaSendMoney', // Temporarily point to an existing screen until KenyaData is implemented
-    },
-    {
-      name: 'Paybill',
-      icon: PaybillIcon,
-      navigate: 'KenyaSendMoney', // Temporarily point to an existing screen until KenyaPaybill is implemented
-    },
-  ],
-  Uganda: [
-    {
-      name: 'MTN',
-      icon: MTNIcon,
-      navigate: 'UgandaAirtime',
-    },
-  ],
-  Nigeria: [
-    {
-      name: 'Send',
-      icon: SendMoneyIcon,
-      navigate: 'NigeriaSendMoney',
-    },
-    {
-      name: 'Air-time',
-      icon: AirtimeIcon,
-      navigate: 'NigeriaAirtime',
-    },
-  ],
-  Ghana: [
-    {
-      name: 'MTN',
-      icon: MTNIcon,
-      navigate: 'KenyaSendMoney', // Temporarily point to an existing screen until GhanaMTN is implemented
-    },
-  ],
-}
-
 const Promotions = [
   {
     name: 'Partnership',
@@ -307,19 +247,7 @@ export default function WalletScreen(
 
   React.useEffect(() => {
     if (!tokens || tokens.length === 0) return
-
-    const totalValueInUsd = tokens.reduce((total, token) => {
-      const balance = parseFloat((token.balance as any) || '0')
-      const price = parseFloat((token.lastKnownPriceUsd as any) || '0')
-
-      if (isNaN(balance) || isNaN(price) || balance === 0 || price === 0) {
-        return total
-      }
-
-      return total + balance * price
-    }, 0)
-
-    setUsdBalance(parseFloat(totalValueInUsd.toFixed(4)))
+    setUsdBalance(calculateTotalUsdValue(tokens))
   }, [tokens])
 
   return (
@@ -385,8 +313,15 @@ export default function WalletScreen(
                     letterSpacing: 0,
                     verticalAlign: 'bottom',
                   }}
-                  dropDownContainerStyle={{ zIndex: 1000 }}
-                  style={tw`h-6 w-32 border-transparent bg-[#8DADFE] ml-2 px-4  rounded-md`}
+                  dropDownContainerStyle={{
+                    zIndex: 1000,
+                    width: '76.5%',
+                    marginLeft: '22.5%',
+                    backgroundColor: '#8DADFE',
+                    borderRadius: 4,
+                    borderWidth: 0,
+                  }}
+                  style={tw`h-6 w-26 border-transparent bg-[#8DADFE] ml-7.5   rounded text-lg`}
                 />
               </View>
             </View>
@@ -422,19 +357,19 @@ export default function WalletScreen(
         </View>
 
         {/* Services */}
-        <View
-          style={tw`flex-1.5 w-[90%] bg-transparent justify-center pb-4`}
-        >
+        <View style={tw`flex-1.5 w-[90%] bg-transparent justify-center pb-4`}>
           <View style={tw`flex flex-col justify-start pt-2 pb-2`}>
-              <Text style={tw`pt-2 pb-2 text-left self-start font-medium text-sm text-[#1B1A46]`}>
-                Quick Utilities
-              </Text>
+            <Text
+              style={tw`pt-2 pb-2 text-left self-start font-medium text-sm text-[#1B1A46]`}
+            >
+              Quick Utilities
+            </Text>
             <FlatList
               data={services[selectedCountry]}
               keyExtractor={(item) => item.name}
               horizontal
               showsHorizontalScrollIndicator={false}
-              ItemSeparatorComponent={() => <View style={tw`w-2.5`} />}
+              ItemSeparatorComponent={() => <View style={tw`w-2`} />}
               renderItem={({ item }) => (
                 <Pressable
                   key={item.name}
@@ -442,9 +377,9 @@ export default function WalletScreen(
                     console.log(`Navigate to ${item.navigate}`)
                     navigate(item.navigate)
                   }}
-                  style={tw`justify-center items-center bg-[#C0D0FF] rounded  px-6.5 border border-[#AEC5FF] py-2.5`}
+                  style={tw`justify-center items-center bg-[#C0D0FF] rounded  px-6 border border-[#AEC5FF] py-2.5`}
                 >
-                  <item.icon width={16} height={16} />
+                  <item.icon width={16} height={20} />
                   <Text
                     style={tw`text-[10px] text-center font-normal text-[#002586] leading-4`}
                   >
@@ -476,9 +411,7 @@ export default function WalletScreen(
       </View>
 
       {/* Tokens */}
-      <View
-        style={tw`flex-4 w-[100%] px-4`}
-      >
+      <View style={tw`flex-4 w-[100%] px-4`}>
         <View style={tw`px-2 pt-2 pb-2`}>
           <View style={tw`flex-row justify-between items-center mb-2`}>
             <Text style={tw`font-medium text-base text-[#1B1A46]`}>

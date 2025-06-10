@@ -1,5 +1,12 @@
 import { Pretium } from '../api/api'
-
+import MpesaIcon from '../assets/icons/sendmoney-icon.svg'
+import AirtimeIcon from '../assets/icons/airtime-icon.svg'
+import DataIcon from '../assets/icons/network-icon.svg'
+import PaybillIcon from '../assets/icons/paybills-icon.svg'
+import AirtelTigoIcon from '../assets/icons/airteltigo-icon.svg'
+import SendMoneyIcon from '../assets/icons/opay-icon.svg'
+import MTNIcon from '../assets/icons/mtn-icon.svg'
+import TelecelIcon from '../assets/icons/telecel-icon.svg'
 
 if (!process.env.API_KEY || !process.env.BASE_URL) {
   throw new Error(
@@ -21,3 +28,60 @@ export const NETWORK_CONFIG = {
   name: CHAIN,
   pretiumAddress: PRETIUM_ADDRESS,
 } as const
+
+export type Service = {
+  name: string
+  icon: any
+  navigate: string | any
+}
+export const services: Record<string, Service[]> = {
+  Kenya: [
+    {
+      name: 'Send Money',
+      icon: MpesaIcon,
+      navigate: 'KenyaSendMoney',
+    },
+    {
+      name: 'Air-time',
+      icon: AirtimeIcon,
+      navigate: 'KenyaSendMoney', // Temporarily point to an existing screen until KenyaAirtime is implemented
+    },
+    {
+      name: 'Data',
+      icon: DataIcon,
+      navigate: 'KenyaSendMoney', // Temporarily point to an existing screen until KenyaData is implemented
+    },
+    {
+      name: 'Paybill',
+      icon: PaybillIcon,
+      navigate: 'KenyaSendMoney', // Temporarily point to an existing screen until KenyaPaybill is implemented
+    },
+  ],
+  Uganda: [
+    {
+      name: 'MTN',
+      icon: MTNIcon,
+      navigate: 'UgandaAirtime',
+    },
+  ],
+  Nigeria: [
+    {
+      name: 'Send',
+      icon: SendMoneyIcon,
+      navigate: 'NigeriaSendMoney',
+    },
+    {
+      name: 'Air-time',
+      icon: AirtimeIcon,
+      navigate: 'NigeriaAirtime',
+    },
+  ],
+  Ghana: [
+    {
+      name: 'MTN',
+      icon: MTNIcon,
+      navigate: 'KenyaSendMoney', // Temporarily point to an existing screen until GhanaMTN is implemented
+    },
+  ],
+}
+
