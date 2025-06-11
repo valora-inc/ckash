@@ -14,9 +14,9 @@ import PrimaryButton from "../../../components/PrimaryButton"
 import InputField from "../../../components/InputField"
 import { MobileNetwork } from "../../../api/types";
 import MtnIcon from '../../../assets/icons/mtn-icon.svg'
-import AirtelTigoIcon from '../../../assets/icons/airteltigo-icon.svg'
-import TelecelIcon from '../../../assets/icons/telecel-icon.svg'
+import AirtelIcon from '../../../assets/icons/airtel-icon.svg'
 import ContactListIcon from '../../../assets/icons/list-icon.svg'
+
 
 
 interface Bank {
@@ -25,7 +25,7 @@ interface Bank {
     logo: React.ComponentType<any>;
 }
 
-export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMoney'>) {
+export default function UgandaSendMoney(_props: RootStackScreenProps<'UgandaSendMoney'>) {
     const [selectedBank, setSelectedBank] = React.useState<Bank | null>(null)
     const [accountNumber, setAccountNumber] = React.useState<string>("")
     const [accountName, setAccountName] = React.useState<string | null>(null)
@@ -52,9 +52,9 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
             }
     
             try {
-                const ratedAmountToDeduct = await getRatedAmount(numericValue, 'GHS')
+                const ratedAmountToDeduct = await getRatedAmount(numericValue, 'UGX')
                 console.log("RATE AMOUNT",ratedAmountToDeduct)
-                const rate = await getExchangeRate("GHS")
+                const rate = await getExchangeRate("UGX")
                 console.log("RATE RATE",rate)
                 setTokenAmount(ratedAmountToDeduct.toString())
             } catch (error) {
@@ -66,8 +66,7 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
 
     const banks: Bank[] = [
         { id: 'mtn', name: 'MTN', logo: MtnIcon },
-        { id: 'telecel', name: 'Telecel', logo: TelecelIcon },
-        { id: 'airteltigo', name: 'AirtelTigo', logo: AirtelTigoIcon }
+        { id: 'airtel', name: 'Airtel', logo: AirtelIcon }
     ]
 
     const handleBankSelect = (bank: Bank) => {
@@ -81,7 +80,7 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
 
     const account_name = async (shortcode: string) => {
         try {
-            const result = await validateAccount({shortcode:shortcode,mobile_network:selectedBank?.name as MobileNetwork,country_code:"GHS"})
+            const result = await validateAccount({shortcode:shortcode,mobile_network:selectedBank?.name as MobileNetwork,country_code:"UGX"})
             setAccountName(result || null)
         } catch (error) {
             setAccountName(null)
@@ -99,7 +98,7 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
     React.useEffect(() => {
         if (!tokens || tokens.length === 0) return
         let totalUsdValue = calculateTotalUsdValue(tokens)
-        getRatedAmountToLocalCurrency(Number(totalUsdValue), 'GHS').then((value) =>
+        getRatedAmountToLocalCurrency(Number(totalUsdValue), 'UGX').then((value) =>
             setLocalBalance(Number(value)),
         )
     }, [tokens])
@@ -135,7 +134,7 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
                 account_name:accountName,
                 ratedTokenAmount: tokenAmount,
                 rawAmount: amount,
-                country_code:"GHS",
+                country_code:"UGX",
                 type:"MOBILE",
                 mobileNetwork: selectedBank?.name as MobileNetwork,
                 tokenBalance: cUSDToken as TokenBalance,
@@ -153,8 +152,7 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
 
     return (
         <ScrollView style={tw`flex-1 bg-[#F5F7FA] px-4`} showsVerticalScrollIndicator={false}>
-           
-
+            
             {/* Bank Selection Section */}
             <View style={tw`bg-[#EFF3FF] border border-[#AEC5FF] rounded-lg p-6 mb-4`}>
                 <Text style={tw`text-left font-medium text-sm mb-2 text-[#1B1A46]`}>Select Network</Text>
@@ -202,18 +200,18 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
             {/* Amount Section */}
             <View style={tw`mb-4`}>
                 <View style={tw`flex-row justify-between items-center my-2`}>
-                    <Text style={tw`text-left font-medium text-sm text-[#1B1A46]`}>Enter Amount (GHS)</Text>
-                    <Text style={tw`text-left font-medium text-sm text-[#1B1A46]`}>GHS {localBalance}</Text>
+                    <Text style={tw`text-left font-medium text-sm text-[#1B1A46]`}>Enter Amount (UGX)</Text>
+                    <Text style={tw`text-left font-medium text-sm text-[#1B1A46]`}>UGX {localBalance.toLocaleString()}</Text>
                 </View>
                 <TextInput
                     style={tw`bg-white border border-[#B2C7FF] rounded px-4 py-4 mb-1 bg-[#DAE3FF]`}
                     value={amount}
                     onChangeText={handleAmountChange}
-                    placeholder="GHS 10"
+                    placeholder="UGX 1,000"
                     placeholderTextColor="#A0A0A0"
                     keyboardType="numeric"
                 />
-                <Text style={tw`text-[#EEA329] text-xs`}>(min: ₵10 max ₵1,000)</Text>
+                <Text style={tw`text-[#EEA329] text-xs`}>(min: UGX1,000 max UGX60,000)</Text>
             </View>
 
             {/* Continue Button */}
@@ -226,7 +224,7 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
                     resetForm()
                 }}
                 title="Transaction Successful"
-                amount={amount ? `Amount: ${amount} GHS` : ''}
+                amount={amount ? `Amount: ${amount} UGX` : ''}
                 iconType="success"
                 loading={loading}
                 accountName={accountName ? `Recipient: ${accountName}` : ''}

@@ -23,6 +23,7 @@ import WalletScreen from './screens/WalletScreen'
 import KenyaSendMoney from './screens/services/kenya/SendMoney'
 import NigeriaSendMoney from './screens/services/nigeria/SendMoney'
 import NigeriaAirtime from './screens/services/nigeria/Airtime'
+import UgandaSendMoney from './screens/services/uganda/SendMoney'
 import UgandaAirtime from './screens/services/uganda/Airtime'
 import SendMoney from './screens/services/kenya/SendMoney'
 import BuyAirtime from './screens/services/kenya/Airtime'
@@ -138,6 +139,16 @@ const App = createApp({
         <Screen
           name="GhanaSendMoney"
           component={GhanaSendMoney}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            headerTitle: 'Send Money',
+          }}
+        />
+
+        <Screen
+          name="UgandaSendMoney"
+          component={UgandaSendMoney}
           options={{
             headerBackVisible: true,
             headerShown: true,

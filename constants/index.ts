@@ -60,8 +60,13 @@ export const services: Record<string, Service[]> = {
   ],
   Uganda: [
     {
-      name: 'MTN',
-      icon: MTNIcon,
+      name: 'Send Money',
+      icon: MpesaIcon,
+      navigate: '',
+    },
+    {
+      name: 'Air-time',
+      icon: DataIcon,
       navigate: 'UgandaAirtime',
     },
   ],
@@ -79,8 +84,8 @@ export const services: Record<string, Service[]> = {
   ],
   Ghana: [
     {
-      name: 'MTN',
-      icon: MTNIcon,
+      name: 'Send Money',
+      icon: MpesaIcon,
       navigate: 'GhanaSendMoney', // Temporarily point to an existing screen until GhanaMTN is implemented
     },
   ],
