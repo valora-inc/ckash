@@ -167,13 +167,7 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
 
     return (
         <ScrollView style={tw`flex-1 bg-[#F5F7FA] px-4`} showsVerticalScrollIndicator={false}>
-            {/* Header */}
-            <View style={tw`flex-row items-center py-4 mb-2`}>
-                <TouchableOpacity style={tw`mr-4`}>
-                    <Text style={tw`text-2xl text-gray-800 font-light`}>‹</Text>
-                </TouchableOpacity>
-                <Text style={tw`text-lg font-semibold text-gray-800`}>Send Money</Text>
-            </View>
+           
 
             {/* Bank Selection Section */}
             <View style={tw`bg-[#EFF3FF] border border-[#AEC5FF] rounded-lg p-6 mb-4`}>

@@ -81,7 +81,7 @@ export const services: Record<string, Service[]> = {
     {
       name: 'MTN',
       icon: MTNIcon,
-      navigate: 'KenyaSendMoney', // Temporarily point to an existing screen until GhanaMTN is implemented
+      navigate: 'GhanaSendMoney', // Temporarily point to an existing screen until GhanaMTN is implemented
     },
   ],
 }
