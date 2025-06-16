@@ -2,6 +2,16 @@ import { NativeStackScreenProps, StackParamList } from '@divvi/mobile'
 
 type RootStackParamList = StackParamList & {
   Home: undefined
+  CustomWallet: undefined
+  Service: undefined
+  KenyaSendMoney: undefined
+  NigeriaSendMoney: undefined
+  NigeriaAirtime: undefined
+  UgandaSendMoney: undefined  
+  KenyaBuyAirtime: undefined
+  KenyaBuyGoods: undefined
+  KenyaPayBills: undefined
+  GhanaSendMoney: undefined
 }
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =

@@ -5,9 +5,36 @@ import BrandLogo from './assets/BrandLogo'
 import WelcomeLogo from './assets/WelcomeLogo'
 import HomeScreen from './screens/HomeScreen'
 import ActivityIcon from './assets/ActivityTabIcon'
-import { CKES_TOKEN_ID, CUSD_TOKEN_ID, colors } from './utils'
+import WalletIcon from './assets/WalletTabIcon'
+import UtilityIcon from './assets/UtilityTabIcon'
+import {
+  CKES_TOKEN_ID,
+  CUSD_TOKEN_ID,
+  USDC_TOKEN_ID,
+  USDT_TOKEN_ID,
+  cGHS_TOKEN_ID,
+  cZAR_TOKEN_ID,
+  colors,
+} from './utils'
 import GetStarted from './components/GetStarted'
-import React from 'react'
+import * as React from "react"
+import ServiceScreen from './screens/ServiceScreen'
+import WalletScreen from './screens/WalletScreen'
+import KenyaSendMoney from './screens/services/kenya/SendMoney'
+import NigeriaSendMoney from './screens/services/nigeria/SendMoney'
+import NigeriaAirtime from './screens/services/nigeria/Airtime'
+import UgandaAirtime from './screens/services/uganda/Airtime'
+import SendMoney from './screens/services/kenya/SendMoney'
+import BuyAirtime from './screens/services/kenya/Airtime'
+import BuyGoods from './screens/services/kenya/BuyGoods'
+import PayBills from './screens/services/kenya/PayBills'
+import GhanaSendMoney from './screens/services/ghana/SendMoney'
+import UgandaSendMoney from './screens/services/uganda/SendMoney'
+export function createStaticLabel(
+  label: string,
+): (t: (key: string) => string) => string {
+  return () => label
+}
 
 const expoConfig = Constants.expoConfig
 if (!expoConfig) {
@@ -57,12 +84,26 @@ const App = createApp({
     tabs: ({ defaultTabs }) => {
       return {
         screens: [
-          defaultTabs.wallet,
+          // defaultTabs.wallet,
+          // {
+          //   name: 'Home',
+          //   component: HomeScreen,
+          //   icon: defaultTabs.activity.icon,
+          //   label: defaultTabs.activity.label,
+          // }
           {
-            name: 'Home',
-            component: HomeScreen,
-            icon: defaultTabs.activity.icon,
-            label: defaultTabs.activity.label,
+            name: 'Wallet',
+            component: WalletScreen,
+            icon: WalletIcon,
+            // label: defaultTabs.activity.label,
+            label: createStaticLabel('Wallet'),
+          },
+          {
+            name: 'Utilities',
+            component: ServiceScreen,
+            icon: UtilityIcon,
+            // label: defaultTabs.activity.label,
+            label: createStaticLabel('Utility'),
           },
           {
             ...defaultTabs.activity,
@@ -70,10 +111,101 @@ const App = createApp({
             icon: ActivityIcon,
           },
         ],
-        initialScreen: 'Home',
+        // initialScreen: 'Home',
+        initialScreen: 'Wallet',
       }
     },
+    custom: (Screen) => (
+      <>
+        <Screen
+          name="KenyaSendMoney"
+          component={KenyaSendMoney}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            headerTitle: 'Send Money',
+          }}
+        />
+        <Screen
+          name="UgandaSendMoney"
+          component={UgandaSendMoney}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            headerTitle: 'Send Money',
+          }}
+        />
+        <Screen
+          name="NigeriaSendMoney"
+          component={NigeriaSendMoney}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            headerTitle: 'Send Money',
+          }}
+        />
+
+        <Screen
+          name="GhanaSendMoney"
+          component={GhanaSendMoney}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            headerTitle: 'Send Money',
+          }}
+        />
+
+        <Screen
+          name="NigeriaAirtime"
+          component={NigeriaAirtime}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            headerTitle: 'Buy Airtime',
+          }}
+        />
+
+        <Screen
+          name="UgandaAirtime"
+          component={UgandaAirtime}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            headerTitle: 'Buy Airtime',
+          }}
+        />
+
+        <Screen
+          name="KenyaBuyAirtime"
+          component={BuyAirtime}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            headerTitle: 'Buy Airtime',
+          }}
+        />
+        <Screen
+          name="KenyaBuyGoods"
+          component={BuyGoods}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            headerTitle: 'Buy Goods',
+          }}
+        />
+        <Screen
+          name="KenyaPayBills"
+          component={PayBills}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            headerTitle: 'Pay Bills',
+          }}
+        />
+      </>
+    ),
   },
+
   locales: {
     'en-US': require('./locales/en-US.json'),
   },
@@ -85,9 +217,25 @@ const App = createApp({
       hideActionsCarousel: true,
     },
     tokens: {
-      enabledTokenIds: [CUSD_TOKEN_ID, CKES_TOKEN_ID],
+      enabledTokenIds: [
+        CUSD_TOKEN_ID,
+        CKES_TOKEN_ID,
+        USDC_TOKEN_ID,
+        USDT_TOKEN_ID,
+        cGHS_TOKEN_ID,
+        cZAR_TOKEN_ID,
+      ],
       overrides: {
         [CKES_TOKEN_ID]: {
+          showZeroBalance: true,
+        },
+        [USDC_TOKEN_ID]: {
+          showZeroBalance: true,
+        },
+        [cGHS_TOKEN_ID]: {
+          showZeroBalance: true,
+        },
+        [cZAR_TOKEN_ID]: {
           showZeroBalance: true,
         },
       },
