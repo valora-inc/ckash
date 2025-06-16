@@ -65,6 +65,7 @@ export default function Airtime(_props: RootStackScreenProps<'UgandaAirtime'>) {
     setSelectedAmount(amount)
     setCustomAmount('')
     fetchTokenAmount(amount.toString())
+    setAccountName('')
   }
 
   const handleCustomAmountChange = (text: string) => {

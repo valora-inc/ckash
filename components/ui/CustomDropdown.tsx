@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import {
   View,
   Text,
@@ -8,11 +8,10 @@ import {
   Animated,
   Pressable,
   Dimensions,
-  LayoutChangeEvent,
 } from 'react-native'
 import tw from 'twrnc'
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window')
+const { height: screenHeight } = Dimensions.get('window')
 
 export interface DropdownItem {
   label: string

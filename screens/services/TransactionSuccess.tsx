@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  Dimensions,
 } from 'react-native'
 
 export default function TransactionSuccess() {

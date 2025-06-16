@@ -4,11 +4,9 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  Dimensions,
 } from 'react-native'
 import tw from 'twrnc'
 
-const { height: screenHeight } = Dimensions.get('window')
 
 export interface DropdownItem {
   label: string
@@ -62,11 +60,6 @@ const SimpleDropdown: React.FC<SimpleDropdownProps> = ({
   disabled = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [dropdownPosition, setDropdownPosition] = useState({
-    x: 0,
-    y: 0,
-    width: 0,
-  })
 
   const dropdownRef = useRef<View>(null)
   const selectedItem = items.find((item) => item.value === selectedValue)
@@ -84,11 +77,6 @@ const SimpleDropdown: React.FC<SimpleDropdownProps> = ({
   const openDropdown = () => {
     if (dropdownRef.current) {
       dropdownRef.current.measure((x, y, width, height, pageX, pageY) => {
-        setDropdownPosition({
-          x: pageX,
-          y: pageY + height,
-          width,
-        })
         setIsOpen(true)
       })
     }

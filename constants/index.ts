@@ -3,10 +3,8 @@ import MpesaIcon from '../assets/icons/sendmoney-icon.svg'
 import AirtimeIcon from '../assets/icons/airtime-icon.svg'
 import DataIcon from '../assets/icons/network-icon.svg'
 import PaybillIcon from '../assets/icons/paybills-icon.svg'
-import AirtelTigoIcon from '../assets/icons/airteltigo-icon.svg'
 import SendMoneyIcon from '../assets/icons/opay-icon.svg'
 import MTNIcon from '../assets/icons/mtn-icon.svg'
-import TelecelIcon from '../assets/icons/telecel-icon.svg'
 import BuyGoodsIcon from '../assets/icons/buygoods-icon.svg'
 
 if (!process.env.API_KEY || !process.env.BASE_URL) {

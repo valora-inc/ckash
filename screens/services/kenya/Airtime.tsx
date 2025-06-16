@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {
   View,
-  StyleSheet,
   TextInput,
   Text,
   Alert,
@@ -26,15 +25,12 @@ import {
   //   usePrepareTransactions,
 } from '@divvi/mobile'
 // import { encodeFunctionData, erc20Abi, parseEther, parseUnits } from "viem"
-import { celo } from 'viem/chains'
 import { useTokens } from '../../../utils'
 // import { TokenBalance } from "src/tokens/slice"
 // import { Pretium_api } from "../../../constants/index"
 import ContactIcon from '../../../assets/icons/contact-icon.svg'
 import {
   calculateTotalUsdValue,
-  executeCKashTransaction,
-  getExchangeRate,
   getRatedAmount,
   getRatedAmountToLocalCurrency,
   sendTransactionStable,

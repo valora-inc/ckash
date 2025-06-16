@@ -2,10 +2,6 @@ import React from 'react'
 import {
   Pressable,
   Text,
-  StyleSheet,
-  Image,
-  ImageSourcePropType,
-  View,
   ViewStyle,
 } from 'react-native'
 import tw from 'twrnc'
