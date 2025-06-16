@@ -31,7 +31,7 @@ export default function MPESABuyGoods(
   const [modalVisible, setModalVisible] = React.useState(false)
   const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })
 
-  const { sendMoney, loading } = useSend()
+  const { sendMoney, loading,isError } = useSend()
 
   const { cUSDToken } = useTokens()
 
@@ -138,7 +138,7 @@ export default function MPESABuyGoods(
         </View>
 
         {/* Continue Button */}
-        <PrimaryButton onPress={handleBuyGoods} label="Continue" />
+ <PrimaryButton onPress={handleBuyGoods} label="Continue" isLoading={loading} />
 
         {/* Disclaimer */}
         <View style={tw`flex-row items-center`}>
@@ -154,9 +154,9 @@ export default function MPESABuyGoods(
           setModalVisible(false)
           resetForm()
         }}
-        title="Transaction Successful"
+        title={isError?"Transaction Failed":"Transaction Successful"}
         amount={amount ? `Amount: ${amount} KES` : ''}
-        iconType="success"
+        iconType={isError?"error":"success"}
         loading={loading}
         accountName={tillNumber ? `Recipient: ${tillNumber}` : ''}
       />

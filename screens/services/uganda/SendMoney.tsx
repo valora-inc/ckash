@@ -40,7 +40,7 @@ export default function UgandaSendMoney(_props: RootStackScreenProps<'UgandaSend
     const [tokenAmount, setTokenAmount] = React.useState<string>('')
     const [localBalance, setLocalBalance] = React.useState<number>(0.0)
 
-    const { sendMoney, loading } = useSend()
+    const { sendMoney, loading,isError } = useSend()
     
     const { tokens, cUSDToken } = useTokens()
 
@@ -216,7 +216,7 @@ export default function UgandaSendMoney(_props: RootStackScreenProps<'UgandaSend
             </View>
 
             {/* Continue Button */}
-            <PrimaryButton onPress={handleSendMoney} label="Continue" />
+            <PrimaryButton onPress={handleSendMoney} label="Continue" isLoading={loading} />
 
             <AlertModal
                 visible={modalVisible}
@@ -224,9 +224,9 @@ export default function UgandaSendMoney(_props: RootStackScreenProps<'UgandaSend
                     setModalVisible(false)
                     resetForm()
                 }}
-                title="Transaction Successful"
+                title={isError?"Transaction Failed":"Transaction Successful"}
                 amount={amount ? `Amount: ${amount} UGX` : ''}
-                iconType="success"
+                iconType={isError?"error":"success"}
                 loading={loading}
                 accountName={accountName ? `Recipient: ${accountName}` : ''}
             />

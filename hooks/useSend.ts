@@ -30,6 +30,7 @@ interface SendMoneyProps {
 
 export const useSend = () => {
   const [loading, setLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { sendStableToken } = useSendTransactionStable()
 
@@ -52,6 +53,7 @@ export const useSend = () => {
     try {
       setLoading(true)
       setError(null)
+      setIsError(false)
 
       // Send the on-chaintransaction
       const txHash = await sendStableToken({
@@ -64,6 +66,8 @@ export const useSend = () => {
         feeCurrency,
       })
       if (!txHash) {
+        setLoading(false)
+        setIsError(true)
         throw new Error('Transaction failed')
       }
       
@@ -83,19 +87,25 @@ export const useSend = () => {
       })
       console.log("THE ACCOUNT Name",account_name)
        console.log("Country Code",country_code)
-       console.log ("THE RESPONSE CODE",response.code)
-       if(response.code === "200"){
-         setError( 'Transaction Failed try again')
-
+       console.log ("THE RESPONSE CODE",typeof(response.code))
+       if(response.code.toString() !== "200"){
+         setError('Transaction Failed try again')
+         setIsError(true)
+         setLoading(false)
+         
+         return { txHash: null, response: null }
+         
        }
       
 
       return { txHash, response }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
+      setIsError(true)
       throw err
     } finally {
       setLoading(false)
+      //setIsError(false)
     }
   }
 
@@ -103,5 +113,6 @@ export const useSend = () => {
     sendMoney,
     loading,
     error,
+    isError
   }
 }

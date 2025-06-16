@@ -24,6 +24,7 @@ import debounce from "lodash.debounce"
 import { TokenBalance } from "src/tokens/slice"
 import AlertModal from "../../../components/AlertModal"
 import { MobileNetwork, NigeriaBanks } from "../../../api/types";
+import PrimaryButton from '../../../components/PrimaryButton'
 const popularBanks = [
   {
     id: '1',
@@ -73,7 +74,7 @@ export default function SendMoney(
           
             const [tokenAmount, setTokenAmount] = React.useState<string>('')
       
-          const { sendMoney, loading } = useSend()
+          const { sendMoney, loading,error,isError } = useSend()
           
             const { cUSDToken } = useTokens()
 
@@ -376,11 +377,7 @@ export default function SendMoney(
         </View> */}
 
         {/* Continue Button */}
-        <Button
-          title="Continue"
-          onPress={handleSendMoney}
-          style={styles.continueButton}
-        />
+       <PrimaryButton onPress={handleSendMoney} label="Continue" isLoading={loading} />
       </View>
       <AlertModal
                           visible={modalVisible}
@@ -388,9 +385,9 @@ export default function SendMoney(
                             setModalVisible(false)
                             resetForm()
                           }}
-                          title="Transaction Successful"
+                          title={isError?"Transaction Failed":"Transaction Successful"}
                           amount={amount ? `Amount: ${amount} GHS` : ''}
-                          iconType="success"
+                          iconType={isError?"error":"success"}
                           loading={loading}
                           accountName={accountName ? `Recipient: ${accountName}` : ''}
                         />

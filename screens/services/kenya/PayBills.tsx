@@ -33,7 +33,7 @@ export default function MPESAPaybills(
 
   const [tokenAmount, setTokenAmount] = React.useState<string>('')
 
-  const { sendMoney, loading } = useSend()
+  const { sendMoney, loading,isError } = useSend()
 
   const { cUSDToken } = useTokens()
 
@@ -154,7 +154,7 @@ export default function MPESAPaybills(
         </View>
 
         {/* Continue Button */}
-        <PrimaryButton onPress={handleSendMoney} label="Continue" />
+        <PrimaryButton onPress={handleSendMoney} label="Continue" isLoading={loading} />
 
         {/* Disclaimer */}
         <View style={tw`flex-row items-center`}>
@@ -170,9 +170,9 @@ export default function MPESAPaybills(
           setModalVisible(false)
           resetForm()
         }}
-        title="Transaction Successful"
+        title={isError?"Transaction Failed":"Transaction Successful"}
         amount={amount ? `Amount: ${amount} KES` : ''}
-        iconType="success"
+        iconType={isError?"error":"success"}
         loading={loading}
         accountName={accountNumber ? `Recipient: ${accountNumber}` : ''}
       />

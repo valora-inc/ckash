@@ -39,7 +39,7 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
     const [tokenAmount, setTokenAmount] = React.useState<string>('')
     const [localBalance, setLocalBalance] = React.useState<number>(0.0)
 
-    const { sendMoney, loading } = useSend()
+    const { sendMoney, loading,isError } = useSend()
     
     const { tokens, cUSDToken } = useTokens()
 
@@ -217,7 +217,7 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
             </View>
 
             {/* Continue Button */}
-            <PrimaryButton onPress={handleSendMoney} label="Continue" />
+            <PrimaryButton onPress={handleSendMoney} label="Continue" isLoading={loading} />
 
             <AlertModal
                 visible={modalVisible}
@@ -225,9 +225,9 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
                     setModalVisible(false)
                     resetForm()
                 }}
-                title="Transaction Successful"
+                title={isError?"Transaction Failed":"Transaction Successful"}
                 amount={amount ? `Amount: ${amount} GHS` : ''}
-                iconType="success"
+                iconType={isError?"error":"success"}
                 loading={loading}
                 accountName={accountName ? `Recipient: ${accountName}` : ''}
             />

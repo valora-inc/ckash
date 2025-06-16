@@ -55,7 +55,7 @@ export default function SendMoney(
   const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })
   const [amount, setAmount] = React.useState<string>('')
   const [tokenAmount, setTokenAmount] = React.useState<string>('')
-  const { sendMoney, loading } = useSend()
+  const { sendMoney, loading,error ,isError} = useSend()
   const [localBalance, setLocalBalance] = React.useState<number>(0.0)
 
   const { tokens, cUSDToken } = useTokens()
@@ -216,7 +216,8 @@ export default function SendMoney(
       </View>
 
       {/* Continue Button */}
-      <PrimaryButton onPress={handleSendMoney} label="Continue" />
+      
+      <PrimaryButton onPress={handleSendMoney} label="Continue" isLoading={loading} />
 
       {/* Contacts Section */}
       {/* <ContactList
@@ -232,9 +233,9 @@ export default function SendMoney(
           setModalVisible(false)
           resetForm()
         }}
-        title="Transaction Successful"
+        title={isError?"Transaction Failed":"Transaction Successful"}
         amount={amount ? `Amount: ${amount} KES` : ''}
-        iconType="success"
+        iconType={isError?"error":"success"}
         loading={loading}
         accountName={accountName ? `Recipient: ${accountName}` : ''}
       />
