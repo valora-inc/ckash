@@ -8,6 +8,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native'
+import tw from 'twrnc'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 type IconButtonProps = {
@@ -26,7 +27,7 @@ type IconButtonProps = {
 
 const IconButton: React.FC<IconButtonProps> = ({
   iconName,
-  iconSize = 15,
+  iconSize = 20,
   onPress,
   disabled = false,
   style,
@@ -41,50 +42,25 @@ const IconButton: React.FC<IconButtonProps> = ({
       onPress={onPress}
       disabled={disabled}
       style={({ pressed }) => [
-        styles.button,
-        pressed && styles.pressed,
-        disabled && styles.disabled,
+        tw`flex-row items-center justify-center gap-1 px-2 py-2 bg-[#D3DFFE] rounded-[2px] flex-1`,
+        pressed && tw`opacity-70`,
+        disabled && tw`opacity-40`,
         style,
       ]}
     >
       {iconPostion === 'left' && (
         <Icon name={iconName} size={iconSize} color={iconColor} />
       )}
-      {lable && <Text style={[styles.text, textStyle]}>{lable}</Text>}
+      {lable && (
+        <Text style={[tw`text-xs font-medium text-[#1B1A46]`, textStyle]}>
+          {lable}
+        </Text>
+      )}
       {iconPostion === 'right' && (
         <Icon name={iconName} size={iconSize} color={iconColor} />
       )}
     </Pressable>
   )
 }
-
-const styles = StyleSheet.create({
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 4,
-    backgroundColor: '#D3DFFE',
-    borderRadius: 4,
-    width: 102,
-    height: 40,
-  },
-  iconContainer: {
-    marginBottom: 6,
-  },
-  text: {
-    fontSize: 10,
-    fontWeight: '600',
-    zIndex: 1000,
-    padding: 6,
-    color: '#000',
-  },
-  pressed: {
-    opacity: 0.7,
-  },
-  disabled: {
-    opacity: 0.4,
-  },
-})
 
 export default IconButton

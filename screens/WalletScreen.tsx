@@ -14,7 +14,7 @@ import { RootStackScreenProps } from './types'
 import { navigate } from '@divvi/mobile'
 import Card from '../components/ui/Card'
 import { useTokens } from '../utils'
-import DropDownPicker from 'react-native-dropdown-picker'
+import SimpleDropdown from '../components/ui/SimpleDropdown'
 
 import SearchIcon from '../assets/icons/search.svg'
 
@@ -205,9 +205,7 @@ export default function WalletScreen(
   const [balanceHidden, setBalanceHidden] = React.useState<boolean>(false)
   const [currentIndex, setCurrentIndex] = React.useState(0)
   // Dropdown state
-  const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState(selectedCountry)
-  const [items, setItems] = React.useState([
+  const [dropdownItems] = React.useState([
     { label: '🇰🇪 Kenya', value: 'Kenya' },
     { label: '🇺🇬 Uganda', value: 'Uganda' },
     { label: '🇬🇭 Ghana', value: 'Ghana' },
@@ -242,9 +240,9 @@ export default function WalletScreen(
     return () => clearInterval(interval)
   }, [])
 
-  React.useEffect(() => {
+  const handleCountrySelect = (value: string) => {
     setSelectedCountry(value)
-  }, [value])
+  }
 
   React.useEffect(() => {
     if (!tokens || tokens.length === 0) return
@@ -256,12 +254,12 @@ export default function WalletScreen(
       <View
         style={tw`flex-5 bg-[#D7E1FF] w-[100%] justify-center items-center`}
       >
-        <View style={tw`flex-2.5 pt-2 w-[100%] justify-center items-center`}>
+        <View style={tw`flex-4 pt-2 w-[100%] justify-center items-center`}>
           <Card
-            style={tw` flex-1 bg-[#0034BB] w-[90%] h-[95%] gap-4 justify-between z-10`}
+            style={tw` flex-1 bg-[#0034BB] rounded-lg w-[90%] h-[95%] gap-4 my-4 mx-2.5 justify-between z-10`}
           >
             {/* Wallet Title */}
-            <View style={tw`flex-row gap-4`}>
+            <View style={tw`flex-row gap-4 pt-2`}>
               <Text style={{ color: '#AEC5FF' }}>Wallet Balance</Text>
               <TouchableOpacity
                 onPress={() => setBalanceHidden(!balanceHidden)}
@@ -270,26 +268,14 @@ export default function WalletScreen(
 
             {/* Wallet Balance */}
             <View style={tw`flex-row justify-between`}>
-              <View style={tw`flex-row gap-2`}>
+              <View style={tw`flex-row gap-1`}>
                 <Text
-                  style={{
-                    color: '#AEC5FF',
-                    fontWeight: '500',
-                    fontSize: 33,
-                    lineHeight: 33,
-                    letterSpacing: -1,
-                  }}
+                  style={tw`text-3xl font-medium text-[#AEC5FF]`}
                 >
                   $
                 </Text>
                 <Text
-                  style={{
-                    color: '#E4EBFE',
-                    fontWeight: '500',
-                    fontSize: 32,
-                    lineHeight: 32,
-                    letterSpacing: -2,
-                  }}
+                  style={tw`text-4xl font-semibold text-[#E4EBFE]`}
                 >
                   {balanceHidden ? '*****' : usdBalance}
                 </Text>
@@ -301,37 +287,29 @@ export default function WalletScreen(
                   zIndex: 1000,
                 }}
               >
-                <DropDownPicker
-                  open={open}
-                  value={value}
-                  items={items}
-                  setOpen={setOpen}
-                  setValue={setValue}
-                  setItems={setItems}
-                  textStyle={{
-                    fontSize: 10,
-                    fontWeight: '400',
-                    letterSpacing: 0,
-                    verticalAlign: 'bottom',
-                  }}
-                  dropDownContainerStyle={{
-                    zIndex: 1000,
-                    width: '76.5%',
-                    marginLeft: '22.5%',
-                    backgroundColor: '#8DADFE',
-                    borderRadius: 4,
-                    borderWidth: 0,
-                  }}
-                  style={tw`h-6 w-26 border-transparent bg-[#8DADFE] ml-7.5   rounded text-lg`}
+                <SimpleDropdown
+                  items={dropdownItems}
+                  selectedValue={selectedCountry}
+                  onSelect={handleCountrySelect}
+                  dropdownStyle="h-6 w-22 border-transparent bg-[#8DADFE] ml-11 rounded-[2px] flex-row items-center justify-between px-2"
+                  textStyle="text-xs text-black flex-1 font-normal"
+                  dropdownListStyle="bg-[#8DADFE] rounded-md rounded-[2px] border border-[#7A96FE]"
+                  itemStyle="px-2 py-2.5 border-b border-[#7A96FE]/30"
+                  selectedItemStyle="bg-[#6B8BFE] px-2 py-2.5 border-[#5A7BFE]"
+                  itemTextStyle="text-xs text-black font-normal"
+                  selectedItemTextStyle="text-xs text-white font-medium"
+                  maxHeight={160}
                 />
               </View>
             </View>
 
             {/* Buttons */}
-            <View style={tw`flex-row justify-between items-center gap-2`}>
+            <View
+              style={tw`flex-row justify-between items-center gap-1.5 mb-2 mx-1`}
+            >
               <IconButton
                 style={tw`border-1 border-[#789EFF]`}
-                textStyle={tw`font-medium text-sm text-[#1B1A46]`}
+                textStyle={tw`font-medium text-xs text-[#1B1A46]`}
                 iconName="send"
                 iconPostion="left"
                 lable="Send"
@@ -339,7 +317,7 @@ export default function WalletScreen(
               />
               <IconButton
                 style={tw`border-1 border-[#789EFF]`}
-                textStyle={tw`font-medium text-sm text-[#1B1A46]`}
+                textStyle={tw`font-medium text-xs text-[#1B1A46]`}
                 iconName="arrow-down"
                 iconPostion="left"
                 lable="Receive"
@@ -347,7 +325,7 @@ export default function WalletScreen(
               />
               <IconButton
                 style={tw`border-1 border-[#789EFF]`}
-                textStyle={tw`font-medium text-sm text-[#1B1A46]`}
+                textStyle={tw`font-medium text-xs text-[#1B1A46]`}
                 iconName="swap-horizontal"
                 iconPostion="left"
                 lable="Swap"
