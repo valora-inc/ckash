@@ -1,368 +1,211 @@
 import * as React from 'react'
 import {
   View,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   ScrollView,
-  Image,
-  Clipboard,
-  ToastAndroid,
-  Platform,
   Alert,
 } from 'react-native'
 import { RootStackScreenProps } from '../../types'
-import Card from '../../../components/ui/Card'
-import Button from '../../../components/ui/Button'
+import { useWalletClient } from '@divvi/mobile'
+import { useTokens } from '../../../utils'
+import {
+  calculateTotalUsdValue,
+  getRatedAmount,
+  getRatedAmountToLocalCurrency,
+  sendTransactionStable,
+} from '../../../lib/cKash'
+import { PRETIUM_ADDRESS } from '../../../constants'
+import { TokenBalance } from 'src/tokens/slice'
+import tw from 'twrnc'
+import ContactList from '../../../components/ContactList'
+import PrimaryButton from '../../../components/PrimaryButton'
+import InputField from '../../../components/InputField'
+import NoteIcon from '../../../assets/icons/note-icon.svg'
+import ContactIcon from '../../../assets/icons/contact-icon.svg'
 
-const PRESET_AMOUNTS = [
-  { value: '100', display: '₦100' },
-  { value: '200', display: '₦200' },
-  { value: '500', display: '₦500' },
-  { value: '1000', display: '₦1000' },
-  { value: '2000', display: '₦2000' },
-  { value: '5000', display: '₦5000' },
-]
+interface SavedContact {
+  phone: string
+  name: string
+}
 
-// Move savedContacts to state to make it mutable
-const initialSavedContacts = [
-  {
-    phoneNumber: '0816 057 3659',
-    name: 'PABLO LEMONR',
-  },
-  {
-    phoneNumber: '0816 057 3659',
-    name: 'PABLO LEMONR',
-  },
-  {
-    phoneNumber: '0816 057 3659',
-    name: 'PABLO LEMONR',
-  },
-  {
-    phoneNumber: '0816 057 3659',
-    name: 'PABLO LEMONR',
-  },
-]
+interface AmountOption {
+  value: number
+  label: string
+}
 
 export default function Airtime(
   _props: RootStackScreenProps<'NigeriaAirtime'>,
 ) {
-  const [amount, setAmount] = React.useState('')
-  const [phoneNumber, setPhoneNumber] = React.useState('')
-  const [savedContacts, setSavedContacts] = React.useState(initialSavedContacts)
+  const [phoneNumber, setPhoneNumber] = React.useState<string>('')
+  const [selectedAmount, setSelectedAmount] = React.useState<number | null>(
+    null,
+  )
+  const [customAmount, setCustomAmount] = React.useState<string>('')
+  const [activeTab, setActiveTab] = React.useState<'saved' | 'recent'>('saved')
 
-  const handleAmountPress = (value: string) => {
-    setAmount(value)
-  }
+  const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })
+  const [localBalance, setLocalBalance] = React.useState<number>(0.0)
 
-  const handleAmountChange = (text: string) => {
+  const { tokens, cUSDToken } = useTokens()
+
+  const amountOptions: AmountOption[] = [
+    { value: 100, label: 'NGN 100' },
+    { value: 200, label: 'NGN 200' },
+    { value: 500, label: 'NGN 500' },
+    { value: 1000, label: 'NGN 1000' },
+    { value: 2000, label: 'NGN 2000' },
+    { value: 5000, label: 'NGN 5000' },
+  ]
+
+  const savedContacts: SavedContact[] = [
+    { phone: '08160573659', name: 'PABLO LEMONR' },
+    { phone: '07034493632', name: 'JOHN DOE' },
+  ]
+
+  const handlePhoneChange = (text: string) => {
     const cleaned = text.replace(/[^0-9]/g, '')
-    setAmount(cleaned)
-  }
-
-  const handlePhoneNumberChange = (text: string) => {
-    // Remove any non-numeric characters
-    const cleaned = text.replace(/[^0-9]/g, '')
-
-    // Format the phone number as user types
-    let formatted = cleaned
-    if (cleaned.length > 4 && cleaned.length <= 7) {
-      formatted = cleaned.replace(/(\d{4})(\d{1,3})/, '$1 $2')
-    } else if (cleaned.length > 7) {
-      formatted = cleaned.replace(/(\d{4})(\d{3})(\d{1,4})/, '$1 $2 $3')
-    }
-
+    // Format as XXXX XXX XXXX
+    const formatted = cleaned.replace(/(\d{4})(\d{3})(\d{4})/, '$1 $2 $3')
     setPhoneNumber(formatted)
   }
 
-  const copyToClipboard = () => {
-    if (phoneNumber) {
-      Clipboard.setString(phoneNumber)
-      if (Platform.OS === 'android') {
-        ToastAndroid.show('Phone number copied!', ToastAndroid.SHORT)
-      } else {
-        Alert.alert('Copied', 'Phone number copied to clipboard!')
+  const handleAmountSelect = (amount: number) => {
+    setSelectedAmount(amount)
+    setCustomAmount('')
+  }
+
+  const handleCustomAmountChange = (text: string) => {
+    setCustomAmount(text)
+    setSelectedAmount(null)
+  }
+
+  const handleBuyAirtime = async () => {
+    try {
+      const amount = selectedAmount || parseFloat(customAmount)
+      if (!amount || !phoneNumber) {
+        Alert.alert('Error', 'Please select an amount and enter phone number')
+        return
       }
+
+      const calculatedAmount = await getRatedAmount(amount, 'NGN')
+
+      const txHash = await sendTransactionStable({
+        to: cUSDToken?.address as `0x${string}`,
+        recipient: PRETIUM_ADDRESS as `0x${string}`,
+        from: walletClient?.account?.address as `0x${string}`,
+        amount: calculatedAmount.toString(),
+        feeCurrency: cUSDToken?.address as `0x${string}`,
+        tokenBalance: cUSDToken as TokenBalance,
+        type: 'cip64',
+      })
+      console.log('The txHash is ', txHash)
+      Alert.alert('Success', `Airtime purchase successful! Hash: ${txHash}`)
+    } catch (error) {
+      console.log('THE ERROR', error)
+      Alert.alert('Error', `Transaction failed: ${error}`)
     }
   }
 
-  const addToRecentContacts = () => {
-    if (phoneNumber) {
-      // Check if the number already exists in contacts
-      const exists = savedContacts.some(
-        (contact) => contact.phoneNumber === phoneNumber,
-      )
-
-      if (!exists) {
-        // Add new contact to the beginning of the array
-        const newContact = {
-          phoneNumber: phoneNumber,
-          name: 'Recent Contact', // Default name for recent contacts
-        }
-        setSavedContacts([newContact, ...savedContacts])
-
-        // Show feedback
-        if (Platform.OS === 'android') {
-          ToastAndroid.show('Added to recent contacts!', ToastAndroid.SHORT)
-        } else {
-          Alert.alert('Success', 'Added to recent contacts!')
-        }
-      }
-    }
+  const selectContact = (contact: SavedContact) => {
+    setPhoneNumber(contact.phone)
   }
 
-  const handleContinue = () => {
-    if (!phoneNumber || !amount) {
-      Alert.alert('Error', 'Please enter both phone number and amount')
-      return
-    }
-
-    // Add to recent contacts
-    addToRecentContacts()
-
-    // Process the airtime purchase
-    console.log('Processing airtime purchase...')
-
-    // Clear input fields
-    setPhoneNumber('')
-    setAmount('')
-
-    // Show success message
-    if (Platform.OS === 'android') {
-      ToastAndroid.show('Airtime purchase initiated!', ToastAndroid.SHORT)
-    } else {
-      Alert.alert('Success', 'Airtime purchase initiated!')
-    }
-  }
+  React.useEffect(() => {
+    if (!tokens || tokens.length === 0) return
+    let totalUsdValue = calculateTotalUsdValue(tokens)
+    getRatedAmountToLocalCurrency(Number(totalUsdValue), 'NGN').then(
+      (value: any) => setLocalBalance(Number(value)),
+    )
+  }, [tokens])
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
-        {/* Amount Selection */}
-        <Card style={styles.card}>
-          <Text style={styles.label}>Choose Amount (NGN)</Text>
-          <View style={styles.amountGrid}>
-            {PRESET_AMOUNTS.map((preset) => (
-              <TouchableOpacity
-                key={preset.value}
-                style={[
-                  styles.amountButton,
-                  amount === preset.value && styles.selectedAmount,
-                ]}
-                onPress={() => handleAmountPress(preset.value)}
-              >
-                <Text
-                  style={[
-                    styles.amountButtonText,
-                    amount === preset.value && styles.selectedAmountText,
-                  ]}
-                >
-                  {preset.display}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <Text style={styles.label}>Input an Amount (NGN)</Text>
-          <View style={styles.inputContainer}>
-            <Text style={styles.currencySymbol}>₦</Text>
-            <TextInput
-              style={styles.input}
-              value={amount}
-              onChangeText={handleAmountChange}
-              placeholder="100"
-              placeholderTextColor="#A0A0A0"
-              keyboardType="numeric"
-            />
-          </View>
-        </Card>
-
-        {/* Phone Number Input */}
-        <View style={styles.section}>
-          <Text style={styles.label}>Phone Number</Text>
-          <View style={styles.phoneInputContainer}>
-            <TextInput
-              style={styles.phoneInput}
-              value={phoneNumber}
-              onChangeText={handlePhoneNumberChange}
-              placeholder="0816 057 3659"
-              placeholderTextColor="#A0A0A0"
-              keyboardType="numeric"
-              maxLength={13} // Including spaces
-            />
-            <TouchableOpacity onPress={copyToClipboard}>
-              <Image
-                source={require('../../../assets/copy.png')}
-                style={styles.copyIcon}
-              />
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.supportText}>
-            All mobile networks are supported
-          </Text>
-        </View>
-
-        {/* Continue Button */}
-        <Button
-          title="Continue"
-          onPress={handleContinue}
-          style={styles.continueButton}
-        />
-
-        {/* Saved Contacts */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Saved Contact</Text>
-            <TouchableOpacity>
-              <Text style={styles.recentContact}>Recent Contact</Text>
-            </TouchableOpacity>
-          </View>
-          {savedContacts.map((contact, index) => (
+    <ScrollView
+      style={tw`flex-1 bg-[#F5F7FA] px-4`}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* Amount Selection Card */}
+      <View
+        style={tw`bg-[#EFF3FF] border border-[#AEC5FF] rounded-lg p-6 mb-4`}
+      >
+        <Text style={tw`text-sm text-gray-700 font-medium mb-2`}>
+          Choose Amount (NGN)
+        </Text>
+        <View style={tw`flex-row flex-wrap gap-2`}>
+          {amountOptions.map((option, index) => (
             <TouchableOpacity
               key={index}
-              style={styles.contactCard}
-              onPress={() => setPhoneNumber(contact.phoneNumber)}
+              style={[
+                tw`rounded-lg p-4 w-[31%] border border-[#B2C7FF] rounded mb-2 bg-[#DAE3FF]`,
+                selectedAmount === option.value && tw`bg-[#2B5CE6]`,
+              ]}
+              onPress={() => handleAmountSelect(option.value)}
             >
-              <Text style={styles.contactNumber}>{contact.phoneNumber}</Text>
-              <Text style={styles.contactName}>{contact.name}</Text>
+              <Text
+                style={[
+                  tw`text-sm font-medium text-sm text-black`,
+                  selectedAmount === option.value && tw`text-white`,
+                ]}
+              >
+                {option.label}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
+
+        {/* Custom Amount Input */}
+        <View style={tw`mt-2`}>
+          <View style={tw`flex-row justify-between items-center mb-2`}>
+            <Text style={tw`text-sm text-gray-700 font-medium`}>
+              Input an Amount (NGN)
+            </Text>
+            <Text style={tw`text-sm font-medium text-sm text-black`}>
+              NGN {localBalance}
+            </Text>
+          </View>
+          <TextInput
+            style={tw`bg-white border border-[#B2C7FF] rounded px-4 py-4 mb-1 bg-[#DAE3FF]`}
+            value={customAmount}
+            onChangeText={handleCustomAmountChange}
+            placeholder="NGN 100"
+            placeholderTextColor="#A0A0A0"
+            keyboardType="numeric"
+          />
+        </View>
       </View>
+
+      {/* Phone Number Input */}
+      <View style={tw`p-4 mb-4`}>
+        <Text style={tw`text-sm text-gray-700 font-medium mb-2`}>
+          Phone Number
+        </Text>
+        <InputField
+          value={phoneNumber}
+          onChangeText={handlePhoneChange}
+          placeholder="0816 057 3659"
+          keyboardType="phone-pad"
+          maxLength={13}
+          icon={<ContactIcon width={24} height={24} style={tw`mr-4`} />}
+        />
+        <View style={tw`flex-row items-center`}>
+          <NoteIcon width={16} height={16} style={tw`mr-1`} />
+          <Text style={tw`text-[10px] text-gray-700 font-medium`}>
+            All mobile networks are supported
+          </Text>
+        </View>
+      </View>
+
+      {/* Continue Button */}
+      <PrimaryButton onPress={handleBuyAirtime} label="Continue" />
+
+      {/* Contacts Section */}
+      <ContactList
+        contacts={savedContacts}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onContactSelect={selectContact}
+      />
     </ScrollView>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F6FA',
-  },
-  content: {
-    padding: 16,
-  },
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 24,
-  },
-  label: {
-    fontSize: 14,
-    color: '#1B1A46',
-    marginBottom: 12,
-    fontWeight: '500',
-  },
-  amountGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  amountButton: {
-    width: '31%',
-    backgroundColor: '#F5F6FA',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 8,
-    alignItems: 'center',
-  },
-  selectedAmount: {
-    backgroundColor: '#0034BB',
-  },
-  amountButtonText: {
-    color: '#1B1A46',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  selectedAmountText: {
-    color: '#FFFFFF',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 8,
-    backgroundColor: '#F9FAFB',
-  },
-  currencySymbol: {
-    fontSize: 16,
-    color: '#1B1A46',
-    paddingLeft: 12,
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    padding: 12,
-    color: '#1B1A46',
-  },
-  section: {
-    marginBottom: 24,
-  },
-  phoneInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 8,
-    backgroundColor: '#F9FAFB',
-    paddingHorizontal: 12,
-  },
-  phoneInput: {
-    flex: 1,
-    fontSize: 16,
-    padding: 12,
-    color: '#1B1A46',
-  },
-  copyIcon: {
-    width: 24,
-    height: 24,
-    tintColor: '#6B7280',
-  },
-  supportText: {
-    fontSize: 12,
-    color: '#6B7280',
-    marginTop: 4,
-  },
-  continueButton: {
-    backgroundColor: '#0034BB',
-    borderRadius: 8,
-    padding: 16,
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#1B1A46',
-  },
-  recentContact: {
-    fontSize: 14,
-    color: '#0034BB',
-  },
-  contactCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-  },
-  contactNumber: {
-    fontSize: 14,
-    color: '#1B1A46',
-    marginBottom: 4,
-  },
-  contactName: {
-    fontSize: 12,
-    color: '#6B7280',
-  },
-})

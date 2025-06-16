@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { View, TextInput, StyleSheet, TextInputProps } from 'react-native'
+import { View, TextInput, TextInputProps } from 'react-native'
 import tw from 'twrnc'
 
 interface InputFieldProps extends TextInputProps {

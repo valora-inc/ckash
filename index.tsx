@@ -146,6 +146,16 @@ const App = createApp({
         />
 
         <Screen
+          name="NigeriaAirtime"
+          component={NigeriaAirtime}
+          options={{
+            headerBackVisible: true,
+            headerShown: true,
+            headerTitle: 'Buy Airtime',
+          }}
+        />
+
+        <Screen
           name="UgandaAirtime"
           component={UgandaAirtime}
           options={{

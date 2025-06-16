@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { View, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
 type CustomCardProps = {
   title?: string;
