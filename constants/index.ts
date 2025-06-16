@@ -60,8 +60,8 @@ export const services: Record<string, Service[]> = {
   ],
   Uganda: [
     {
-      name: 'MTN',
-      icon: MTNIcon,
+      name: 'Airtime',
+      icon: AirtimeIcon,
       navigate: 'UgandaAirtime',
     },
   ],
