@@ -1,565 +1,290 @@
 import * as React from 'react'
 import {
   View,
-  StyleSheet,
   Text,
   TextInput,
-  Image,
   TouchableOpacity,
   ScrollView,
-  Pressable,
-  Clipboard,
-  ToastAndroid,
-  Platform,
   Alert,
 } from 'react-native'
 import { RootStackScreenProps } from '../../types'
-import Card from '../../../components/ui/Card'
-import Button from '../../../components/ui/Button'
-import { useSend } from "../../../hooks/useSend"
-import { useTokens } from "../../../utils"
+import { useSend } from '../../../hooks/useSend'
+import { useTokens } from '../../../utils'
 import { useWalletClient } from '@divvi/mobile'
-import { getExchangeRate, getRatedAmount, validateAccount } from "../../../lib/cKash"
-import debounce from "lodash.debounce"
-import { TokenBalance } from "src/tokens/slice"
-import AlertModal from "../../../components/AlertModal"
-import { MobileNetwork, NigeriaBanks } from "../../../api/types";
+import {
+  getExchangeRate,
+  getRatedAmount,
+  getRatedAmountToLocalCurrency,
+  calculateTotalUsdValue,
+  validateAccount,
+} from '../../../lib/cKash'
+import debounce from 'lodash.debounce'
+import { TokenBalance } from 'src/tokens/slice'
+import AlertModal from '../../../components/AlertModal'
+import { MobileNetwork, NigeriaBanks } from '../../../api/types'
+import tw from 'twrnc'
+import ContactList from '../../../components/ContactList'
 import PrimaryButton from '../../../components/PrimaryButton'
-const popularBanks = [
-  {
-    id: '1',
-    name: 'Opay',
-    icon: require('../../../assets/opay.png'),
-  },
-  {
-    id: '2',
-    name: 'Moniepoint',
-    icon: require('../../../assets/moniepoint.png'),
-  },
-  {
-    id: '3',
-    name: 'Palmpay',
-    icon: require('../../../assets/palmpay.png'),
-  },
-]
+import InputField from '../../../components/InputField'
+import ContactListIcon from '../../../assets/icons/list-icon.svg'
+import OpayIcon from '../../../assets/icons/opay-icon.svg'
+import MoniepointIcon from '../../../assets/icons/moniepoint-icon.svg'
+import PalmpayIcon from '../../../assets/icons/palmpay-icon.svg'
+interface Contact {
+  phone: string
+  name: string
+}
 
-const initialSavedContacts = [
-  {
-    id: '1',
-    name: 'PABLO LEMONR',
-    accountNumber: '025457656',
-    bank: 'Moniepoint',
-  },
-  {
-    id: '2',
-    name: 'PABLO LEMONR',
-    accountNumber: '025457656',
-    bank: 'Moniepoint',
-  },
-]
+interface Bank {
+  id: string
+  name: string
+  logo: React.ComponentType<any>
+}
 
 export default function SendMoney(
   _props: RootStackScreenProps<'NigeriaSendMoney'>,
 ) {
-  const [selectedBank, setSelectedBank] = React.useState('')
-  const [accountNumber, setAccountNumber] = React.useState('')
-  const [amount, setAmount] = React.useState('')
-  const [bankcode, setBankCode] = React.useState('') 
+  const [selectedBank, setSelectedBank] = React.useState<Bank | null>(null)
+  const [accountNumber, setAccountNumber] = React.useState<string>('')
   const [accountName, setAccountName] = React.useState<string | null>(null)
-  const [savedContacts, setSavedContacts] = React.useState(initialSavedContacts)
+  const [activeTab, setActiveTab] = React.useState<'saved' | 'recent'>('saved')
+  const [amount, setAmount] = React.useState<string>('')
+  const [bankcode, setBankCode] = React.useState('')
   const [modalVisible, setModalVisible] = React.useState(false)
-  const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })  
+  const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })
   const [tokenAmount, setTokenAmount] = React.useState<string>('')
-  const { sendMoney, loading,error,isError } = useSend()  
-  const { cUSDToken } = useTokens()
+  const [localBalance, setLocalBalance] = React.useState<number>(0.0)
+  const { sendMoney, loading,isError } = useSend()
+  const { tokens, cUSDToken } = useTokens()
 
-  const handleBankSelect = (bankName: string) => {
-    setSelectedBank(bankName)
-    const bank_code = NigeriaBanks[bankName]
+  const banks: Bank[] = [
+    { id: 'opay', name: 'Opay', logo: OpayIcon },
+    { id: 'moniepoint', name: 'Moniepoint', logo: MoniepointIcon },
+    { id: 'palmpay', name: 'Palmpay', logo: PalmpayIcon },
+  ]
+
+  const savedContacts: Contact[] = [
+    { phone: '09012345678', name: 'PABLO LEMONR' },
+    { phone: '08098765432', name: 'JOHN DOE' },
+  ]
+
+  const handleBankSelect = (bank: Bank) => {
+    setSelectedBank(bank)
+    const bank_code = NigeriaBanks[bank.name]
     setBankCode(bank_code)
   }
 
   const handleAccountNumberChange = (text: string) => {
     const cleaned = text.replace(/[^0-9]/g, '')
     setAccountNumber(cleaned)
-    
   }
 
-  
+  const selectContact = (contact: Contact) => {
+    setAccountNumber(contact.phone)
+    setAccountName(contact.name)
+  }
 
-  const addToRecentContacts = () => {
-    if (accountNumber && selectedBank) {
-      // Check if the account already exists in contacts
-      const exists = savedContacts.some(
-        (contact) => contact.accountNumber === accountNumber,
-      )
-
-      if (!exists) {
-        // Create new contact with a unique ID
-        const newContact = {
-          id: (savedContacts.length + 1).toString(),
-          name: accountName || 'Recent Contact',
-          accountNumber: accountNumber,
-          bank: selectedBank,
-        }
-       
-        setSavedContacts([newContact, ...savedContacts])
-
-        // Show feedback
-        if (Platform.OS === 'android') {
-          ToastAndroid.show('Added to recent contacts!', ToastAndroid.SHORT)
-        } else {
-          Alert.alert('Success', 'Added to recent contacts!')
-        }
+  const fetchTokenAmount = React.useCallback(
+    debounce(async (text: string) => {
+      const numericValue = parseFloat(text)
+      if (isNaN(numericValue)) {
+        setTokenAmount('0')
+        return
       }
-    }
+
+      try {
+        const ratedAmountToDeduct = await getRatedAmount(numericValue, 'NGN')
+        console.log('RATE AMOUNT', ratedAmountToDeduct)
+        const rate = await getExchangeRate('NGN')
+        console.log('RATE RATE', rate)
+        setTokenAmount(ratedAmountToDeduct.toString())
+      } catch (error) {
+        console.error('Failed to fetch exchange rate:', error)
+      }
+    }, 500), // Delay in ms
+    [],
+  )
+
+  const handleAmountChange = (text: string) => {
+    setAmount(text)
+    fetchTokenAmount(text)
   }
 
-  const handleContinue = () => {
-    if (!accountNumber || !selectedBank || !amount) {
-      Alert.alert('Error', 'Please fill in all required fields')
-      return
-    }
-
-    // Add to recent contacts
-    addToRecentContacts()
-
-   
-
-    // Clear all input fields
+  const resetForm = () => {
     setAccountNumber('')
-    setSelectedBank('')
     setAmount('')
-    setAccountName('')
-
-    // Show success message
-    if (Platform.OS === 'android') {
-      ToastAndroid.show('Transaction initiated!', ToastAndroid.SHORT)
-    } else {
-      Alert.alert('Success', 'Transaction initiated!')
-    }
+    setTokenAmount('')
+    setSelectedBank(null)
+    setAccountName(null)
   }
-
-  const copyToClipboard = () => {
-    if (accountNumber) {
-      Clipboard.setString(accountNumber)
-      if (Platform.OS === 'android') {
-        ToastAndroid.show('Account number copied!', ToastAndroid.SHORT)
-      } else {
-        Alert.alert('Copied', 'Account number copied to clipboard!')
-      }
-    }
-  }
-
-   
-      
-            const fetchTokenAmount = React.useCallback(
-                debounce(async (text: string) => {
-                  const numericValue = parseFloat(text)
-                  if (isNaN(numericValue)) {
-                    setTokenAmount('0')
-                    return
-                  }
-            
-                  try {
-                    const ratedAmountToDeduct = await getRatedAmount(numericValue, 'NGN')
-                    console.log("RATE AMOUNT",ratedAmountToDeduct)
-                    const rate = await getExchangeRate("NGN")
-                        console.log("RATE RATE",rate)
-                    setTokenAmount(ratedAmountToDeduct.toString())
-                  } catch (error) {
-                    console.error('Failed to fetch exchange rate:', error)
-                  }
-                }, 500), // Delay in ms
-                [],
-            )
-  
-  
-            const handleAmountChange = (text: string) => {
-              setAmount(text)
-              fetchTokenAmount(text)
-            }
-              
-            
-                
-            
-                const resetForm = () => {
-                setAccountNumber('')
-                setAmount('')
-                  setTokenAmount('')
-                  
-    setSelectedBank('')
-    setAmount('')
-    setAccountName('')
-                
-              }
-
 
   const account_name = async (account_number: string) => {
-          try {
-            
-            const result =await  validateAccount({account_number:account_number,bank_code:bankcode,country_code:"NGN"})
-            
-            setAccountName(result || null)
-          } catch (error) {
-            setAccountName(null)
-          }
-        }
-      
-        React.useEffect(() => {
-          if (accountNumber.length >=0) {
-            
-            account_name(accountNumber)
-          } else {
-            setAccountName(null)
-          }
-        }, [accountNumber])
-  
-  
+    try {
+      // Adjust type and mobile_network as needed for your use case
+      const result = await validateAccount({
+        account_number: account_number,
+        bank_code: bankcode,
+        country_code: 'NGN',
+      })
+      // console.log('THE RESULT', result?.data?.public_name)
+      // Assume result.data.name or similar contains the public name
+      setAccountName(result || null)
+    } catch (error) {
+      setAccountName(null)
+    }
+  }
+
+  React.useEffect(() => {
+    if (accountNumber.length >= 10 && selectedBank) {
+      account_name(accountNumber)
+    } else {
+      setAccountName(null)
+    }
+  }, [accountNumber, selectedBank])
+
+  React.useEffect(() => {
+    if (!tokens || tokens.length === 0) return
+    let totalUsdValue = calculateTotalUsdValue(tokens)
+    getRatedAmountToLocalCurrency(Number(totalUsdValue), 'NGN').then((value) =>
+      setLocalBalance(Number(value)),
+    )
+  }, [tokens])
+
   const handleSendMoney = async () => {
-          try {
-            if (!tokenAmount || tokenAmount == null || tokenAmount == undefined) {
-              Alert.alert('All Fields required')
-              return
-            }
-            if( !selectedBank){
-              Alert.alert('Please Select Mobile Network')
-              return
-            }  
-            const {response } = await sendMoney({
-              //shortcode: accountNumber,
-              account_name:accountName as string,
-              ratedTokenAmount: tokenAmount,
-              rawAmount: amount,
-              country_code:"NGN",
-              account_number: accountNumber,
-              bank_code: bankcode,
-              bank_name:selectedBank,
-              //type:"MOBILE",
-              mobileNetwork: selectedBank as MobileNetwork,
-              tokenBalance: cUSDToken as TokenBalance,
-              from: walletClient?.account?.address as `0x${string}`,
-              to: cUSDToken?.address as `0x${string}`,
-              feeCurrency: cUSDToken?.address as `0x${string}`,
-            })
-            console.log('THE RESPONSE', response)
-            setModalVisible(true)
-          } catch (error) {
-            console.log('THE ERROR', error)
-            Alert.alert(`${error}`)
-          }
-        }
+    try {
+      if (
+        !tokenAmount ||
+        tokenAmount == null ||
+        tokenAmount == undefined ||
+        !accountName
+      ) {
+        Alert.alert('All Fields required')
+        return
+      }
+      if (!selectedBank) {
+        Alert.alert('Please Select Bank')
+        return
+      }
+      const { response } = await sendMoney({
+        account_name: accountName as string,
+        ratedTokenAmount: tokenAmount,
+        rawAmount: amount,
+        country_code: 'NGN',
+        account_number: accountNumber,
+        bank_code: bankcode,
+        bank_name: selectedBank.name,
+        mobileNetwork: selectedBank.name as MobileNetwork,
+        tokenBalance: cUSDToken as TokenBalance,
+        from: walletClient?.account?.address as `0x${string}`,
+        to: cUSDToken?.address as `0x${string}`,
+        feeCurrency: cUSDToken?.address as `0x${string}`,
+      })
+      console.log('THE RESPONSE', response)
+      setModalVisible(true)
+    } catch (error) {
+      console.log('THE ERROR', error)
+      Alert.alert('Error', `Transaction failed: ${error}`)
+    }
+  }
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
-        {/* Popular Banks Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Popular Banks</Text>
-          <View style={styles.popularBanks}>
-            {popularBanks.map((bank) => (
-              <Pressable
+    <ScrollView
+      style={tw`flex-1 bg-[#F5F7FA] px-4`}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* Bank Selection Section */}
+      <View
+        style={tw`bg-[#EFF3FF] border border-[#AEC5FF] rounded-lg p-6 mb-4`}
+      >
+        <Text style={tw`text-left font-medium text-sm mb-2 text-[#1B1A46]`}>
+          Select Bank
+        </Text>
+        <View style={tw`flex-row gap-3`}>
+          {banks.map((bank) => {
+            const LogoComponent = bank.logo
+            return (
+              <TouchableOpacity
                 key={bank.id}
-                style={styles.bankButton}
-                onPress={() => handleBankSelect(bank.name)}
+                style={tw`bg-white rounded-lg py-3 px-4 items-center flex-1 border-2 ${
+                  selectedBank?.id === bank.id
+                    ? 'border-blue-600'
+                    : 'border-transparent'
+                }`}
+                onPress={() => handleBankSelect(bank)}
               >
-                <View style={styles.bankIconContainer}>
-                  <Image source={bank.icon} style={styles.bankIcon} />
-                </View>
-                <Text style={styles.bankName}>{bank.name}</Text>
-              </Pressable>
-            ))}
-          </View>
-        </View>
-
-        {/* Bank Selection Card */}
-        <Card style={styles.card}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>All Banks</Text>
-            <TouchableOpacity style={styles.bankSelect}>
-              <Text
-                style={[
-                  styles.bankSelectText,
-                  !selectedBank && styles.placeholderText,
-                ]}
-              >
-                {selectedBank || 'Select a Bank'}
-              </Text>
-              <Text style={styles.dropdownIcon}>▼</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Account Number</Text>
-            <View style={styles.accountInputContainer}>
-              <TextInput
-                style={styles.input}
-                value={accountNumber}
-                onChangeText={handleAccountNumberChange}
-                placeholder="Enter account Number"
-                placeholderTextColor="#A0A0A0"
-                keyboardType="numeric"
-                maxLength={10}
-              />
-              <TouchableOpacity onPress={copyToClipboard}>
-                <Image
-                  source={require('../../../assets/copy.png')}
-                  style={styles.copyIcon}
-                />
+                <LogoComponent width={24} height={24} style={tw`mb-1`} />
+                <Text
+                  style={tw`text-xs font-semibold ${
+                    selectedBank?.id === bank.id
+                      ? 'text-blue-600'
+                      : 'text-gray-800'
+                  }`}
+                >
+                  {bank.name}
+                </Text>
               </TouchableOpacity>
-            </View>
-            {accountName && (
-              <Text style={styles.accountName}>
-                Account name: {accountName}
-              </Text>
-            )}
-          </View>
-        </Card>
-
-        {/* Amount Input */}
-        <View style={styles.amountContainer}>
-          <Text style={styles.label}>Enter Amount (NGN)</Text>
-          <View style={styles.amountInputContainer}>
-            <Text style={styles.currencySymbol}>₦</Text>
-            <TextInput
-              style={styles.amountInput}
-              value={amount}
-              onChangeText={handleAmountChange}
-              placeholder="100"
-              placeholderTextColor="#A0A0A0"
-              keyboardType="numeric"
-            />
-          </View>
-          <Text style={styles.minAmount}>(min. 100 max 1,000,000)</Text>
+            )
+          })}
         </View>
 
-      
-        {/* Continue Button */}
-       <PrimaryButton onPress={handleSendMoney} label="Continue" isLoading={loading} />
+        <Text
+          style={tw`text-left mt-6 mb-2 font-medium text-sm text-[#1B1A46]`}
+        >
+          Account Number
+        </Text>
+        <InputField
+          value={accountNumber}
+          onChangeText={handleAccountNumberChange}
+          placeholder="Enter account number"
+          keyboardType="numeric"
+          maxLength={10}
+          icon={<ContactListIcon width={24} height={24} style={tw`mr-4`} />}
+        />
+
+        {accountName && (
+          <Text style={tw`text-left mt-2 font-medium text-sm text-[#1B1A46]`}>
+            Account name: {accountName}
+          </Text>
+        )}
       </View>
+
+      {/* Amount Section */}
+      <View style={tw`mb-4`}>
+        <View style={tw`flex-row justify-between items-center my-2`}>
+          <Text style={tw`text-left font-medium text-sm text-[#1B1A46]`}>
+            Enter Amount (NGN)
+          </Text>
+          <Text style={tw`text-left font-medium text-sm text-[#1B1A46]`}>
+            NGN {localBalance}
+          </Text>
+        </View>
+        <TextInput
+          style={tw`bg-white border border-[#B2C7FF] rounded px-4 py-4 mb-1 bg-[#DAE3FF]`}
+          value={amount}
+          onChangeText={handleAmountChange}
+          placeholder="NGN 200"
+          placeholderTextColor="#A0A0A0"
+          keyboardType="numeric"
+        />
+        <Text style={tw`text-[#EEA329] text-xs`}>(min: ₦200 max ₦60,000)</Text>
+      </View>
+
+      {/* Continue Button */}
+           <PrimaryButton onPress={handleSendMoney} label="Continue" isLoading={loading} />
+
+     
       <AlertModal
-                          visible={modalVisible}
-                          onClose={() => {
-                            setModalVisible(false)
-                            resetForm()
-                          }}
-                          title={isError?"Transaction Failed":"Transaction Successful"}
-                          amount={amount ? `Amount: ${amount} GHS` : ''}
-                          iconType={isError?"error":"success"}
-                          loading={loading}
-                          accountName={accountName ? `Recipient: ${accountName}` : ''}
-                        />
+        visible={modalVisible}
+        onClose={() => {
+          setModalVisible(false)
+          resetForm()
+        }}
+        title={isError?"Transaction Failed":"Transaction Successful"}
+        amount={amount ? `Amount: ${amount} NGN` : ''}
+        iconType={isError?"error":"success"}
+        loading={loading}
+        accountName={accountName ? `Recipient: ${accountName}` : ''}
+      />
     </ScrollView>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F6FA',
-  },
-  content: {
-    padding: 16,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#1B1A46',
-    marginBottom: 12,
-  },
-  popularBanks: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-  },
-  bankButton: {
-    alignItems: 'center',
-    width: '30%',
-  },
-  bankIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  bankIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-  },
-  bankName: {
-    fontSize: 12,
-    color: '#1B1A46',
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  inputContainer: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 14,
-    color: '#1B1A46',
-    marginBottom: 8,
-    fontWeight: '500',
-  },
-  bankSelect: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 8,
-    padding: 12,
-    backgroundColor: '#F9FAFB',
-  },
-  bankSelectText: {
-    fontSize: 16,
-    color: '#1B1A46',
-  },
-  placeholderText: {
-    color: '#A0A0A0',
-  },
-  dropdownIcon: {
-    fontSize: 12,
-    color: '#6B7280',
-  },
-  accountInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    backgroundColor: '#F9FAFB',
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    padding: 12,
-    color: '#1B1A46',
-  },
-  copyIcon: {
-    width: 24,
-    height: 24,
-    tintColor: '#6B7280',
-  },
-  accountName: {
-    fontSize: 14,
-    color: '#1B1A46',
-    marginTop: 8,
-  },
-  amountContainer: {
-    marginBottom: 24,
-  },
-  amountInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 8,
-    backgroundColor: '#F9FAFB',
-  },
-  currencySymbol: {
-    fontSize: 16,
-    color: '#1B1A46',
-    paddingLeft: 12,
-  },
-  amountInput: {
-    flex: 1,
-    fontSize: 16,
-    padding: 12,
-    color: '#1B1A46',
-  },
-  minAmount: {
-    fontSize: 12,
-    color: '#6B7280',
-    marginTop: 4,
-  },
-  contactCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  contactInfo: {
-    flex: 1,
-  },
-  contactName: {
-    fontSize: 14,
-    color: '#1B1A46',
-    fontWeight: '500',
-    marginBottom: 4,
-  },
-  contactAccount: {
-    fontSize: 12,
-    color: '#6B7280',
-  },
-  bankBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#0034BB',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  bankBadgeText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  recentContact: {
-    fontSize: 14,
-    color: '#0034BB',
-  },
-  continueButton: {
-    backgroundColor: '#0034BB',
-    borderRadius: 8,
-    padding: 16,
-    alignItems: 'center',
-    marginTop: 24,
-  },
-})
