@@ -26,6 +26,13 @@ export function useTokens() {
   //console.log("The Tokens are", tokens)
   return { cKESToken, cUSDToken,uSDCToken,uSDTToken,cGHSToken,cZARToken,tokens }
 }
+
+export function createStaticLabel(
+  label: string,
+): (t: (key: string) => string) => string {
+  return () => label
+}
+
 export const colors = {
   // backgrounds
   backgroundPrimary: '#FFFFFF', // Main background color for the app, used for primary surfaces (screens, navigation).

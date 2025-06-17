@@ -30,9 +30,7 @@ export default function MPESABuyGoods(
   const [tokenAmount, setTokenAmount] = React.useState<string>('')
   const [modalVisible, setModalVisible] = React.useState(false)
   const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })
-
   const { sendMoney, loading,isError } = useSend()
-
   const { cUSDToken } = useTokens()
 
   const fetchTokenAmount = React.useCallback(
@@ -133,7 +131,7 @@ export default function MPESABuyGoods(
             />
           </View>
           <Text style={tw`text-xs text-[#EEA329] font-medium`}>
-            (min: 20 max 60,000)
+            (min: 20 max 250,000)
           </Text>
         </View>
 

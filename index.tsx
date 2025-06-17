@@ -15,6 +15,7 @@ import {
   cGHS_TOKEN_ID,
   cZAR_TOKEN_ID,
   colors,
+  createStaticLabel,
 } from './utils'
 import GetStarted from './components/GetStarted'
 import * as React from "react"
@@ -30,11 +31,8 @@ import BuyGoods from './screens/services/kenya/BuyGoods'
 import PayBills from './screens/services/kenya/PayBills'
 import GhanaSendMoney from './screens/services/ghana/SendMoney'
 import UgandaSendMoney from './screens/services/uganda/SendMoney'
-export function createStaticLabel(
-  label: string,
-): (t: (key: string) => string) => string {
-  return () => label
-}
+
+
 
 const expoConfig = Constants.expoConfig
 if (!expoConfig) {
@@ -94,15 +92,13 @@ const App = createApp({
           {
             name: 'Wallet',
             component: WalletScreen,
-            icon: WalletIcon,
-            // label: defaultTabs.activity.label,
+            icon: WalletIcon,           
             label: createStaticLabel('Wallet'),
           },
           {
             name: 'Utilities',
             component: ServiceScreen,
             icon: UtilityIcon,
-            // label: defaultTabs.activity.label,
             label: createStaticLabel('Utility'),
           },
           {

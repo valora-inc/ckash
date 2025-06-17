@@ -29,9 +29,6 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
     const [selectedBank, setSelectedBank] = React.useState<Bank | null>(null)
     const [accountNumber, setAccountNumber] = React.useState<string>("")
     const [accountName, setAccountName] = React.useState<string | null>(null)
-    
-    const [activeTab, setActiveTab] = React.useState<'saved' | 'recent'>('saved')
-
     const [amount, setAmount] = React.useState<string>("")
     const [modalVisible, setModalVisible] = React.useState(false)
     const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })
@@ -213,7 +210,7 @@ export default function GhanaSendMoney(_props: RootStackScreenProps<'GhanaSendMo
                     placeholderTextColor="#A0A0A0"
                     keyboardType="numeric"
                 />
-                <Text style={tw`text-[#EEA329] text-xs`}>(min: ₵10 max ₵1,000)</Text>
+                <Text style={tw`text-[#EEA329] text-xs`}>(min: ₵5 max ₵1,000)</Text>
             </View>
 
             {/* Continue Button */}

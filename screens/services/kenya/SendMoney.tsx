@@ -46,12 +46,6 @@ export default function SendMoney(
   _props: RootStackScreenProps<'KenyaSendMoney'>,
 ) {
   const [phoneNumber, setPhoneNumber] = React.useState<string>('')
-  const [activeTab, setActiveTab] = React.useState<'saved' | 'recent'>('saved')
-  const [savedContacts] = React.useState<Contact[]>([
-    { phone: '0701707772', name: 'Ronex' },
-    { phone: '0703449363', name: 'Saint Brisa' },
-  ])
-
   const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })
   const [amount, setAmount] = React.useState<string>('')
   const [tokenAmount, setTokenAmount] = React.useState<string>('')
@@ -113,19 +107,16 @@ export default function SendMoney(
       Alert.alert(`${error}`)
     }
   }
-  function selectContact(contact: Contact): void {
-    setPhoneNumber(contact.phone)
-  }
+ 
 
   const account_name = async (shortcode: string) => {
     try {
-      // Adjust type and mobile_network as needed for your use case
+     
       const result = await validateAccount({
         shortcode: shortcode,
         mobile_network: 'Safaricom',
       })
-      // console.log('THE RESULT', result?.data?.public_name)
-      // Assume result.data.name or similar contains the public name
+      
       setAccountName(result || null)
     } catch (error) {
       setAccountName(null)
@@ -134,7 +125,7 @@ export default function SendMoney(
 
   React.useEffect(() => {
     if (phoneNumber.length >= 10) {
-      // or your validation logic
+      
       account_name(phoneNumber)
     } else {
       setAccountName(null)
@@ -212,20 +203,14 @@ export default function SendMoney(
           placeholderTextColor="#A0A0A0"
           keyboardType="numeric"
         />
-        <Text style={tw`text-[#EEA329] text-xs`}>(min. 20 max 60,000)</Text>
+        <Text style={tw`text-[#EEA329] text-xs`}>(min. 20 max 250,000)</Text>
       </View>
 
       {/* Continue Button */}
       
       <PrimaryButton onPress={handleSendMoney} label="Continue" isLoading={loading} />
 
-      {/* Contacts Section */}
-      {/* <ContactList
-        contacts={savedContacts}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        onContactSelect={selectContact}
-      /> */}
+    
 
       <AlertModal
         visible={modalVisible}

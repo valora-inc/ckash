@@ -30,28 +30,20 @@ export default function UgandaSendMoney(_props: RootStackScreenProps<'UgandaSend
     const [selectedBank, setSelectedBank] = React.useState<Bank | null>(null)
     const [accountNumber, setAccountNumber] = React.useState<string>("")
     const [accountName, setAccountName] = React.useState<string | null>(null)
-    
-    const [activeTab, setActiveTab] = React.useState<'saved' | 'recent'>('saved')
-
     const [amount, setAmount] = React.useState<string>("")
     const [modalVisible, setModalVisible] = React.useState(false)
-    const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })
-    
+    const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })    
     const [tokenAmount, setTokenAmount] = React.useState<string>('')
     const [localBalance, setLocalBalance] = React.useState<number>(0.0)
-
-    const { sendMoney, loading,isError } = useSend()
-    
+    const { sendMoney, loading,isError } = useSend()    
     const { tokens, cUSDToken } = useTokens()
-
     const fetchTokenAmount = React.useCallback(
         debounce(async (text: string) => {
             const numericValue = parseFloat(text)
             if (isNaN(numericValue)) {
                 setTokenAmount('0')
                 return
-            }
-    
+            }    
             try {
                 const ratedAmountToDeduct = await getRatedAmount(numericValue, 'UGX')
                 console.log("RATE AMOUNT",ratedAmountToDeduct)
@@ -78,7 +70,6 @@ export default function UgandaSendMoney(_props: RootStackScreenProps<'UgandaSend
         const cleaned = text.replace(/[^0-9]/g, '')
         setAccountNumber(cleaned)
     }
-
     const account_name = async (shortcode: string) => {
         try {
             const result = await validateAccount({shortcode:shortcode,mobile_network:selectedBank?.name as MobileNetwork,country_code:"UGX"})
@@ -104,10 +95,7 @@ export default function UgandaSendMoney(_props: RootStackScreenProps<'UgandaSend
         )
     }, [tokens])
 
-    const handleContinue = () => {
-        console.log("Continue pressed", { selectedBank, accountNumber, accountName, amount })
-    }
-
+   
     const handleAmountChange = (text: string) => {
         setAmount(text)
         fetchTokenAmount(text)
@@ -212,7 +200,7 @@ export default function UgandaSendMoney(_props: RootStackScreenProps<'UgandaSend
                     placeholderTextColor="#A0A0A0"
                     keyboardType="numeric"
                 />
-                <Text style={tw`text-[#EEA329] text-xs`}>(min: UGX1,000 max UGX60,000)</Text>
+                <Text style={tw`text-[#EEA329] text-xs`}>(min: UGX500 max UGX5,000,000)</Text>
             </View>
 
             {/* Continue Button */}

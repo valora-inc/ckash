@@ -64,19 +64,14 @@ export default function SendMoney(
   const [selectedBank, setSelectedBank] = React.useState('')
   const [accountNumber, setAccountNumber] = React.useState('')
   const [amount, setAmount] = React.useState('')
-  const [bankcode, setBankCode] = React.useState('')
- 
-      const [accountName, setAccountName] = React.useState<string | null>(null)
+  const [bankcode, setBankCode] = React.useState('') 
+  const [accountName, setAccountName] = React.useState<string | null>(null)
   const [savedContacts, setSavedContacts] = React.useState(initialSavedContacts)
-  
-          const [modalVisible, setModalVisible] = React.useState(false)
-          const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })
-          
-            const [tokenAmount, setTokenAmount] = React.useState<string>('')
-      
-          const { sendMoney, loading,error,isError } = useSend()
-          
-            const { cUSDToken } = useTokens()
+  const [modalVisible, setModalVisible] = React.useState(false)
+  const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })  
+  const [tokenAmount, setTokenAmount] = React.useState<string>('')
+  const { sendMoney, loading,error,isError } = useSend()  
+  const { cUSDToken } = useTokens()
 
   const handleBankSelect = (bankName: string) => {
     setSelectedBank(bankName)
@@ -87,13 +82,10 @@ export default function SendMoney(
   const handleAccountNumberChange = (text: string) => {
     const cleaned = text.replace(/[^0-9]/g, '')
     setAccountNumber(cleaned)
-    // In a real app, you would trigger account name fetch here
+    
   }
 
-  // const handleAmountChange = (text: string) => {
-  //   const cleaned = text.replace(/[^0-9]/g, '')
-  //   setAmount(cleaned)
-  // }
+  
 
   const addToRecentContacts = () => {
     if (accountNumber && selectedBank) {
@@ -110,7 +102,7 @@ export default function SendMoney(
           accountNumber: accountNumber,
           bank: selectedBank,
         }
-        // Add new contact to the beginning of the array
+       
         setSavedContacts([newContact, ...savedContacts])
 
         // Show feedback
@@ -132,8 +124,7 @@ export default function SendMoney(
     // Add to recent contacts
     addToRecentContacts()
 
-    // Handle the transfer logic here
-    console.log('Processing transfer...')
+   
 
     // Clear all input fields
     setAccountNumber('')
@@ -206,10 +197,9 @@ export default function SendMoney(
 
   const account_name = async (account_number: string) => {
           try {
-            // Adjust type and mobile_network as needed for your use case
+            
             const result =await  validateAccount({account_number:account_number,bank_code:bankcode,country_code:"NGN"})
-            // console.log('THE RESULT', result?.data?.public_name)
-            // Assume result.data.name or similar contains the public name
+            
             setAccountName(result || null)
           } catch (error) {
             setAccountName(null)
@@ -218,7 +208,7 @@ export default function SendMoney(
       
         React.useEffect(() => {
           if (accountNumber.length >=0) {
-            // or your validation logic
+            
             account_name(accountNumber)
           } else {
             setAccountName(null)
@@ -340,42 +330,10 @@ export default function SendMoney(
               keyboardType="numeric"
             />
           </View>
-          <Text style={styles.minAmount}>(min. 200 max 60,000)</Text>
+          <Text style={styles.minAmount}>(min. 100 max 1,000,000)</Text>
         </View>
 
-        {/* Saved Contacts */}
-        {/* <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Saved Contact</Text>
-            <TouchableOpacity>
-              <Text style={styles.recentContact}>Recent Contact</Text>
-            </TouchableOpacity>
-          </View>
-          {savedContacts.map((contact) => (
-            <TouchableOpacity
-              key={contact.id}
-              style={styles.contactCard}
-              onPress={() => {
-                setAccountNumber(contact.accountNumber)
-                setSelectedBank(contact.bank)
-                setAccountName(contact.name)
-              }}
-            >
-              <View style={styles.contactInfo}>
-                <Text style={styles.contactName}>{contact.name}</Text>
-                <Text style={styles.contactAccount}>
-                  {contact.accountNumber}
-                </Text>
-              </View>
-              <View style={styles.bankBadge}>
-                <Text style={styles.bankBadgeText}>
-                  {contact.bank.charAt(0).toUpperCase()}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View> */}
-
+      
         {/* Continue Button */}
        <PrimaryButton onPress={handleSendMoney} label="Continue" isLoading={loading} />
       </View>

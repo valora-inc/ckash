@@ -30,13 +30,9 @@ export default function MPESAPaybills(
   const [amount, setAmount] = React.useState<string>('')
   const [modalVisible, setModalVisible] = React.useState(false)
   const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })
-
   const [tokenAmount, setTokenAmount] = React.useState<string>('')
-
   const { sendMoney, loading,isError } = useSend()
-
   const { cUSDToken } = useTokens()
-
   const fetchTokenAmount = React.useCallback(
     debounce(async (text: string) => {
       const numericValue = parseFloat(text)
@@ -149,7 +145,7 @@ export default function MPESAPaybills(
             />
           </View>
           <Text style={tw`text-xs text-[#EEA329] font-medium`}>
-            (min: 20 max 60,000)
+            (min: 20 max 250,000)
           </Text>
         </View>
 
