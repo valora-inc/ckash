@@ -4,6 +4,27 @@
     "appVersionSource": "remote"
   },
   "build": {
+    "development": {
+      "env": {
+        "API_KEY": "development_api_key",
+        "BASE_URL": "https://api-dev.yourservice.com"
+      }
+    },
+    "preview": {
+      "env": {
+        "API_KEY": "preview_api_key",
+        "BASE_URL": "https://api-staging.yourservice.com"
+      }
+    },
+    "production": {
+      "node": "20.17.0",
+      "autoIncrement": true,
+      "distribution": "store",
+      "env": {
+        "API_KEY": "production_api_key",
+        "BASE_URL": "https://api.yourservice.com"
+      }
+    },
     "e2e": {
       "withoutCredentials": true,
       "android": {
@@ -12,11 +33,6 @@
       "ios": {
         "simulator": true
       }
-    },
-    "production": {
-      "node": "20.17.0",
-      "autoIncrement": true,
-      "distribution": "store"
     }
   },
   "submit": {

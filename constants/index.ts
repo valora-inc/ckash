@@ -9,16 +9,6 @@ import MTNIcon from '../assets/icons/mtn-icon.svg'
 import TelecelIcon from '../assets/icons/telecel-icon.svg'
 import BuyGoodsIcon from '../assets/icons/buygoods-icon.svg'
 
-if (!process.env.API_KEY || !process.env.BASE_URL) {
-  throw new Error(
-    'API_KEY and BASE_URL must be defined in environment variables',
-  )
-}
-
-const Pretium_api = new Pretium(process.env.API_KEY , process.env.BASE_URL )
-
-export { Pretium_api }
-
 export const CHAIN_ID = 42220
 export const PRETIUM_ADDRESS = '0x8005ee53E57aB11E11eAA4EFe07Ee3835Dc02F98'
 export const CHAIN = 'celo'
@@ -35,6 +25,7 @@ export type Service = {
   icon: any
   navigate: string | any
 }
+
 export const services: Record<string, Service[]> = {
   Kenya: [
     {
@@ -91,3 +82,17 @@ export const services: Record<string, Service[]> = {
   ],
 }
 
+// API configuration with fallback values
+// Use fallback values if environment variables are not set
+const API_KEY = process.env.API_KEY || 'development_api_key'
+const BASE_URL = process.env.BASE_URL || 'https://api-dev.example.com'
+
+if (!process.env.API_KEY || !process.env.BASE_URL) {
+  console.warn(
+    'API_KEY and BASE_URL environment variables are not set. Using fallback values for development.',
+  )
+}
+
+const Pretium_api = new Pretium(API_KEY, BASE_URL)
+
+export { Pretium_api }
