@@ -21,7 +21,6 @@ import { services } from '../constants'
 import { calculateTotalUsdValue } from '../lib/cKash'
 import ServiceButton from '../components/ServiceButton'
 
-
 const Promotions = [
   {
     name: 'Partnership',
@@ -98,15 +97,23 @@ export default function WalletScreen(
   return (
     <View style={tw`flex-1 pt-0 gap-4 items-center`}>
       <View
-        style={tw`flex-5 bg-[#D7E1FF] pb-8 w-[100%] justify-center items-center`}
+        style={tw`flex-5 bg-[#D7E1FF] pb-12 w-[100%] justify-center items-center`}
       >
-        <View style={tw`flex-4 pt-2 w-[100%] justify-center items-center`}>
+        <View style={tw`flex-5 pt-1 w-[100%] justify-center items-center`}>
           <Card
             style={tw` flex-1 bg-[#0034BB] rounded-lg w-[90%] h-[95%] gap-4 my-4 mx-2.5 justify-between z-10`}
           >
             {/* Wallet Title */}
             <View style={tw`flex-row gap-4 pt-2`}>
-              <Text style={{ color: '#AEC5FF' }}>Wallet Balance</Text>
+              <Text
+                style={{
+                  color: '#AEC5FF',
+                  fontFamily: 'Heebo-Regular',
+                  fontSize: 14,
+                }}
+              >
+                Wallet Balance
+              </Text>
               <TouchableOpacity
                 onPress={() => setBalanceHidden(!balanceHidden)}
               ></TouchableOpacity>
@@ -114,9 +121,17 @@ export default function WalletScreen(
 
             {/* Wallet Balance */}
             <View style={tw`flex-row justify-between`}>
-              <View style={tw`flex-row gap-1`}>
+              <View style={tw`flex-row items-center gap-1`}>
                 <Text style={tw`text-3xl font-medium text-[#AEC5FF]`}>$</Text>
-                <Text style={tw`text-4xl font-semibold text-[#E4EBFE]`}>
+                <Text
+                  style={{
+                    fontSize: 32,
+                    color: '#E4EBFE',
+                    fontFamily: 'Heebo-Bold',
+                    lineHeight: 40,
+                    fontWeight: 'bold',
+                  }}
+                >
                   {balanceHidden ? '*****' : usdBalance}
                 </Text>
               </View>
@@ -179,12 +194,20 @@ export default function WalletScreen(
         <View style={tw`flex-1.5 w-[90%] bg-transparent justify-center pb-4`}>
           <View style={tw`flex flex-col justify-start pt-2 pb-2`}>
             <Text
-              style={tw`pt-6 pb-2 text-left self-start font-medium text-base text-[#1B1A46]`}
+              style={{
+                paddingTop: 24,
+                paddingBottom: 8,
+                textAlign: 'left',
+                alignSelf: 'flex-start',
+                fontFamily: 'Heebo-Medium',
+                fontSize: 16,
+                color: '#1B1A46',
+              }}
             >
               Quick Utilities
             </Text>
-            <View style={tw`flex-row flex-wrap gap-1.5`}>
-              {services[selectedCountry].map((item) => (
+            <View style={tw`flex-row flex-wrap gap-2.5`}>
+              {(services?.[selectedCountry] || []).map((item) => (
                 <ServiceButton
                   key={item.name}
                   name={item.name}

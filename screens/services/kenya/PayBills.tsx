@@ -107,7 +107,7 @@ export default function MPESAPaybills(
             onChangeText={setPaybillNumber}
             placeholder="Enter paybill number"
             keyboardType="numeric"
-            icon={<ListIcon width={24} height={24} style={tw`mr-4`} />}
+            icon={<ListIcon width={0} height={0} style={tw`mr-4`} />}
           />
         </View>
 

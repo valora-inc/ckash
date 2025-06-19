@@ -238,7 +238,7 @@ export default function SendMoney(
           placeholder="Enter account number"
           keyboardType="numeric"
           maxLength={10}
-          icon={<ContactListIcon width={24} height={24} style={tw`mr-4`} />}
+          icon={<ContactListIcon width={0} height={0} style={tw`mr-4`} />}
         />
 
         {accountName && (

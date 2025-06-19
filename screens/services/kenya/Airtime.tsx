@@ -7,6 +7,8 @@ import {
   Alert,
   TouchableOpacity,
   ScrollView,
+  PermissionsAndroid,
+  Platform,
 } from 'react-native'
 import { RootStackScreenProps } from '../../types'
 // import Card from "../../../components/ui/Card"
@@ -45,6 +47,9 @@ import tw from 'twrnc'
 import ContactList from '../../../components/ContactList'
 import PrimaryButton from '../../../components/PrimaryButton'
 import InputField from '../../../components/InputField'
+import { useContactPicker } from '../../../hooks/useContactPicker'
+
+import { ContactPickerModal } from '../../../components/ContactPickerModal'
 
 interface SavedContact {
   phone: string
@@ -70,6 +75,17 @@ export default function BuyAirtime(
   const [localBalance, setLocalBalance] = React.useState<number>(0.0)
 
   const { tokens, cUSDToken } = useTokens()
+
+  const {
+    openContactPicker,
+    closeContactPicker,
+    isModalVisible,
+    handleContactSelect,
+  } = useContactPicker({
+    onContactSelect: (formattedNumber: string) => {
+      setPhoneNumber(formattedNumber)
+    },
+  })
 
   const amountOptions: AmountOption[] = [
     { value: 100, label: 'KES 100' },
@@ -209,18 +225,29 @@ export default function BuyAirtime(
           placeholder="0816 057 3659"
           keyboardType="phone-pad"
           maxLength={13}
-          icon={<ContactIcon width={24} height={24} style={tw`mr-4`} />}
+          icon={<ContactIcon width={24} height={24} />}
+          onIconPress={openContactPicker}
         />
-        <View style={tw`flex-row items-center`}>
+        <TouchableOpacity
+          style={tw`flex-row items-center`}
+          onPress={openContactPicker}
+        >
           <NoteIcon width={16} height={16} style={tw`mr-1`} />
           <Text style={tw`text-[10px] text-gray-700 font-medium`}>
-            All mobile networks are supported
+            All mobile networks are supported - Tap to select from contacts
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
 
       {/* Continue Button */}
       <PrimaryButton onPress={handleBuyAirtime} label="Continue" />
+
+      {/* Contact Picker Modal */}
+      <ContactPickerModal
+        visible={isModalVisible}
+        onClose={closeContactPicker}
+        onContactSelect={handleContactSelect}
+      />
 
       {/* Contacts Section */}
       <ContactList

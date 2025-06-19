@@ -106,7 +106,7 @@ export default function MPESABuyGoods(
             onChangeText={setTillNumber}
             placeholder="Enter till number"
             keyboardType="numeric"
-            icon={<ListIcon width={24} height={24} style={tw`mr-4`} />}
+            icon={<ListIcon width={0} height={0} style={tw`mr-4 hidden`} />}
           />
         </View>
 

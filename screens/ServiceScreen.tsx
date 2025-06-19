@@ -1,70 +1,49 @@
 import * as React from 'react'
 import { navigate } from '@divvi/mobile'
 import { RootStackScreenProps } from './types'
-import {
-  View,
-  StyleSheet,
-  Text,
-  FlatList,
-  Pressable,
-} from 'react-native'
-import DropDownPicker from 'react-native-dropdown-picker'
+import { View, StyleSheet, Text, FlatList, Pressable } from 'react-native'
+import SimpleDropdown from '../components/ui/SimpleDropdown'
 import { services } from '../constants'
 import tw from 'twrnc'
-
 
 export default function ServiceScreen(_props: RootStackScreenProps<'Service'>) {
   const [selectedCountry, setSelectedCountry] = React.useState('Kenya')
   // Dropdown state
-  const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState(selectedCountry)
-  const [items, setItems] = React.useState([
+  const [dropdownItems] = React.useState([
     { label: '🇰🇪 Kenya', value: 'Kenya' },
     { label: '🇺🇬 Uganda', value: 'Uganda' },
     { label: '🇬🇭 Ghana', value: 'Ghana' },
     { label: '🇳🇬 Nigeria', value: 'Nigeria' },
   ])
 
-  React.useEffect(() => {
+  const handleCountrySelect = (value: string) => {
     setSelectedCountry(value)
-  }, [value])
+  }
+
   return (
     <View style={styles.container}>
       {/**Countries */}
       <View style={styles.countries_selection}>
-        <Text>Utilities</Text>
+        <Text
+          style={{ fontFamily: 'Heebo-Medium', fontSize: 18, color: '#1B1A46' }}
+        >
+          Utilities
+        </Text>
         <View
           style={{ backgroundColor: 'transparent', width: '40%', zIndex: 1000 }}
         >
-          <DropDownPicker
-            open={open}
-            value={value}
-            items={items}
-            setOpen={setOpen}
-            setValue={setValue}
-            setItems={setItems}
-            textStyle={{
-              fontSize: 10,
-              fontWeight: '400',
-              letterSpacing: 0,
-              verticalAlign: 'bottom',
-              color: '#E4EBFE',
-            }}
-            // zIndex={1000}
-            dropDownContainerStyle={{
-              zIndex: 1000,
-              backgroundColor: 'blue',
-              paddingVertical: 0,
-            }}
-            style={{
-              marginBottom: open ? 0 : 0,
-              zIndex: 1000,
-              height: 30,
-              borderColor: 'transparent',
-              backgroundColor: '#0034BB',
-              paddingVertical: 0,
-              marginVertical: 0,
-            }}
+          <SimpleDropdown
+            items={dropdownItems}
+            selectedValue={selectedCountry}
+            onSelect={handleCountrySelect}
+            dropdownStyle="h-6 w-22 border-transparent bg-[#8DADFE] ml-14 rounded-[2px] flex-row items-center justify-between px-2"
+            textStyle="text-xs text-black flex-1 font-normal"
+            dropdownListStyle="bg-[#8DADFE] rounded-md rounded-[2px] border border-[#7A96FE]"
+            itemStyle="px-2 py-2.5 border-b border-[#7A96FE]/30"
+            selectedItemStyle="bg-[#6B8BFE] px-2 py-2.5 border-[#5A7BFE]"
+            itemTextStyle="text-xs text-black font-normal"
+            selectedItemTextStyle="text-xs text-white font-medium"
+            maxHeight={160}
           />
         </View>
       </View>
@@ -93,7 +72,14 @@ export default function ServiceScreen(_props: RootStackScreenProps<'Service'>) {
             >
               <item.icon width={60} height={40} />
               <Text
-                style={tw`text-[10px] text-center font-normal text-[#002586] leading-4`}
+                style={{
+                  fontSize: 10,
+                  textAlign: 'center',
+                  fontFamily: 'Heebo-Medium',
+                  fontWeight: '600',
+                  color: '#002586',
+                  lineHeight: 16,
+                }}
               >
                 {item.name}
               </Text>

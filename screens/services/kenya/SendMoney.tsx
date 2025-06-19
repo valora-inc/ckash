@@ -22,12 +22,13 @@ import {
   validateAccount,
 } from '../../../lib/cKash'
 import { useSend } from '../../../hooks/useSend'
+import { ContactPickerModal } from '../../../components/ContactPickerModal'
 import AlertModal from '../../../components/AlertModal'
 import MpesaIcon from '../../../assets/icons/mpesa-icon.svg'
 import ContactListIcon from '../../../assets/icons/list-icon.svg'
-import ContactList from '../../../components/ContactList'
 import PrimaryButton from '../../../components/PrimaryButton'
 import InputField from '../../../components/InputField'
+import { useContactPicker } from '../../../hooks/useContactPicker'
 
 export type TransactionRequest = (
   | TransactionRequestCIP64
@@ -37,11 +38,6 @@ export type TransactionRequest = (
   _baseFeePerGas?: bigint
 }
 
-interface Contact {
-  phone: string
-  name: string
-}
-
 export default function SendMoney(
   _props: RootStackScreenProps<'KenyaSendMoney'>,
 ) {
@@ -49,12 +45,23 @@ export default function SendMoney(
   const { data: walletClient } = useWalletClient({ networkId: 'celo-mainnet' })
   const [amount, setAmount] = React.useState<string>('')
   const [tokenAmount, setTokenAmount] = React.useState<string>('')
-  const { sendMoney, loading,error ,isError} = useSend()
+  const { sendMoney, loading, isError } = useSend()
   const [localBalance, setLocalBalance] = React.useState<number>(0.0)
 
   const { tokens, cUSDToken } = useTokens()
   const [modalVisible, setModalVisible] = React.useState(false)
   const [accountName, setAccountName] = React.useState<string | null>(null)
+
+  const {
+    openContactPicker,
+    closeContactPicker,
+    isModalVisible,
+    handleContactSelect,
+  } = useContactPicker({
+    onContactSelect: (formattedNumber: string) => {
+      setPhoneNumber(formattedNumber)
+    },
+  })
 
   const handlePhoneChange = (text: string) => {
     const cleaned = text.replace(/[^0-9]/g, '')
@@ -107,16 +114,14 @@ export default function SendMoney(
       Alert.alert(`${error}`)
     }
   }
- 
 
   const account_name = async (shortcode: string) => {
     try {
-     
       const result = await validateAccount({
         shortcode: shortcode,
         mobile_network: 'Safaricom',
       })
-      
+
       setAccountName(result || null)
     } catch (error) {
       setAccountName(null)
@@ -125,7 +130,6 @@ export default function SendMoney(
 
   React.useEffect(() => {
     if (phoneNumber.length >= 10) {
-      
       account_name(phoneNumber)
     } else {
       setAccountName(null)
@@ -155,18 +159,41 @@ export default function SendMoney(
       <View
         style={tw`bg-[#EFF3FF] border border-[#AEC5FF] rounded-lg p-6 mb-4`}
       >
-        <Text style={tw`text-left font-medium text-sm  mb-2 text-[#1B1A46]`}>
+        <Text
+          style={{
+            textAlign: 'left',
+            fontFamily: 'Heebo-Medium',
+            fontSize: 14,
+            marginBottom: 8,
+            color: '#1B1A46',
+          }}
+        >
           Select Bank
         </Text>
         <View style={tw`flex flex-coljustify-start`}>
           <MpesaIcon width={200} height={40} />
-          <Text style={tw`ml-20 mt-1 font-medium text-sm text-[#1B1A46]`}>
+          <Text
+            style={{
+              marginLeft: 80,
+              marginTop: 4,
+              fontFamily: 'Heebo-Medium',
+              fontSize: 14,
+              color: '#1B1A46',
+            }}
+          >
             M-pesa
           </Text>
         </View>
 
         <Text
-          style={tw`text-left mt-6 mb-2 font-medium text-sm text-[#1B1A46]`}
+          style={{
+            textAlign: 'left',
+            marginTop: 24,
+            marginBottom: 8,
+            fontFamily: 'Heebo-Medium',
+            fontSize: 14,
+            color: '#1B1A46',
+          }}
         >
           Mobile Number
         </Text>
@@ -176,10 +203,18 @@ export default function SendMoney(
           placeholder="0701707772"
           keyboardType="phone-pad"
           maxLength={15}
-          icon={<ContactListIcon width={24} height={24} style={tw`mr-4`} />}
+          icon={<ContactListIcon width={24} height={24} />}
+          onIconPress={openContactPicker}
         />
         {phoneNumber && (
-          <Text style={tw`text-left font-medium text-sm text-[#1B1A46]`}>
+          <Text
+            style={{
+              textAlign: 'left',
+              fontFamily: 'Heebo-Regular',
+              fontSize: 14,
+              color: '#1B1A46',
+            }}
+          >
             Account name: {accountName}
           </Text>
         )}
@@ -191,7 +226,14 @@ export default function SendMoney(
           <Text style={tw`text-left font-medium text-sm text-[#1B1A46]`}>
             Enter Amount (KES)
           </Text>
-          <Text style={tw`text-left font-medium text-sm text-[#1B1A46]`}>
+          <Text
+            style={{
+              textAlign: 'left',
+              fontFamily: 'Heebo-Medium',
+              fontSize: 14,
+              color: '#1B1A46',
+            }}
+          >
             KES {localBalance}
           </Text>
         </View>
@@ -207,10 +249,19 @@ export default function SendMoney(
       </View>
 
       {/* Continue Button */}
-      
-      <PrimaryButton onPress={handleSendMoney} label="Continue" isLoading={loading} />
 
-    
+      <PrimaryButton
+        onPress={handleSendMoney}
+        label="Continue"
+        isLoading={loading}
+      />
+
+      {/* Contact Picker Modal */}
+      <ContactPickerModal
+        visible={isModalVisible}
+        onClose={closeContactPicker}
+        onContactSelect={handleContactSelect}
+      />
 
       <AlertModal
         visible={modalVisible}
@@ -218,9 +269,9 @@ export default function SendMoney(
           setModalVisible(false)
           resetForm()
         }}
-        title={isError?"Transaction Failed":"Transaction Successful"}
+        title={isError ? 'Transaction Failed' : 'Transaction Successful'}
         amount={amount ? `Amount: ${amount} KES` : ''}
-        iconType={isError?"error":"success"}
+        iconType={isError ? 'error' : 'success'}
         loading={loading}
         accountName={accountName ? `Recipient: ${accountName}` : ''}
       />

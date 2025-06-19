@@ -1,19 +1,29 @@
 import * as React from 'react'
-import { View, TextInput, StyleSheet, TextInputProps } from 'react-native'
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  TextInputProps,
+  TouchableOpacity,
+} from 'react-native'
 import tw from 'twrnc'
 
 interface InputFieldProps extends TextInputProps {
   icon?: React.ReactNode
   containerStyle?: any
   inputStyle?: any
+  onIconPress?: () => void
 }
 
 export default function InputField({
   icon,
   containerStyle,
   inputStyle,
+  onIconPress,
   ...props
 }: InputFieldProps) {
+  const IconComponent = onIconPress ? TouchableOpacity : View
+
   return (
     <View
       style={[
@@ -26,7 +36,11 @@ export default function InputField({
         placeholderTextColor="#A0A0A0"
         {...props}
       />
-      {icon && icon}
+      {icon && (
+        <IconComponent onPress={onIconPress} style={tw`pr-4`}>
+          {icon}
+        </IconComponent>
+      )}
     </View>
   )
 }
